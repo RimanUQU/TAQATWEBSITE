@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* مجموعة الوردي (الأساسية) */
+  --primary-pink: #D95F93;
+  --primary-pink-hover: #C94F85;
+  --pink-light-bg: #FDF2F6;
+
+  /* مجموعة التركواز (الثانوية) */
+  --secondary-turquoise: #3E9694;
+  --secondary-turquoise-hover: #2C888D;
+  --turq-light-bg: #F2FBFA;
+
+  /* الألوان المحايدة للنصوص والخلفيات */
+  --text-main: #374151;
+  --text-heading: #2F2F2F;
+  --text-secondary: #6B7280;
+  --bg-page: #FAFAFA;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  direction: rtl;
+}
