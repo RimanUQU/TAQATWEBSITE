@@ -1,0 +1,1 @@
+import { db } from "@/lib/db";import { ProgramAdminForm } from "@/components/program-admin-form";export default async function NewProgram(){return <ProgramAdminForm categories={await db.programCategory.findMany()}/>}
