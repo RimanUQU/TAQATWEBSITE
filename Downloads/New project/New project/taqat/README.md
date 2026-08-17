@@ -5,7 +5,7 @@
 ## التقنيات
 
 - Next.js 15 App Router وReact 19 وTypeScript
-- Prisma ORM مع SQLite للتطوير المحلي (يمكن نقل المخطط إلى PostgreSQL للإنتاج)
+- Prisma ORM مع PostgreSQL على Supabase، مناسب للنشر على Netlify
 - جلسات JWT موقعة داخل Cookie محمية وHTTP-only
 - bcryptjs لتجزئة كلمات المرور
 - Zod للتحقق من المدخلات
@@ -33,7 +33,8 @@ npm run dev
 
 | المتغير | الغرض |
 |---|---|
-| `DATABASE_URL` | اتصال Prisma؛ محليًا `file:./dev.db` |
+| `DATABASE_URL` | رابط Supabase Pooler (منفذ 6543) الذي يستخدمه التطبيق في وقت التشغيل |
+| `DIRECT_URL` | رابط Supabase المباشر (منفذ 5432) الذي تستخدمه Prisma لتطبيق الترحيلات |
 | `AUTH_SECRET` | مفتاح عشوائي لا يقل عن 32 حرفًا لتوقيع الجلسات |
 | `NEXT_PUBLIC_APP_URL` | الرابط العام للموقع والـSEO |
 | `SEED_ADMIN_EMAIL` | بريد المدير الذي ينشئه أمر seed |
@@ -49,10 +50,14 @@ npm run dev
 
 ## قاعدة البيانات والبيانات الأولية
 
+أنشئ مشروع Supabase، ثم انسخ روابط الاتصال من **Connect** إلى ملف `.env` حسب المثال: رابط Pooler في `DATABASE_URL` والرابط المباشر في `DIRECT_URL`. بعد ذلك طبّق المخطط والبيانات الأولية:
+
 ```bash
-npm run db:push
+npm run db:deploy
 npm run db:seed
 ```
+
+في Netlify أضف `DATABASE_URL` و`DIRECT_URL` و`AUTH_SECRET` وبقية متغيرات الإنتاج في إعدادات البيئة. لا تشغّل `db:push` ضمن عملية النشر؛ الترحيلات الموجودة في `prisma/migrations` هي المصدر المعتمد للمخطط، ويشغّل أمر `db:deploy` الترحيلات الآمنة فقط.
 
 يشمل seed ثلاثة برامج عربية وأربعة شركاء وثلاث شهادات وثلاثة أعضاء فريق وإحصائيات ومحتوى صفحة «من نحن» وإعدادات عامة. ينشأ حساب المدير فقط عندما تكون قيمتا `SEED_ADMIN_EMAIL` و`SEED_ADMIN_PASSWORD` موجودتين.
 
