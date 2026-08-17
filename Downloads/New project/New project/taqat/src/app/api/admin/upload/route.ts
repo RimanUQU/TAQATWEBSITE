@@ -1,2 +1,20 @@
-import { requireAdmin } from "@/lib/auth";import { mkdir,writeFile } from "node:fs/promises";import path from "node:path";
-const allowed=new Set(["image/jpeg","image/png","image/webp","image/svg+xml"]);export async function POST(request:Request){await requireAdmin();const data=await request.formData(),file=data.get("file");if(!(file instanceof File))return Response.json({error:"لم يتم اختيار ملف"},{status:400});if(!allowed.has(file.type))return Response.json({error:"نوع الصورة غير مدعوم"},{status:400});if(file.size>5*1024*1024)return Response.json({error:"حجم الصورة يجب ألا يتجاوز 5 ميجابايت"},{status:400});const ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/svg+xml":"svg"}[file.type],name=`${crypto.randomUUID()}.${ext}`,folder=path.join(process.cwd(),"public","uploads");await mkdir(folder,{recursive:true});await writeFile(path.join(folder,name),Buffer.from(await file.arrayBuffer()));return Response.json({url:`/uploads/${name}`})}
+import { requireAdmin } from "@/lib/auth";
+import { getStorageClient, STORAGE_BUCKET } from "@/lib/supabase-storage";
+
+const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" } as const;
+const folders = new Set(["programs", "staff", "partners"]);
+
+export async function POST(request: Request) {
+  await requireAdmin();
+  const body = await request.json().catch(() => null);
+  const contentType = body?.contentType as keyof typeof extensions | undefined;
+  const size = Number(body?.size);
+  const folder = String(body?.folder ?? "");
+  if (!contentType || !(contentType in extensions) || !folders.has(folder)) return Response.json({ error: "نوع الصورة غير مدعوم" }, { status: 400 });
+  if (!Number.isFinite(size) || size < 1 || size > 5 * 1024 * 1024) return Response.json({ error: "حجم الصورة يجب ألا يتجاوز 5 ميجابايت" }, { status: 400 });
+
+  const path = `${folder}/${crypto.randomUUID()}.${extensions[contentType]}`;
+  const { data, error } = await getStorageClient().storage.from(STORAGE_BUCKET).createSignedUploadUrl(path);
+  if (error || !data) return Response.json({ error: "تعذر تجهيز رفع الصورة" }, { status: 500 });
+  return Response.json({ path, token: data.token });
+}

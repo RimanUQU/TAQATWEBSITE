@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  images: { remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }, { protocol: "https", hostname: "dummyimage.com" }] },
+  images: { remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }, { protocol: "https", hostname: "dummyimage.com" }, { protocol: "https", hostname: "**.supabase.co" }] },
   experimental: { cpus: 1 },
   turbopack: { root: projectRoot },
 };

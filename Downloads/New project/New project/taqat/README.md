@@ -37,6 +37,9 @@ npm run dev
 | `DIRECT_URL` | رابط Supabase المباشر (منفذ 5432) الذي تستخدمه Prisma لتطبيق الترحيلات |
 | `AUTH_SECRET` | مفتاح عشوائي لا يقل عن 32 حرفًا لتوقيع الجلسات |
 | `NEXT_PUBLIC_APP_URL` | الرابط العام للموقع والـSEO |
+| `NEXT_PUBLIC_SUPABASE_URL` | رابط مشروع Supabase المستخدم لصور Storage |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | المفتاح العام لمشروع Supabase؛ يستخدم فقط لإتمام رفع موقّع |
+| `SUPABASE_SERVICE_ROLE_KEY` | مفتاح الخادم لإنشاء روابط الرفع وحذف الصور؛ لا تضعه في متغير يبدأ بـ `NEXT_PUBLIC_` |
 | `SEED_ADMIN_EMAIL` | بريد المدير الذي ينشئه أمر seed |
 | `SEED_ADMIN_PASSWORD` | كلمة مرور تطوير قوية؛ لا تستخدم قيمة التطوير في الإنتاج |
 | `GOOGLE_CLIENT_ID` | اختياري، لإظهار تكامل Google عند إضافة موفر OAuth |
@@ -58,6 +61,10 @@ npm run db:seed
 ```
 
 في Netlify أضف `DATABASE_URL` و`DIRECT_URL` و`AUTH_SECRET` وبقية متغيرات الإنتاج في إعدادات البيئة. لا تشغّل `db:push` ضمن عملية النشر؛ الترحيلات الموجودة في `prisma/migrations` هي المصدر المعتمد للمخطط، ويشغّل أمر `db:deploy` الترحيلات الآمنة فقط.
+
+## تخزين الصور
+
+يستخدم الموقع bucket عام موجود في Supabase باسم `uploads`. أضف متغيرات Storage الثلاثة الموضحة أعلاه إلى `.env` وNetlify. طلب إنشاء رابط الرفع الموقّع وحذف الصور يتطلبان جلسة أدمن، بينما يرفع المتصفح الملف باستخدام token مؤقت فقط؛ لا يُرسل مفتاح `SUPABASE_SERVICE_ROLE_KEY` إلى المتصفح.
 
 يشمل seed ثلاثة برامج عربية وأربعة شركاء وثلاث شهادات وثلاثة أعضاء فريق وإحصائيات ومحتوى صفحة «من نحن» وإعدادات عامة. ينشأ حساب المدير فقط عندما تكون قيمتا `SEED_ADMIN_EMAIL` و`SEED_ADMIN_PASSWORD` موجودتين.
 
