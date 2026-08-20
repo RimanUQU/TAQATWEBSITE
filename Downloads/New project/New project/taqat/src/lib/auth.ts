@@ -21,7 +21,7 @@ export async function getUser() {
   try {
     const { payload } = await jwtVerify(token, key());
     if (!payload.sub) return null;
-    return db.user.findFirst({ where: { id: payload.sub, active: true }, select: { id: true, name: true, email: true, phone: true, avatar: true, role: true } });
+    return await db.user.findFirst({ where: { id: payload.sub, active: true }, select: { id: true, name: true, email: true, phone: true, avatar: true, role: true } });
   } catch { return null; }
 }
 
