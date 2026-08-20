@@ -13,8 +13,8 @@ export function ProgramCard({ program }: { program: ProgramCardData }) {
   </Link><div className="card-body"><h3><Link href={`/programs/${program.slug}`}>{program.title}</Link></h3><p>{program.shortDescription}</p><div className="card-meta"><span><CalendarDays /> {formatDate(program.startDate)}</span><span><MapPin /> {program.location}</span><span><Users /> {program._count.registrations} / {program.capacity}</span></div><Link className="card-link" href={`/programs/${program.slug}`}>استكشف البرنامج <span>←</span></Link></div></Card>;
 }
 
-export function StaffCard({ member }: { member: { name: string; jobTitle: string; bio: string | null } }) {
-  return <Card className="staff-card"><div className="card-body"><span className="staff-mark" aria-hidden="true">ط</span><h3>{member.name}</h3><strong>{member.jobTitle}</strong>{member.bio && <p>{member.bio}</p>}</div></Card>;
+export function StaffCard({ member }: { member: { name: string; jobTitle: string; icon: string } }) {
+  return <Card className="staff-card"><div className="card-body"><span className="staff-mark" aria-hidden="true">{member.icon ? <img src={member.icon} alt="" /> : "ط"}</span><h3>{member.name}</h3><strong>{member.jobTitle}</strong></div></Card>;
 }
 
 export function TestimonialCard({ item }: { item: { quote: string; name: string; title: string | null; rating: number } }) {

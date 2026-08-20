@@ -130,17 +130,28 @@ model Testimonial {
   updatedAt    DateTime @updatedAt
 }
 
+model StaffGroup {
+  id           String        @id @default(cuid())
+  name         String?
+  displayOrder Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  members      StaffMember[]
+}
+
 model StaffMember {
-  id           String   @id @default(cuid())
+  id           String     @id @default(cuid())
   name         String
   jobTitle     String
-  image        String
-  bio          String?
-  contactUrl   String?
-  displayOrder Int      @default(0)
-  active       Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  icon         String     @default("")
+  displayOrder Int        @default(0)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  groupId      String
+  group        StaffGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, displayOrder])
 }
 
 model Statistic {
