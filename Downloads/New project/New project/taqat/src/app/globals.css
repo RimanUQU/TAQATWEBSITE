@@ -17,6 +17,11 @@
   gap: 48px;
 }
 
+/* المجموعات غير المسمّاة لا يظهر لها عنوان، لكنها تبدأ صفًا جديدًا. */
+.staff-section-unnamed + .staff-section-unnamed {
+  margin-top: -24px;
+}
+
 .staff-group-title {
   display: flex;
   align-items: center;
