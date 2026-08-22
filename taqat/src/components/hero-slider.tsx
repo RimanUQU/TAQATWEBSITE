@@ -49,35 +49,40 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
           className={`hero-slide ${index === current ? "active" : ""}`}
           aria-hidden={index !== current}
         >
-          {slide.coverImage && (
-            <Image
-              src={getPublicImageUrl(slide.coverImage)}
-              alt=""
-              fill
-              priority={index === 0}
-              sizes="100vw"
-            />
-          )}
           <div className="container hero-content">
-            <Badge tone="teal">{slide.price === 0 ? "برنامج مجاني" : "برنامج مدفوع"}</Badge>
-            <h1>{slide.title}</h1>
-            <p>{slide.shortDescription}</p>
-            <ButtonLink href={`/programs/${slide.slug}`} size="lg">
-              عرض التفاصيل <ChevronLeft size={19} />
-            </ButtonLink>
+            <div className="hero-text">
+              {slide.coverImage && (
+                <span className="hero-thumb">
+                  <Image
+                    src={getPublicImageUrl(slide.coverImage)}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    sizes="60px"
+                  />
+                </span>
+              )}
+              <Badge tone="teal">{slide.price === 0 ? "برنامج مجاني" : "برنامج مدفوع"}</Badge>
+              <h1>{slide.title}</h1>
+            </div>
+            <div className="hero-actions">
+              <ButtonLink href={`/programs/${slide.slug}`} size="sm">
+                عرض التفاصيل <ChevronLeft size={16} />
+              </ButtonLink>
+              {slides.length > 1 && (
+                <div className="hero-controls">
+                  <button onClick={() => move(1)} aria-label="البرنامج التالي">
+                    <ChevronRight size={18} />
+                  </button>
+                  <button onClick={() => move(-1)} aria-label="البرنامج السابق">
+                    <ChevronLeft size={18} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </article>
       ))}
-      {slides.length > 1 && (
-        <div className="hero-controls">
-          <button onClick={() => move(1)} aria-label="البرنامج التالي">
-            <ChevronRight />
-          </button>
-          <button onClick={() => move(-1)} aria-label="البرنامج السابق">
-            <ChevronLeft />
-          </button>
-        </div>
-      )}
     </section>
   );
 }
