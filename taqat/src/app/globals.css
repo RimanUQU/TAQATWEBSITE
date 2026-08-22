@@ -667,11 +667,13 @@ button:focus-visible {
   color: #b8d3d2;
   font-size: 0.85rem;
 }
-/* شريط الإعلانات (Hero) - شريط رفيع أفقي، مستوحى من مرجع طويق بألوان طاقات المعتمدة */
+/* شريط الإعلانات (Hero) - شريط رفيع عائم بحواف دائرية، مستوحى من مرجع طويق بألوان طاقات المعتمدة */
 .hero-slider {
   position: relative;
   height: 92px;
+  margin-block: 20px 0; /* مسافة تفصله عن الهيدر، يبان "عائم" مو ملاصق */
   background: var(--teal-800);
+  border-radius: var(--radius); /* حواف دائرية، نفس قيمة الاستدارة المستخدمة بباقي الكروت */
   overflow: hidden;
 }
 .hero-slide {
@@ -693,6 +695,7 @@ button:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding-inline: 28px;
   color: white;
 }
 .hero-text {
@@ -1257,6 +1260,7 @@ button:focus-visible {
   }
   .hero-content {
     padding-block: 10px;
+    padding-inline: 16px;
     flex-wrap: wrap;
     row-gap: 8px;
   }

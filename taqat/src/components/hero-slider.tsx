@@ -26,7 +26,7 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
   const move = (step: number) => setCurrent((current + step + slides.length) % slides.length);
   return (
     <section
-      className="hero-slider"
+      className="container hero-slider"
       aria-roledescription="carousel"
       aria-label="أحدث البرامج"
       onMouseEnter={() => setPaused(true)}
@@ -49,7 +49,7 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
           className={`hero-slide ${index === current ? "active" : ""}`}
           aria-hidden={index !== current}
         >
-          <div className="container hero-content">
+          <div className="hero-content">
             <div className="hero-text">
               {slide.coverImage && (
                 <span className="hero-thumb">
