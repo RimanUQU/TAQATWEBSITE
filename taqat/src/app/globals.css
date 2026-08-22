@@ -730,19 +730,23 @@ button:focus-visible {
   gap: 10px;
   flex: 0 0 auto;
 }
-.hero-controls {
+.hero-dots {
   display: flex;
+  align-items: center;
   gap: 6px;
 }
-.hero-controls button {
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  color: white;
-  display: grid;
-  place-items: center;
+.hero-dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.4);
+  transition: 0.2s;
+}
+.hero-dots button.active {
+  width: 22px;
+  background: #fff;
 }
 .stat-card {
   text-align: center;

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { getPublicImageUrl } from "@/lib/images";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { ButtonLink, Badge } from "./ui";
 
 type Slide = {
@@ -70,13 +70,17 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
                 عرض التفاصيل <ChevronLeft size={16} />
               </ButtonLink>
               {slides.length > 1 && (
-                <div className="hero-controls">
-                  <button onClick={() => move(1)} aria-label="البرنامج التالي">
-                    <ChevronRight size={18} />
-                  </button>
-                  <button onClick={() => move(-1)} aria-label="البرنامج السابق">
-                    <ChevronLeft size={18} />
-                  </button>
+                <div className="hero-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
+                  {slides.map((s, i) => (
+                    <button
+                      key={s.id}
+                      role="tab"
+                      aria-selected={i === current}
+                      aria-label={`عرض برنامج ${s.title}`}
+                      className={i === current ? "active" : ""}
+                      onClick={() => setCurrent(i)}
+                    />
+                  ))}
                 </div>
               )}
             </div>
