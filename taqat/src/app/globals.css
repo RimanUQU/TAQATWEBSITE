@@ -667,10 +667,10 @@ button:focus-visible {
   color: #b8d3d2;
   font-size: 0.85rem;
 }
+/* شريط الإعلانات (Hero) - شريط رفيع أفقي، مستوحى من مرجع طويق بألوان طاقات المعتمدة */
 .hero-slider {
   position: relative;
-  height: min(660px, calc(100vh - 82px));
-  min-height: 530px;
+  height: 92px;
   background: var(--teal-800);
   overflow: hidden;
 }
@@ -685,50 +685,61 @@ button:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }
-.hero-slide img {
-  object-fit: cover;
-}
-.hero-slide:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(5, 54, 53, 0.2), rgba(5, 54, 53, 0.82));
-}
 .hero-content {
   position: relative;
   z-index: 2;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   color: white;
 }
-.hero-content h1 {
-  max-width: 650px;
-  margin-bottom: 16px;
+.hero-text {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0; /* يسمح بقص العنوان الطويل (ellipsis) بدل ما يكسر الصف */
 }
-.hero-content p {
-  font-size: 1.12rem;
-  max-width: 610px;
-  color: #eef8f7;
-  margin-bottom: 26px;
+.hero-thumb {
+  position: relative;
+  flex: 0 0 60px;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.hero-thumb img {
+  object-fit: cover; /* أي صورة، بأي نسبة أبعاد، تتقص تلقائيًا تملأ المربع بدون تشويه */
+}
+.hero-text h1 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
 }
 .hero-controls {
-  position: absolute;
-  z-index: 5;
-  bottom: 35px;
-  left: max(80px, calc((100vw - 1440px) / 2));
   display: flex;
-  gap: 10px;
+  gap: 6px;
 }
 .hero-controls button {
-  width: 46px;
-  height: 46px;
+  width: 32px;
+  height: 32px;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
   color: white;
+  display: grid;
+  place-items: center;
 }
 .stat-card {
   text-align: center;
@@ -1218,9 +1229,6 @@ button:focus-visible {
   .admin-main {
     padding: 28px;
   }
-  .hero-controls {
-    left: 32px;
-  }
 }
 @media (max-width: 700px) {
   .container {
@@ -1245,19 +1253,19 @@ button:focus-visible {
     grid-template-columns: 1fr;
   }
   .hero-slider {
-    min-height: 540px;
-    height: calc(100vh - 72px);
+    height: auto;
   }
   .hero-content {
-    justify-content: flex-end;
-    padding-bottom: 105px;
+    padding-block: 10px;
+    flex-wrap: wrap;
+    row-gap: 8px;
   }
-  .hero-controls {
-    left: 16px;
-    bottom: 28px;
+  .hero-thumb {
+    display: none; /* المساحة ضيقة على الجوال، نعطي الأولوية للعنوان والزر */
   }
-  .hero-content h1 {
-    font-size: 2rem;
+  .hero-text h1 {
+    font-size: 0.92rem;
+    max-width: 100%;
   }
   .program-card .card-image {
     height: 230px;
