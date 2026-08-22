@@ -1,2 +1,68 @@
-import type { Metadata } from "next"; import Link from "next/link"; import { requireUser } from "@/lib/auth"; import { db } from "@/lib/db"; import { formatDate } from "@/lib/utils"; import { AccountForm, DeleteAccount } from "@/components/account-form"; import { Badge } from "@/components/ui";
-export const metadata:Metadata={title:"حسابي الشخصي",robots:{index:false}};export default async function AccountPage(){const user=await requireUser();const registrations=await db.programRegistration.findMany({where:{userId:user.id},include:{program:true},orderBy:{createdAt:"desc"}});return <><div className="page-hero"><div className="container"><h1>حسابي الشخصي</h1><p>أديري بياناتك وتابعي البرامج التي انضممتِ إليها.</p></div></div><section className="page-section"><div className="container account-grid"><section className="panel"><h2>البيانات الشخصية</h2><AccountForm user={user}/></section><section className="panel"><h2>برامجي</h2>{registrations.length?registrations.map(r=><div className="registration-item" key={r.id}><div><Link href={`/programs/${r.program.slug}`}><strong>{r.program.title}</strong></Link><small style={{display:"block"}}>سُجل في {formatDate(r.createdAt)}</small></div><Badge tone={r.status==="CONFIRMED"?"teal":"gray"}>{r.status==="CONFIRMED"?"مؤكد":r.status==="WAITLIST"?"انتظار":"ملغي"}</Badge></div>):<p>لم تسجلي في أي برنامج بعد. <Link className="card-link" href="/programs">اكتشفي البرامج ←</Link></p>}</section></div><div className="container panel danger-zone"><h2>المنطقة الخطرة</h2><p>حذف الحساب إجراء نهائي يزيل بياناتك وتسجيلاتك من المنصة.</p><DeleteAccount/></div></section></>}
+import type { Metadata } from "next";
+import Link from "next/link";
+import { requireUser } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { formatDate } from "@/lib/utils";
+import { AccountForm, DeleteAccount } from "@/components/account-form";
+import { Badge } from "@/components/ui";
+export const metadata: Metadata = { title: "حسابي الشخصي", robots: { index: false } };
+export default async function AccountPage() {
+  const user = await requireUser();
+  const registrations = await db.programRegistration.findMany({
+    where: { userId: user.id },
+    include: { program: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return (
+    <>
+      <div className="page-hero">
+        <div className="container">
+          <h1>حسابي الشخصي</h1>
+          <p>أديري بياناتك وتابعي البرامج التي انضممتِ إليها.</p>
+        </div>
+      </div>
+      <section className="page-section">
+        <div className="container account-grid">
+          <section className="panel">
+            <h2>البيانات الشخصية</h2>
+            <AccountForm user={user} />
+          </section>
+          <section className="panel">
+            <h2>برامجي</h2>
+            {registrations.length ? (
+              registrations.map((r) => (
+                <div className="registration-item" key={r.id}>
+                  <div>
+                    <Link href={`/programs/${r.program.slug}`}>
+                      <strong>{r.program.title}</strong>
+                    </Link>
+                    <small style={{ display: "block" }}>سُجل في {formatDate(r.createdAt)}</small>
+                  </div>
+                  <Badge tone={r.status === "CONFIRMED" ? "teal" : "gray"}>
+                    {r.status === "CONFIRMED"
+                      ? "مؤكد"
+                      : r.status === "WAITLIST"
+                        ? "انتظار"
+                        : "ملغي"}
+                  </Badge>
+                </div>
+              ))
+            ) : (
+              <p>
+                لم تسجلي في أي برنامج بعد.{" "}
+                <Link className="card-link" href="/programs">
+                  اكتشفي البرامج ←
+                </Link>
+              </p>
+            )}
+          </section>
+        </div>
+        <div className="container panel danger-zone">
+          <h2>المنطقة الخطرة</h2>
+          <p>حذف الحساب إجراء نهائي يزيل بياناتك وتسجيلاتك من المنصة.</p>
+          <DeleteAccount />
+        </div>
+      </section>
+    </>
+  );
+}

@@ -1,2 +1,82 @@
-import Link from "next/link";import { db } from "@/lib/db";import { deleteStatisticAction,saveStatisticAction } from "@/actions/admin";import { ActiveToggle,AdminHeader,TextField } from "@/components/admin-ui";import { Button } from "@/components/ui";
-export default async function Statistics({searchParams}:{searchParams:Promise<{edit?:string}>}){const{edit}=await searchParams;const[items,current]=await Promise.all([db.statistic.findMany({orderBy:{displayOrder:"asc"}}),edit?db.statistic.findUnique({where:{id:edit}}):null]);return <><AdminHeader title="الإحصائيات"/><form action={saveStatisticAction} className="panel admin-form"><input type="hidden" name="id" value={current?.id||""}/><TextField name="title" label="العنوان" value={current?.title} required/><TextField name="value" label="القيمة" type="number" value={current?.value} required/><TextField name="prefix" label="بادئة (مثل +)" value={current?.prefix||""}/><TextField name="suffix" label="لاحقة" value={current?.suffix||""}/><TextField name="icon" label="اسم الأيقونة" value={current?.icon||""}/><TextField name="displayOrder" label="ترتيب العرض" type="number" value={current?.displayOrder??items.length+1}/><ActiveToggle checked={current?.active??true}/><Button>{current?"حفظ التعديل":"إضافة الإحصائية"}</Button>{current&&<Link className="btn btn-outline" href="/admin/statistics">إلغاء</Link>}</form><section className="page-section"><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>العنوان</th><th>القيمة</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>{items.map(i=><tr key={i.id}><td>{i.title}</td><td>{i.prefix}{i.value}{i.suffix}</td><td>{i.active?"نشط":"مخفي"}</td><td className="table-actions"><Link className="btn btn-outline btn-sm" href={`/admin/statistics?edit=${i.id}`}>تعديل</Link><form action={deleteStatisticAction.bind(null,i.id)}><Button variant="text" size="sm">حذف</Button></form></td></tr>)}</tbody></table></div></section></>}
+import Link from "next/link";
+import { db } from "@/lib/db";
+import { deleteStatisticAction, saveStatisticAction } from "@/actions/admin";
+import { ActiveToggle, AdminHeader, TextField } from "@/components/admin-ui";
+import { Button } from "@/components/ui";
+export default async function Statistics({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  const { edit } = await searchParams;
+  const [items, current] = await Promise.all([
+    db.statistic.findMany({ orderBy: { displayOrder: "asc" } }),
+    edit ? db.statistic.findUnique({ where: { id: edit } }) : null,
+  ]);
+  return (
+    <>
+      <AdminHeader title="الإحصائيات" />
+      <form action={saveStatisticAction} className="panel admin-form">
+        <input type="hidden" name="id" value={current?.id || ""} />
+        <TextField name="title" label="العنوان" value={current?.title} required />
+        <TextField name="value" label="القيمة" type="number" value={current?.value} required />
+        <TextField name="prefix" label="بادئة (مثل +)" value={current?.prefix || ""} />
+        <TextField name="suffix" label="لاحقة" value={current?.suffix || ""} />
+        <TextField name="icon" label="اسم الأيقونة" value={current?.icon || ""} />
+        <TextField
+          name="displayOrder"
+          label="ترتيب العرض"
+          type="number"
+          value={current?.displayOrder ?? items.length + 1}
+        />
+        <ActiveToggle checked={current?.active ?? true} />
+        <Button>{current ? "حفظ التعديل" : "إضافة الإحصائية"}</Button>
+        {current && (
+          <Link className="btn btn-outline" href="/admin/statistics">
+            إلغاء
+          </Link>
+        )}
+      </form>
+      <section className="page-section">
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>العنوان</th>
+                <th>القيمة</th>
+                <th>الحالة</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((i) => (
+                <tr key={i.id}>
+                  <td>{i.title}</td>
+                  <td>
+                    {i.prefix}
+                    {i.value}
+                    {i.suffix}
+                  </td>
+                  <td>{i.active ? "نشط" : "مخفي"}</td>
+                  <td className="table-actions">
+                    <Link
+                      className="btn btn-outline btn-sm"
+                      href={`/admin/statistics?edit=${i.id}`}
+                    >
+                      تعديل
+                    </Link>
+                    <form action={deleteStatisticAction.bind(null, i.id)}>
+                      <Button variant="text" size="sm">
+                        حذف
+                      </Button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </>
+  );
+}
