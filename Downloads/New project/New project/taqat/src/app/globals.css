@@ -1,23 +1,44 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap");
 :root {
+  /* Primary - Pink (Taqat UI Style Guide) */
   --pink-50: #fff1f6;
   --pink-100: #ffe3ed;
+  /* --pink-200: القيمة في ملف الـPDF طلعت مطابقة لـPink-50 بسبب خطأ استخراج نص من الصورة - تحتاج تأكيد بالعين قبل اعتمادها */
   --pink-300: #ffc6db;
   --pink-400: #ff7daa;
-  --pink-500: #f85e96;
+  --pink-500: #fb5e96;
   --pink-600: #e94a83;
   --pink-700: #c9366c;
+  --pink-800: #bc3869;
+
+  /* Secondary - Green/Teal (Taqat UI Style Guide) */
   --teal-50: #eef9f8;
   --teal-100: #d8f0ef;
+  --teal-200: #b7e2e1;
   --teal-300: #8fd0cf;
+  --teal-400: #62b6b4;
   --teal-500: #3b9391;
+  --teal-600: #317d7b;
   --teal-700: #286866;
   --teal-800: #075658;
-  --ink: #263332;
-  --muted: #687372;
-  --line: #e8edec;
+
+  /* Neutral (Taqat UI Style Guide) */
+  --neutral-50: #f9fafb;
+  --neutral-100: #f3f4f6;
+  --neutral-200: #e5e7eb;
+  --neutral-300: #d1d5db;
+  --neutral-400: #9ca3af;
+  --neutral-500: #6b7280;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+
+  /* Semantic aliases - derived from the scales above, used across the whole site */
+  --ink: var(--neutral-800);
+  --muted: var(--neutral-500);
+  --line: var(--neutral-200);
   --surface: #fff;
-  --bg: #fffafa;
+  --bg: var(--neutral-50);
   --danger: #b42318;
   --shadow: 0 10px 32px rgba(64, 42, 51, 0.08);
   --radius: 18px;
@@ -33,6 +54,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: "Noto Sans Arabic", Tahoma, sans-serif;
+  font-size: 16px; /* Body - Regular 16px (Taqat UI Style Guide) */
   line-height: 1.75;
 }
 a {
@@ -52,7 +74,7 @@ img {
   max-width: 100%;
 }
 .container {
-  width: min(100% - 160px, 1280px);
+  width: min(100% - 160px, 1440px); /* Desktop max-width 1440px, margin 80px (Taqat UI Style Guide) */
   margin-inline: auto;
 }
 .site-main {
@@ -65,16 +87,41 @@ h4,
 p {
   margin-top: 0;
 }
+/* سلّم الطباعة (Taqat UI Style Guide) - كله بخط Noto Sans Arabic */
 h1 {
+  /* Display: Bold 48px - العنوان الرئيسي (Hero) */
   font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
   line-height: 1.3;
 }
 h2 {
-  font-size: clamp(1.7rem, 3vw, 2rem);
-  line-height: 1.4;
+  /* H1: Bold 36px - عنوان القسم */
+  font-size: clamp(1.85rem, 3.4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.35;
 }
 h3 {
-  line-height: 1.5;
+  /* H3: SemiBold 24px - عنوان البطاقة */
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.text-h2 {
+  /* H2: SemiBold 32px - عنوان فرعي (لاستخدامها عند الحاجة لعنوان بين H1 وH3) */
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.text-h4 {
+  /* H4: Medium 20px */
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.text-caption {
+  /* Caption: Regular 14px */
+  font-size: 0.875rem;
+  font-weight: 400;
 }
 .page-hero {
   padding: 70px 0 54px;
@@ -214,15 +261,16 @@ h3 {
   display: none;
 }
 .btn {
-  min-height: 48px;
+  min-height: 48px; /* Medium - يطابق الملف المعتمد (Large 56px / Small 44px بالأسفل) */
   padding: 0 24px;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: 12px; /* يطابق الملف المعتمد */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 500; /* Button: Medium 16px (Taqat UI Style Guide) - كانت 600 */
   transition:
     transform 0.18s,
     background 0.18s,
@@ -241,7 +289,7 @@ button:focus-visible {
 .btn-primary {
   background: var(--pink-500);
   color: white;
-  box-shadow: 0 8px 18px rgba(248, 94, 150, 0.22);
+  box-shadow: 0 8px 18px rgba(251, 94, 150, 0.22);
 }
 .btn-primary:hover {
   background: var(--pink-600);
@@ -398,7 +446,8 @@ button:focus-visible {
 }
 .card-body h3 {
   margin-bottom: 8px;
-  font-size: 1.22rem;
+  font-size: 1.5rem; /* H3: SemiBold 24px - عنوان البطاقة (Taqat UI Style Guide) */
+  font-weight: 600;
 }
 .card-body > p {
   color: var(--muted);
@@ -669,7 +718,7 @@ button:focus-visible {
   position: absolute;
   z-index: 5;
   bottom: 35px;
-  left: max(80px, calc((100vw - 1280px) / 2));
+  left: max(80px, calc((100vw - 1440px) / 2));
   display: flex;
   gap: 10px;
 }
