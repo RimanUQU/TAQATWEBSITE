@@ -126,8 +126,6 @@ export function PartnerLogoCard({
     </>
   );
   return (
-    <Card className="partner-card">
-      {item.url ? <a href={item.url}>{content}</a> : content}
-    </Card>
+    <Card className="partner-card">{item.url ? <a href={item.url}>{content}</a> : content}</Card>
   );
 }
