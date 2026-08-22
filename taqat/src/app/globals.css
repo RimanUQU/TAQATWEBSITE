@@ -670,7 +670,7 @@ button:focus-visible {
 /* شريط الإعلانات (Hero) - شريط رفيع عائم بحواف دائرية، مستوحى من مرجع طويق بألوان طاقات المعتمدة */
 .hero-slider {
   position: relative;
-  height: 92px;
+  height: 108px; /* أطول شوي من 92px عشان تنسع لصف النقاط أسفل النص */
   margin-block: 20px 0; /* مسافة تفصله عن الهيدر، يبان "عائم" مو ملاصق */
   background: var(--teal-800);
   border-radius: var(--radius); /* حواف دائرية، نفس قيمة الاستدارة المستخدمة بباقي الكروت */
@@ -695,7 +695,7 @@ button:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding-inline: 28px;
+  padding: 0 28px 18px; /* مسافة سفلية تحجز مكان لصف النقاط تحتها */
   color: white;
 }
 .hero-text {
@@ -731,6 +731,11 @@ button:focus-visible {
   flex: 0 0 auto;
 }
 .hero-dots {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1260,13 +1265,15 @@ button:focus-visible {
     grid-template-columns: 1fr;
   }
   .hero-slider {
-    height: auto;
+    height: 132px; /* رقم ثابت بدل auto - العنصر الداخلي مطلق الموضع فما يقدر يحدد ارتفاع تلقائي */
   }
   .hero-content {
-    padding-block: 10px;
-    padding-inline: 16px;
+    padding: 10px 16px 30px;
     flex-wrap: wrap;
     row-gap: 8px;
+  }
+  .hero-dots {
+    bottom: 10px;
   }
   .hero-thumb {
     display: none; /* المساحة ضيقة على الجوال، نعطي الأولوية للعنوان والزر */

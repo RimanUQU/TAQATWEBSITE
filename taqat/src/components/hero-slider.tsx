@@ -69,22 +69,22 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
               <ButtonLink href={`/programs/${slide.slug}`} size="sm">
                 عرض التفاصيل <ChevronLeft size={16} />
               </ButtonLink>
-              {slides.length > 1 && (
-                <div className="hero-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
-                  {slides.map((s, i) => (
-                    <button
-                      key={s.id}
-                      role="tab"
-                      aria-selected={i === current}
-                      aria-label={`عرض برنامج ${s.title}`}
-                      className={i === current ? "active" : ""}
-                      onClick={() => setCurrent(i)}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           </div>
+          {slides.length > 1 && (
+            <div className="hero-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  role="tab"
+                  aria-selected={i === current}
+                  aria-label={`عرض برنامج ${s.title}`}
+                  className={i === current ? "active" : ""}
+                  onClick={() => setCurrent(i)}
+                />
+              ))}
+            </div>
+          )}
         </article>
       ))}
     </section>
