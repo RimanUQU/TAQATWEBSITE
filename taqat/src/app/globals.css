@@ -1109,6 +1109,24 @@ button:focus-visible {
 .table-actions form {
   display: inline;
 }
+.admin-program-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.admin-program-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.btn-text.danger-text {
+  color: var(--danger);
+}
 .admin-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
