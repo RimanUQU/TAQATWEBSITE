@@ -1,21 +1,28 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { archiveProgramAction } from "@/actions/admin";
 import { AdminHeader } from "@/components/admin-ui";
-import { Alert, Badge, Button } from "@/components/ui";
-import { formatDate } from "@/lib/utils";
+import { AdminProgramCard } from "@/components/admin-program-card";
+import { Alert, EmptyState } from "@/components/ui";
+
+const tabs = [
+  { key: "", label: "الكل" },
+  { key: "PUBLISHED", label: "منشور" },
+  { key: "DRAFT", label: "مسودة" },
+  { key: "ARCHIVED", label: "مؤرشف" },
+] as const;
+
 export default async function AdminPrograms({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; status?: string }>;
 }) {
-  const [programs, sp] = await Promise.all([
-    db.program.findMany({
-      include: { _count: { select: { registrations: true } } },
-      orderBy: { createdAt: "desc" },
-    }),
-    searchParams,
-  ]);
+  const sp = await searchParams;
+  const status = tabs.some((t) => t.key === sp.status) ? sp.status : "";
+  const programs = await db.program.findMany({
+    where: status ? { status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" } : {},
+    include: { _count: { select: { registrations: true } } },
+    orderBy: { createdAt: "desc" },
+  });
   return (
     <>
       <AdminHeader
@@ -28,49 +35,26 @@ export default async function AdminPrograms({
         }
       />
       {sp.saved && <Alert type="success">تم حفظ البرنامج بنجاح.</Alert>}
-      <div className="admin-table-wrap">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>البرنامج</th>
-              <th>البداية</th>
-              <th>التسجيلات</th>
-              <th>الحالة</th>
-              <th>الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {programs.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <strong>{p.title}</strong>
-                </td>
-                <td>{formatDate(p.startDate)}</td>
-                <td>
-                  {p._count.registrations} / {p.capacity}
-                </td>
-                <td>
-                  <Badge tone={p.status === "PUBLISHED" ? "teal" : "gray"}>
-                    {p.status === "PUBLISHED" ? "منشور" : p.status === "DRAFT" ? "مسودة" : "مؤرشف"}
-                  </Badge>
-                </td>
-                <td className="table-actions">
-                  <Link className="btn btn-outline btn-sm" href={`/admin/programs/${p.id}/edit`}>
-                    تعديل
-                  </Link>
-                  {p.status !== "ARCHIVED" && (
-                    <form action={archiveProgramAction.bind(null, p.id)}>
-                      <Button variant="text" size="sm">
-                        أرشفة
-                      </Button>
-                    </form>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="admin-program-tabs">
+        {tabs.map((tab) => (
+          <Link
+            key={tab.key}
+            href={tab.key ? `/admin/programs?status=${tab.key}` : "/admin/programs"}
+            className={`btn btn-sm ${status === tab.key ? "btn-primary" : "btn-outline"}`}
+          >
+            {tab.label}
+          </Link>
+        ))}
       </div>
+      {programs.length ? (
+        <div className="grid-3 admin-program-grid">
+          {programs.map((program) => (
+            <AdminProgramCard key={program.id} program={program} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="ما فيه برامج" text="ما فيه برامج مطابقة لهذا الفلتر حاليًا." />
+      )}
     </>
   );
 }
