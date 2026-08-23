@@ -13,22 +13,15 @@ export function ProgramAdminForm({
   program,
   categories,
   sliderCount = 0,
-  embedded = false,
-  onCancel,
 }: {
   program?: Program;
   categories: ProgramCategory[];
   sliderCount?: number;
-  embedded?: boolean;
-  onCancel?: () => void;
 }) {
   return (
     <>
-      {!embedded && <AdminHeader title={program ? "تعديل البرنامج" : "إضافة برنامج"} />}
-      <form
-        action={saveProgramAction.bind(null, program?.id)}
-        className={embedded ? "admin-form admin-form-embedded" : "panel admin-form"}
-      >
+      <AdminHeader title={program ? "تعديل البرنامج" : "إضافة برنامج"} />
+      <form action={saveProgramAction.bind(null, program?.id)} className="panel admin-form">
         <TextField name="title" label="اسم البرنامج" value={program?.title} required />
         <TextField
           name="slug"
@@ -107,14 +100,7 @@ export function ProgramAdminForm({
           </small>
           <ActiveToggle name="isNew" checked={program?.isNew} label="شارة جديد" />
         </div>
-        <div className={embedded ? "admin-form-embedded-actions" : ""}>
-          <Button className={embedded ? "" : "full"}>حفظ البرنامج</Button>
-          {embedded && onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
-              إلغاء
-            </Button>
-          )}
-        </div>
+        <Button className="full">حفظ البرنامج</Button>
       </form>
     </>
   );
