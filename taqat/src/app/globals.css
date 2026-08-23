@@ -221,7 +221,7 @@ h3 {
   align-items: center;
 }
 .brand-logo img {
-  height: 56px;
+  height: 70px; /* أكبر ما يسمح به ارتفاع الهيدر (82px) مع هامش تنفّس بسيط */
   width: auto;
 }
 .main-nav {
@@ -1256,6 +1256,9 @@ button:focus-visible {
   }
   .site-header {
     height: 72px;
+  }
+  .brand-logo img {
+    height: 58px;
   }
   .nav-wrap {
     gap: 15px;
