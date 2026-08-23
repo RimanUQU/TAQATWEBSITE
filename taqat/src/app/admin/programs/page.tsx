@@ -18,11 +18,15 @@ export default async function AdminPrograms({
 }) {
   const sp = await searchParams;
   const status = tabs.some((t) => t.key === sp.status) ? sp.status : "";
-  const programs = await db.program.findMany({
-    where: status ? { status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" } : {},
-    include: { _count: { select: { registrations: true } } },
-    orderBy: { createdAt: "desc" },
-  });
+  const [programs, categories, sliderCount] = await Promise.all([
+    db.program.findMany({
+      where: status ? { status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" } : {},
+      include: { _count: { select: { registrations: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.programCategory.findMany(),
+    db.program.count({ where: { showInSlider: true } }),
+  ]);
   return (
     <>
       <AdminHeader
@@ -49,7 +53,12 @@ export default async function AdminPrograms({
       {programs.length ? (
         <div className="grid-3 admin-program-grid">
           {programs.map((program) => (
-            <AdminProgramCard key={program.id} program={program} />
+            <AdminProgramCard
+              key={program.id}
+              program={program}
+              categories={categories}
+              sliderCount={sliderCount}
+            />
           ))}
         </div>
       ) : (

@@ -1,34 +1,49 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { CalendarDays, MapPin, Users } from "lucide-react";
+import type { Program, ProgramCategory } from "@prisma/client";
 import { Badge, Button, Card } from "./ui";
+import { ProgramAdminForm } from "./program-admin-form";
 import { formatDate } from "@/lib/utils";
 import { getPublicImageUrl } from "@/lib/images";
 import { archiveProgramAction, restoreProgramAction, deleteProgramAction } from "@/actions/admin";
 
-type AdminProgramCardData = {
-  id: string;
-  slug: string;
-  title: string;
-  cardImage: string;
-  startDate: Date;
-  location: string;
-  capacity: number;
-  price: number;
-  isNew: boolean;
-  featured: boolean;
-  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
-  _count: { registrations: number };
-};
+type AdminProgram = Program & { _count: { registrations: number } };
 
 const statusLabel = { DRAFT: "مسودة", PUBLISHED: "منشور", ARCHIVED: "مؤرشف" } as const;
 const statusTone = { DRAFT: "gray", PUBLISHED: "teal", ARCHIVED: "warn" } as const;
 
-export function AdminProgramCard({ program }: { program: AdminProgramCardData }) {
+export function AdminProgramCard({
+  program,
+  categories,
+  sliderCount,
+}: {
+  program: AdminProgram;
+  categories: ProgramCategory[];
+  sliderCount: number;
+}) {
+  const [editing, setEditing] = useState(false);
   const deleteFormRef = useRef<HTMLFormElement>(null);
   const canDelete = program._count.registrations === 0;
+  const othersOnSlider = program.showInSlider ? Math.max(0, sliderCount - 1) : sliderCount;
+
+  if (editing) {
+    return (
+      <Card className="program-card admin-program-card admin-program-card-editing">
+        <div className="card-body">
+          <ProgramAdminForm
+            program={program}
+            categories={categories}
+            sliderCount={othersOnSlider}
+            embedded
+            onCancel={() => setEditing(false)}
+          />
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="program-card admin-program-card">
       <div className={`card-image ${program.cardImage ? "" : "no-image"}`}>
@@ -63,9 +78,9 @@ export function AdminProgramCard({ program }: { program: AdminProgramCardData })
           </span>
         </div>
         <div className="admin-program-actions">
-          <Link className="btn btn-outline btn-sm" href={`/admin/programs/${program.id}/edit`}>
+          <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
             تعديل
-          </Link>
+          </Button>
           {program.status !== "ARCHIVED" ? (
             <form action={archiveProgramAction.bind(null, program.id)}>
               <Button variant="text" size="sm">
@@ -99,7 +114,10 @@ export function AdminProgramCard({ program }: { program: AdminProgramCardData })
               </Button>
             </form>
           ) : (
-            <span className="upload-hint" title="ما تقدرين تحذفين برنامج فيه تسجيلات حقيقية، استخدمي الأرشفة">
+            <span
+              className="upload-hint"
+              title="ما تقدرين تحذفين برنامج فيه تسجيلات حقيقية، استخدمي الأرشفة"
+            >
               محمي من الحذف (فيه تسجيلات)
             </span>
           )}
