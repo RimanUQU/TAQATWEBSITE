@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -16,10 +17,8 @@ export function Navigation({ user }: { user: { name: string; role: string } | nu
   return (
     <header className="site-header">
       <div className="container nav-wrap">
-        <Link href="/" className="logo" aria-label="نادي طاقات للفتيات">
-          <span>ط</span>
-          <b>طاقات</b>
-          <small>للفتيات</small>
+        <Link href="/" className="brand-logo" aria-label="نادي طاقات للفتيات">
+          <Image src="/brand/logo.png" alt="" width={1024} height={1536} priority />
         </Link>
         <nav className={`main-nav ${open ? "open" : ""}`} aria-label="التنقل الرئيسي">
           <button className="nav-close" onClick={() => setOpen(false)} aria-label="إغلاق القائمة">
