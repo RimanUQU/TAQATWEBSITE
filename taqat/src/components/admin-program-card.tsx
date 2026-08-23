@@ -83,10 +83,14 @@ export function AdminProgramCard({
   }
 
   return (
-    <Card
-      className={`program-card admin-program-card ${editing ? "admin-program-card-editing" : ""}`}
-    >
-      <form action={editing ? saveProgramAction.bind(null, program?.id) : undefined}>
+    <Card className="program-card admin-program-card">
+      <form
+        action={editing ? saveProgramAction.bind(null, program?.id) : undefined}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA")
+            e.preventDefault();
+        }}
+      >
         {editing ? (
           <button
             type="button"
