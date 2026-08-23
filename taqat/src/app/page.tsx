@@ -31,16 +31,17 @@ export default async function HomePage() {
           <div className="container">
             <SectionTitle
               title={settings.programsHeading}
-              subtitle="مساحات آمنة وتجارب عملية تساعدك على اكتشاف قدراتك وبناء مهاراتك."
+              subtitle={settings.programsSubtitle}
+              eyebrow={settings.sectionEyebrow}
             />
             <div className="grid-3">
               {programs.map((p) => (
                 <ProgramCard key={p.id} program={p} />
               ))}
             </div>
-            <div style={{ textAlign: "center", marginTop: 30 }}>
+            <div className="home-section-cta">
               <ButtonLink href="/programs" variant="outline">
-                عرض جميع البرامج
+                {settings.programsCta}
               </ButtonLink>
             </div>
           </div>
@@ -51,16 +52,17 @@ export default async function HomePage() {
           <div className="container">
             <SectionTitle
               title={settings.partnersHeading}
-              subtitle="شركاء النجاح... ممتنون دائمًا لدعمكم وثقتكم برسالتنا."
+              subtitle={settings.partnersSubtitle}
+              eyebrow={settings.sectionEyebrow}
             />
             <div className="grid-4">
               {partners.map((p) => (
                 <PartnerLogoCard key={p.id} item={p} />
               ))}
             </div>
-            <p style={{ textAlign: "center", marginTop: 24 }}>
+            <p className="home-section-cta">
               <Link className="card-link" href="/about">
-                تعرّفي على رحلة طاقات ←
+                {settings.partnersCta}
               </Link>
             </p>
           </div>
@@ -69,7 +71,7 @@ export default async function HomePage() {
       {settings.showStatistics === "true" && (
         <section className="page-section soft-section">
           <div className="container">
-            <SectionTitle title={settings.statisticsHeading} />
+            <SectionTitle title={settings.statisticsHeading} eyebrow={settings.sectionEyebrow} />
             <div className="grid-4">
               {statistics.map((s) => (
                 <div className="stat-card" key={s.id}>
@@ -90,7 +92,8 @@ export default async function HomePage() {
           <div className="container">
             <SectionTitle
               title={settings.testimonialsHeading}
-              subtitle="قصص وتجارب نعتز بها من مجتمع طاقات."
+              subtitle={settings.testimonialsSubtitle}
+              eyebrow={settings.sectionEyebrow}
             />
             <div className="grid-3">
               {testimonials.map((t) => (
