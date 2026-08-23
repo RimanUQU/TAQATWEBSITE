@@ -32,8 +32,8 @@ export default async function Dashboard() {
           <span className="eyebrow">نظرة عامة</span>
           <h1>لوحة التحكم</h1>
         </div>
-        <a className="btn btn-primary" href="/admin/programs/new">
-          إضافة برنامج
+        <a className="btn btn-primary" href="/admin/programs">
+          إدارة البرامج
         </a>
       </div>
       <div className="dashboard-cards">

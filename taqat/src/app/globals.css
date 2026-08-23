@@ -1081,6 +1081,58 @@ button:focus-visible {
   color: var(--pink-700);
   display: block;
 }
+.admin-stats-filters {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto;
+  gap: 10px;
+  margin: 24px 0;
+}
+.admin-table th a {
+  color: inherit;
+}
+@media (max-width: 1024px) {
+  .admin-stats-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .admin-stats-filters {
+    grid-template-columns: 1fr;
+  }
+}
+@media print {
+  .site-header,
+  .site-footer,
+  .admin-sidebar,
+  .mobile-admin-nav,
+  .admin-header-actions,
+  .admin-stats-filters,
+  .pagination {
+    display: none !important;
+  }
+  .admin-table th a {
+    color: var(--ink) !important;
+    pointer-events: none;
+    text-decoration: none;
+  }
+  .admin-shell {
+    display: block !important;
+  }
+  .admin-main {
+    padding: 0 !important;
+  }
+  .admin-table-wrap {
+    overflow: visible;
+    border: 0;
+  }
+  .admin-table {
+    min-width: 0;
+    width: 100%;
+  }
+  body {
+    background: #fff;
+  }
+}
 .admin-table-wrap {
   overflow: auto;
   border: 1px solid var(--line);
