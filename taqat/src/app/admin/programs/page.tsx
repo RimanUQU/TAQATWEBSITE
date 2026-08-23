@@ -25,7 +25,15 @@ export default async function AdminPrograms({
   });
   return (
     <>
-      <AdminHeader title="البرامج" subtitle="إنشاء ونشر وأرشفة البرامج." />
+      <AdminHeader
+        title="البرامج"
+        subtitle="إنشاء ونشر وأرشفة البرامج."
+        actions={
+          <Link className="btn btn-outline btn-sm" href="/admin/programs/stats">
+            الإحصائيات التفصيلية
+          </Link>
+        }
+      />
       <SavedBanner />
       <div className="admin-program-tabs">
         {tabs.map((tab) => (

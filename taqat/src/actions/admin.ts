@@ -91,7 +91,7 @@ export async function saveAboutAction(formData: FormData) {
   redirect("/admin/about?saved=1");
 }
 export async function saveProgramAction(id: string | undefined, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const shortDescription = text(formData, "shortDescription");
   const endDate = new Date(text(formData, "endDate"));
   const registrationDeadlineRaw = text(formData, "registrationDeadline");
@@ -121,8 +121,8 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
   if (data.capacity < 1) throw new Error("السعة يجب أن تكون رقمًا أكبر من صفر");
   if (data.endDate < data.startDate)
     throw new Error("تاريخ النهاية يجب أن يكون بعد تاريخ البداية");
-  if (id) await db.program.update({ where: { id }, data });
-  else await db.program.create({ data });
+  if (id) await db.program.update({ where: { id }, data: { ...data, updatedById: admin.id } });
+  else await db.program.create({ data: { ...data, createdById: admin.id, updatedById: admin.id } });
   revalidatePath("/programs");
   revalidatePath("/");
   redirect("/admin/programs?saved=1");

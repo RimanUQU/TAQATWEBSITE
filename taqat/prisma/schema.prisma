@@ -42,9 +42,11 @@ model User {
   active        Boolean               @default(true)
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
-  registrations ProgramRegistration[]
-  comments      ProgramComment[]
-  resetTokens   PasswordResetToken[]
+  registrations   ProgramRegistration[]
+  comments        ProgramComment[]
+  resetTokens     PasswordResetToken[]
+  createdPrograms Program[]             @relation("ProgramCreatedBy")
+  updatedPrograms Program[]             @relation("ProgramUpdatedBy")
 }
 
 model ProgramCategory {
@@ -76,6 +78,10 @@ model Program {
   updatedAt            DateTime              @updatedAt
   categoryId           String?
   category             ProgramCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdById          String?
+  createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById          String?
+  updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   registrations        ProgramRegistration[]
   comments             ProgramComment[]
 }
