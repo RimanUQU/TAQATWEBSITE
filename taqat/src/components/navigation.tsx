@@ -18,7 +18,7 @@ export function Navigation({ user }: { user: { name: string; role: string } | nu
     <header className="site-header">
       <div className="container nav-wrap">
         <Link href="/" className="brand-logo" aria-label="نادي طاقات للفتيات">
-          <Image src="/brand/logo.png" alt="" width={1024} height={1536} priority />
+          <Image src="/brand/logo-mark.png" alt="" width={720} height={720} priority />
         </Link>
         <nav className={`main-nav ${open ? "open" : ""}`} aria-label="التنقل الرئيسي">
           <button className="nav-close" onClick={() => setOpen(false)} aria-label="إغلاق القائمة">
