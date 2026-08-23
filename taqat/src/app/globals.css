@@ -481,7 +481,10 @@ button:focus-visible {
   position: absolute;
   top: 14px;
   right: 14px;
+  left: 14px;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 7px;
 }
 .card-meta {

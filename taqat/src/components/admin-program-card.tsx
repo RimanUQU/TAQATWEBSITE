@@ -30,6 +30,8 @@ export function AdminProgramCard({
   const [cardImage, setCardImage] = useState(program?.cardImage || "");
   const [status, setStatus] = useState<Status>(program?.status || "DRAFT");
   const [featured, setFeatured] = useState(program?.featured || false);
+  const [isNewBadge, setIsNewBadge] = useState(program?.isNew || false);
+  const [showInSlider, setShowInSlider] = useState(program?.showInSlider || false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const deleteFormRef = useRef<HTMLFormElement>(null);
@@ -43,6 +45,8 @@ export function AdminProgramCard({
     setCardImage(program.cardImage);
     setStatus(program.status);
     setFeatured(program.featured);
+    setIsNewBadge(program.isNew);
+    setShowInSlider(program.showInSlider);
     setEditing(false);
   }
 
@@ -150,6 +154,24 @@ export function AdminProgramCard({
                 />
                 ★ مميز
               </label>
+              <label className={`badge ${isNewBadge ? "badge-teal" : "badge-gray"} inline-toggle-badge`}>
+                <input
+                  type="checkbox"
+                  name="isNew"
+                  checked={isNewBadge}
+                  onChange={(e) => setIsNewBadge(e.target.checked)}
+                />
+                جديد
+              </label>
+              <label className={`badge ${showInSlider ? "badge-teal" : "badge-gray"} inline-toggle-badge`}>
+                <input
+                  type="checkbox"
+                  name="showInSlider"
+                  checked={showInSlider}
+                  onChange={(e) => setShowInSlider(e.target.checked)}
+                />
+                بشريط الإعلانات
+              </label>
               <select
                 name="status"
                 value={status}
@@ -164,6 +186,7 @@ export function AdminProgramCard({
           ) : (
             <>
               {program!.featured && <span className="badge badge-warn">★ مميز</span>}
+              {program!.isNew && <span className="badge badge-teal">جديد</span>}
               <span className={`badge ${statusBadgeClass[program!.status]}`}>
                 {statusLabel[program!.status]}
               </span>
@@ -282,8 +305,6 @@ export function AdminProgramCard({
                 value={toDateTimeLocal(program!.registrationDeadline)}
               />
               <input type="hidden" name="price" value={program!.price} />
-              {program!.isNew && <input type="hidden" name="isNew" value="on" />}
-              {program!.showInSlider && <input type="hidden" name="showInSlider" value="on" />}
             </>
           )}
           {isNewProgram && <input type="hidden" name="cardImage" value={cardImage} />}
