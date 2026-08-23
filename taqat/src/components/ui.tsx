@@ -128,14 +128,16 @@ export function SectionTitle({
   title,
   subtitle,
   center = true,
+  eyebrow = "طاقات تُلهم",
 }: {
   title: string;
   subtitle?: string;
   center?: boolean;
+  eyebrow?: string;
 }) {
   return (
     <div className={`section-title ${center ? "center" : ""}`}>
-      <span className="eyebrow">طاقات تُلهم</span>
+      <span className="eyebrow">{eyebrow}</span>
       <h2>{title}</h2>
       {subtitle && <p>{subtitle}</p>}
     </div>

@@ -23,6 +23,12 @@ export const defaults = {
   partnersHeading: "شركاؤنا",
   statisticsHeading: "أثرٌ يكبر مع كل طاقة",
   testimonialsHeading: "قالوا عنا",
+  sectionEyebrow: "طاقات تُلهم",
+  programsSubtitle: "مساحات آمنة وتجارب عملية تساعدك على اكتشاف قدراتك وبناء مهاراتك.",
+  programsCta: "عرض جميع البرامج",
+  partnersSubtitle: "شركاء النجاح... ممتنون دائمًا لدعمكم وثقتكم برسالتنا.",
+  partnersCta: "تعرّفي على رحلة طاقات ←",
+  testimonialsSubtitle: "قصص وتجارب نعتز بها من مجتمع طاقات.",
 };
 
 export async function getSettings() {

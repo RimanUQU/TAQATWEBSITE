@@ -46,6 +46,12 @@ export async function saveHomepageAction(formData: FormData) {
       "partnersHeading",
       "statisticsHeading",
       "testimonialsHeading",
+      "sectionEyebrow",
+      "programsSubtitle",
+      "programsCta",
+      "partnersSubtitle",
+      "partnersCta",
+      "testimonialsSubtitle",
     ],
     boolKeys = ["showPrograms", "showPartners", "showStatistics", "showTestimonials"];
   await db.$transaction([

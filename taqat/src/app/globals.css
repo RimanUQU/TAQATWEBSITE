@@ -173,6 +173,10 @@ h3 {
   font-size: 0.85rem;
   letter-spacing: 0.04em;
 }
+.home-section-cta {
+  text-align: center;
+  margin-top: 28px;
+}
 .site-header {
   height: 82px;
   background: rgba(255, 255, 255, 0.97);
