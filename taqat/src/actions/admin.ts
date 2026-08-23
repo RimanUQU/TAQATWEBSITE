@@ -111,8 +111,13 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
     isNew: bool(formData, "isNew"),
     categoryId: text(formData, "categoryId") || null,
   };
-  if (!data.title || !data.slug || !data.description || data.capacity < 1)
+  if (!data.title || !data.slug || !data.description || !data.shortDescription || !data.location)
     throw new Error("بيانات البرنامج الأساسية غير مكتملة");
+  if (data.capacity < 1) throw new Error("السعة يجب أن تكون رقمًا أكبر من صفر");
+  if (data.endDate < data.startDate)
+    throw new Error("تاريخ النهاية يجب أن يكون بعد تاريخ البداية");
+  if (data.registrationDeadline > data.endDate)
+    throw new Error("آخر موعد للتسجيل يجب أن يكون قبل نهاية البرنامج أو معها");
   if (id) await db.program.update({ where: { id }, data });
   else await db.program.create({ data });
   revalidatePath("/programs");
@@ -122,6 +127,21 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
 export async function archiveProgramAction(id: string) {
   await requireAdmin();
   await db.program.update({ where: { id }, data: { status: "ARCHIVED" } });
+  revalidatePath("/programs");
+  revalidatePath("/admin/programs");
+}
+export async function restoreProgramAction(id: string) {
+  await requireAdmin();
+  await db.program.update({ where: { id }, data: { status: "DRAFT" } });
+  revalidatePath("/programs");
+  revalidatePath("/admin/programs");
+}
+export async function deleteProgramAction(id: string) {
+  await requireAdmin();
+  const registrations = await db.programRegistration.count({ where: { programId: id } });
+  if (registrations > 0)
+    throw new Error("لا يمكن حذف برنامج مرتبط بتسجيلات حقيقية، استخدمي الأرشفة بدلاً من ذلك");
+  await db.program.delete({ where: { id } });
   revalidatePath("/programs");
   revalidatePath("/admin/programs");
 }
