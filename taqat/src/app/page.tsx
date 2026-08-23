@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { HeroSlider } from "@/components/hero-slider";
+import { IntroSplash } from "@/components/intro-splash";
 import { PartnerLogoCard, ProgramCard, TestimonialCard } from "@/components/cards";
 import { ButtonLink, SectionTitle } from "@/components/ui";
 
@@ -25,6 +26,7 @@ export default async function HomePage() {
   ]);
   return (
     <>
+      <IntroSplash />
       <HeroSlider slides={slides} />
       {settings.showPrograms === "true" && (
         <section className="page-section soft-section">

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 160" direction="rtl">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&amp;display=swap");
+    .word {
+      font-family: "Noto Sans Arabic", Tahoma, sans-serif;
+      font-weight: 800;
+    }
+    .tagline {
+      font-family: "Noto Sans Arabic", Tahoma, sans-serif;
+      font-weight: 600;
+    }
+  </style>
+  <path
+    d="M234 28 q -15 -19 -31 -6 q -11 8 2 21 q 12 11 25 -2 q 8 -9 4 -13z"
+    fill="#3b9391"
+  />
+  <text x="210" y="80" text-anchor="middle" class="word" font-size="58" fill="#fb5e96">
+    طاقات
+  </text>
+  <text x="210" y="114" text-anchor="middle" class="tagline" font-size="20" fill="#286866">
+    نادي طاقات للفتيات
+  </text>
+</svg>
