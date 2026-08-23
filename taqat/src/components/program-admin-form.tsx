@@ -12,9 +12,11 @@ const iso = (date?: Date) =>
 export function ProgramAdminForm({
   program,
   categories,
+  sliderCount = 0,
 }: {
   program?: Program;
   categories: ProgramCategory[];
+  sliderCount?: number;
 }) {
   return (
     <>
@@ -92,6 +94,10 @@ export function ProgramAdminForm({
             checked={program?.showInSlider}
             label="يظهر في سلايدر الرئيسية"
           />
+          <small className="upload-hint" style={sliderCount >= 5 ? { color: "var(--danger)" } : undefined}>
+            {sliderCount} من 5 برامج أخرى مفعّلة بالسلايدر حاليًا
+            {sliderCount >= 5 ? " — السلايدر يعرض 5 كحد أقصى، هذا البرنامج لن يظهر إن فعّلتِه" : ""}
+          </small>
           <ActiveToggle name="isNew" checked={program?.isNew} label="شارة جديد" />
         </div>
         <Button className="full">حفظ البرنامج</Button>

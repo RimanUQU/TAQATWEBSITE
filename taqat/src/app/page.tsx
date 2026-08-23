@@ -15,7 +15,7 @@ export default async function HomePage() {
     db.program.findMany({
       where: { status: "PUBLISHED" },
       include: { _count: { select: { registrations: true } } },
-      orderBy: { startDate: "desc" },
+      orderBy: [{ featured: "desc" }, { startDate: "desc" }],
       take: 3,
     }),
     db.partner.findMany({ where: { active: true }, orderBy: { displayOrder: "asc" }, take: 4 }),

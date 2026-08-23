@@ -15,6 +15,7 @@ type ProgramCardData = {
   capacity: number;
   price: number;
   isNew: boolean;
+  featured: boolean;
   _count: { registrations: number };
 };
 
@@ -38,6 +39,7 @@ export function ProgramCard({ program }: { program: ProgramCardData }) {
           </span>
         )}
         <div className="badges">
+          {program.featured && <Badge tone="warn">★ مميز</Badge>}
           <Badge>{program.price === 0 ? "مجاني" : "مدفوع"}</Badge>
           {program.isNew && <Badge tone="teal">جديد</Badge>}
         </div>
