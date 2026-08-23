@@ -92,17 +92,22 @@ export async function saveAboutAction(formData: FormData) {
 }
 export async function saveProgramAction(id: string | undefined, formData: FormData) {
   await requireAdmin();
+  const shortDescription = text(formData, "shortDescription");
+  const endDate = new Date(text(formData, "endDate"));
+  const registrationDeadlineRaw = text(formData, "registrationDeadline");
   const data = {
     title: text(formData, "title"),
     slug: slugify(text(formData, "slug") || text(formData, "title")),
-    shortDescription: text(formData, "shortDescription"),
-    description: text(formData, "description"),
-    coverImage: text(formData, "coverImage"),
+    shortDescription,
+    // برنامج جديد بدون وصف كامل منفصل: نستخدم الوصف المختصر كقيمة افتراضية
+    description: text(formData, "description") || shortDescription,
+    coverImage: text(formData, "coverImage") || text(formData, "cardImage"),
     cardImage: text(formData, "cardImage") || text(formData, "coverImage"),
     location: text(formData, "location"),
     startDate: new Date(text(formData, "startDate")),
-    endDate: new Date(text(formData, "endDate")),
-    registrationDeadline: new Date(text(formData, "registrationDeadline")),
+    endDate,
+    // بدون آخر موعد تسجيل محدد: نفترضه نفس تاريخ نهاية البرنامج
+    registrationDeadline: registrationDeadlineRaw ? new Date(registrationDeadlineRaw) : endDate,
     capacity: num(formData, "capacity"),
     price: num(formData, "price"),
     status: text(formData, "status") as "DRAFT" | "PUBLISHED" | "ARCHIVED",
@@ -116,8 +121,6 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
   if (data.capacity < 1) throw new Error("السعة يجب أن تكون رقمًا أكبر من صفر");
   if (data.endDate < data.startDate)
     throw new Error("تاريخ النهاية يجب أن يكون بعد تاريخ البداية");
-  if (data.registrationDeadline > data.endDate)
-    throw new Error("آخر موعد للتسجيل يجب أن يكون قبل نهاية البرنامج أو معها");
   if (id) await db.program.update({ where: { id }, data });
   else await db.program.create({ data });
   revalidatePath("/programs");

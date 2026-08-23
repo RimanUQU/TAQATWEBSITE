@@ -10,6 +10,7 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { archiveProgramAction, restoreProgramAction, deleteProgramAction, saveProgramAction } from "@/actions/admin";
 
 type AdminProgram = Program & { _count: { registrations: number } };
+type Status = Program["status"];
 
 const statusLabel = { DRAFT: "مسودة", PUBLISHED: "منشور", ARCHIVED: "مؤرشف" } as const;
 const statusBadgeClass = { DRAFT: "badge-gray", PUBLISHED: "badge-teal", ARCHIVED: "badge-warn" } as const;
@@ -17,17 +18,28 @@ const statusBadgeClass = { DRAFT: "badge-gray", PUBLISHED: "badge-teal", ARCHIVE
 const toDateTimeLocal = (date: Date) =>
   new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 
-export function AdminProgramCard({ program }: { program: AdminProgram }) {
-  const [editing, setEditing] = useState(false);
-  const [cardImage, setCardImage] = useState(program.cardImage);
-  const [status, setStatus] = useState<AdminProgram["status"]>(program.status);
-  const [featured, setFeatured] = useState(program.featured);
+export function AdminProgramCard({
+  program,
+  onCancelNew,
+}: {
+  program?: AdminProgram;
+  onCancelNew?: () => void;
+}) {
+  const isNewProgram = !program;
+  const [editing, setEditing] = useState(isNewProgram);
+  const [cardImage, setCardImage] = useState(program?.cardImage || "");
+  const [status, setStatus] = useState<Status>(program?.status || "DRAFT");
+  const [featured, setFeatured] = useState(program?.featured || false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const deleteFormRef = useRef<HTMLFormElement>(null);
-  const canDelete = program._count.registrations === 0;
+  const canDelete = !program || program._count.registrations === 0;
 
   function cancelEdit() {
+    if (isNewProgram) {
+      onCancelNew?.();
+      return;
+    }
     setCardImage(program.cardImage);
     setStatus(program.status);
     setFeatured(program.featured);
@@ -71,8 +83,10 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
   }
 
   return (
-    <Card className={`program-card admin-program-card ${editing ? "admin-program-card-editing" : ""}`}>
-      <form action={editing ? saveProgramAction.bind(null, program.id) : undefined}>
+    <Card
+      className={`program-card admin-program-card ${editing ? "admin-program-card-editing" : ""}`}
+    >
+      <form action={editing ? saveProgramAction.bind(null, program?.id) : undefined}>
         {editing ? (
           <button
             type="button"
@@ -93,15 +107,15 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
               </span>
             )}
             <span className="admin-image-edit-hint">
-              {uploading ? "جاري الرفع..." : "اضغطي لتغيير الصورة"}
+              {uploading ? "جاري الرفع..." : "اضغطي لإضافة صورة"}
             </span>
           </button>
         ) : (
-          <div className={`card-image ${program.cardImage ? "" : "no-image"}`}>
-            {program.cardImage ? (
+          <div className={`card-image ${program!.cardImage ? "" : "no-image"}`}>
+            {program!.cardImage ? (
               <Image
-                src={getPublicImageUrl(program.cardImage)}
-                alt={`صورة برنامج ${program.title}`}
+                src={getPublicImageUrl(program!.cardImage)}
+                alt={`صورة برنامج ${program!.title}`}
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
@@ -135,7 +149,7 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
               <select
                 name="status"
                 value={status}
-                onChange={(e) => setStatus(e.target.value as AdminProgram["status"])}
+                onChange={(e) => setStatus(e.target.value as Status)}
                 className={`badge ${statusBadgeClass[status]} inline-select-badge`}
               >
                 <option value="DRAFT">مسودة</option>
@@ -145,9 +159,9 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
             </>
           ) : (
             <>
-              {program.featured && <span className="badge badge-warn">★ مميز</span>}
-              <span className={`badge ${statusBadgeClass[program.status]}`}>
-                {statusLabel[program.status]}
+              {program!.featured && <span className="badge badge-warn">★ مميز</span>}
+              <span className={`badge ${statusBadgeClass[program!.status]}`}>
+                {statusLabel[program!.status]}
               </span>
             </>
           )}
@@ -158,14 +172,26 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
             {editing ? (
               <input
                 name="title"
-                defaultValue={program.title}
+                defaultValue={program?.title}
+                placeholder="اسم البرنامج"
                 className="inline-input inline-input-title"
                 required
               />
             ) : (
-              program.title
+              program!.title
             )}
           </h3>
+
+          {isNewProgram && (
+            <input
+              name="shortDescription"
+              defaultValue=""
+              placeholder="وصف مختصر للبرنامج"
+              className="inline-input inline-input-full"
+              required
+            />
+          )}
+
           <div className="card-meta">
             <span>
               <CalendarDays />
@@ -173,69 +199,95 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
                 <input
                   type="datetime-local"
                   name="startDate"
-                  defaultValue={toDateTimeLocal(program.startDate)}
+                  defaultValue={program ? toDateTimeLocal(program.startDate) : ""}
                   className="inline-input inline-input-meta"
                   required
                 />
               ) : (
-                formatDate(program.startDate)
+                formatDate(program!.startDate)
               )}
             </span>
+            {isNewProgram && (
+              <span>
+                <CalendarDays />
+                <input
+                  type="datetime-local"
+                  name="endDate"
+                  defaultValue=""
+                  className="inline-input inline-input-meta"
+                  required
+                />
+              </span>
+            )}
             <span>
               <MapPin />
               {editing ? (
                 <input
                   name="location"
-                  defaultValue={program.location}
+                  defaultValue={program?.location}
+                  placeholder="الموقع"
                   className="inline-input inline-input-meta"
                   required
                 />
               ) : (
-                program.location
+                program!.location
               )}
             </span>
             <span>
-              <Users /> {program._count.registrations} /{" "}
+              <Users /> {program ? `${program._count.registrations} / ` : ""}
               {editing ? (
                 <input
                   type="number"
                   name="capacity"
                   min={1}
-                  defaultValue={program.capacity}
+                  defaultValue={program?.capacity || 20}
                   className="inline-input inline-input-meta inline-input-number"
                   required
                 />
               ) : (
-                program.capacity
+                program!.capacity
               )}
             </span>
+            {isNewProgram && (
+              <span>
+                السعر
+                <input
+                  type="number"
+                  name="price"
+                  min={0}
+                  defaultValue={0}
+                  className="inline-input inline-input-meta inline-input-number"
+                />
+              </span>
+            )}
           </div>
 
-          {editing && (
+          {editing && !isNewProgram && (
             <>
               {/* حقول موجودة بالبرنامج بس مو معروضة على الكارد - تُحفظ بقيمتها الحالية بدون تغيير */}
-              <input type="hidden" name="slug" value={program.slug} />
-              <input type="hidden" name="shortDescription" value={program.shortDescription} />
-              <input type="hidden" name="description" value={program.description} />
-              <input type="hidden" name="coverImage" value={program.coverImage} />
+              <input type="hidden" name="slug" value={program!.slug} />
+              <input type="hidden" name="shortDescription" value={program!.shortDescription} />
+              <input type="hidden" name="description" value={program!.description} />
+              <input type="hidden" name="coverImage" value={program!.coverImage} />
               <input type="hidden" name="cardImage" value={cardImage} />
-              <input type="hidden" name="categoryId" value={program.categoryId || ""} />
-              <input type="hidden" name="endDate" value={toDateTimeLocal(program.endDate)} />
+              <input type="hidden" name="categoryId" value={program!.categoryId || ""} />
+              <input type="hidden" name="endDate" value={toDateTimeLocal(program!.endDate)} />
               <input
                 type="hidden"
                 name="registrationDeadline"
-                value={toDateTimeLocal(program.registrationDeadline)}
+                value={toDateTimeLocal(program!.registrationDeadline)}
               />
-              <input type="hidden" name="price" value={program.price} />
-              {program.isNew && <input type="hidden" name="isNew" value="on" />}
-              {program.showInSlider && <input type="hidden" name="showInSlider" value="on" />}
+              <input type="hidden" name="price" value={program!.price} />
+              {program!.isNew && <input type="hidden" name="isNew" value="on" />}
+              {program!.showInSlider && <input type="hidden" name="showInSlider" value="on" />}
             </>
           )}
+          {isNewProgram && <input type="hidden" name="cardImage" value={cardImage} />}
 
           <div className="admin-program-actions">
             {editing ? (
               <>
-                <Button size="sm">حفظ</Button>
+                <Button size="sm">{isNewProgram ? "إضافة البرنامج" : "حفظ"}</Button>
                 <Button type="button" variant="outline" size="sm" onClick={cancelEdit}>
                   إلغاء
                 </Button>
@@ -245,28 +297,24 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
                 <Button type="button" variant="outline" size="sm" onClick={() => setEditing(true)}>
                   تعديل
                 </Button>
-                {program.status !== "ARCHIVED" ? (
-                  <span>
-                    <Button
-                      type="submit"
-                      formAction={archiveProgramAction.bind(null, program.id)}
-                      variant="text"
-                      size="sm"
-                    >
-                      أرشفة
-                    </Button>
-                  </span>
+                {program!.status !== "ARCHIVED" ? (
+                  <Button
+                    type="submit"
+                    formAction={archiveProgramAction.bind(null, program!.id)}
+                    variant="text"
+                    size="sm"
+                  >
+                    أرشفة
+                  </Button>
                 ) : (
-                  <span>
-                    <Button
-                      type="submit"
-                      formAction={restoreProgramAction.bind(null, program.id)}
-                      variant="text"
-                      size="sm"
-                    >
-                      استرجاع
-                    </Button>
-                  </span>
+                  <Button
+                    type="submit"
+                    formAction={restoreProgramAction.bind(null, program!.id)}
+                    variant="text"
+                    size="sm"
+                  >
+                    استرجاع
+                  </Button>
                 )}
                 {canDelete ? (
                   <Button
@@ -277,7 +325,7 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
                     onClick={() => {
                       if (
                         confirm(
-                          `متأكدة تبين تحذفين برنامج "${program.title}" نهائيًا؟ هذا الإجراء لا يمكن التراجع عنه.`,
+                          `متأكدة تبين تحذفين برنامج "${program!.title}" نهائيًا؟ هذا الإجراء لا يمكن التراجع عنه.`,
                         )
                       )
                         deleteFormRef.current?.requestSubmit();
@@ -298,7 +346,7 @@ export function AdminProgramCard({ program }: { program: AdminProgram }) {
           </div>
         </div>
       </form>
-      {!editing && (
+      {!editing && program && (
         <form ref={deleteFormRef} action={deleteProgramAction.bind(null, program.id)} hidden />
       )}
     </Card>

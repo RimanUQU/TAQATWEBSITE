@@ -1115,6 +1115,9 @@ button:focus-visible {
   flex-wrap: wrap;
   margin-bottom: 24px;
 }
+.admin-program-tabs-row {
+  margin-bottom: 18px;
+}
 .admin-program-actions {
   display: flex;
   align-items: center;
@@ -1168,6 +1171,11 @@ button:focus-visible {
   font-weight: 600;
   width: 100%;
   margin-bottom: 8px;
+}
+.inline-input-full {
+  width: 100%;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
 }
 .inline-input-meta {
   font-size: 0.82rem;
