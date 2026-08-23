@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { AdminHeader } from "@/components/admin-ui";
-import { AdminProgramCard } from "@/components/admin-program-card";
-import { Alert, EmptyState } from "@/components/ui";
+import { AdminProgramGrid } from "@/components/admin-program-grid";
+import { Alert } from "@/components/ui";
 
 const tabs = [
   { key: "", label: "الكل" },
@@ -25,15 +25,7 @@ export default async function AdminPrograms({
   });
   return (
     <>
-      <AdminHeader
-        title="البرامج"
-        subtitle="إنشاء ونشر وأرشفة البرامج."
-        actions={
-          <Link className="btn btn-primary" href="/admin/programs/new">
-            إضافة برنامج
-          </Link>
-        }
-      />
+      <AdminHeader title="البرامج" subtitle="إنشاء ونشر وأرشفة البرامج." />
       {sp.saved && <Alert type="success">تم حفظ البرنامج بنجاح.</Alert>}
       <div className="admin-program-tabs">
         {tabs.map((tab) => (
@@ -46,15 +38,7 @@ export default async function AdminPrograms({
           </Link>
         ))}
       </div>
-      {programs.length ? (
-        <div className="grid-3 admin-program-grid">
-          {programs.map((program) => (
-            <AdminProgramCard key={program.id} program={program} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState title="ما فيه برامج" text="ما فيه برامج مطابقة لهذا الفلتر حاليًا." />
-      )}
+      <AdminProgramGrid programs={programs} />
     </>
   );
 }
