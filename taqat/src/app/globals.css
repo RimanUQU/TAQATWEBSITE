@@ -1150,7 +1150,7 @@ button:focus-visible {
   text-align: center;
 }
 .inline-input {
-  border: 1px dashed var(--pink-300);
+  border: 1px solid var(--pink-300);
   background: white;
   color: inherit;
   font: inherit;
@@ -1208,9 +1208,6 @@ button:focus-visible {
 }
 .admin-form .btn {
   justify-self: start;
-}
-.admin-program-card-editing {
-  grid-column: 1 / -1;
 }
 .admin-header-actions {
   display: flex;
