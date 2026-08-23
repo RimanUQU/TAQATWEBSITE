@@ -2,7 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { AdminHeader } from "@/components/admin-ui";
 import { AdminProgramGrid } from "@/components/admin-program-grid";
-import { Alert } from "@/components/ui";
+import { SavedBanner } from "@/components/saved-banner";
 
 const tabs = [
   { key: "", label: "الكل" },
@@ -26,7 +26,7 @@ export default async function AdminPrograms({
   return (
     <>
       <AdminHeader title="البرامج" subtitle="إنشاء ونشر وأرشفة البرامج." />
-      {sp.saved && <Alert type="success">تم حفظ البرنامج بنجاح.</Alert>}
+      <SavedBanner />
       <div className="admin-program-tabs">
         {tabs.map((tab) => (
           <Link
