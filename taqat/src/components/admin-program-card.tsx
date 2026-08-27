@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { CalendarDays, MapPin, Users } from "lucide-react";
+import { AlertTriangle, CalendarDays, MapPin, Users } from "lucide-react";
 import type { Program } from "@prisma/client";
 import { Button, Card } from "./ui";
 import { formatDate } from "@/lib/utils";
@@ -33,6 +33,7 @@ export function AdminProgramCard({
   const [isNewBadge, setIsNewBadge] = useState(program?.isNew || false);
   const [showInSlider, setShowInSlider] = useState(program?.showInSlider || false);
   const [uploading, setUploading] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const deleteFormRef = useRef<HTMLFormElement>(null);
   const canDelete = !program || program._count.registrations === 0;
@@ -347,14 +348,7 @@ export function AdminProgramCard({
                     variant="text"
                     size="sm"
                     className="danger-text"
-                    onClick={() => {
-                      if (
-                        confirm(
-                          `متأكدة تبين تحذفين برنامج "${program!.title}" نهائيًا؟ هذا الإجراء لا يمكن التراجع عنه.`,
-                        )
-                      )
-                        deleteFormRef.current?.requestSubmit();
-                    }}
+                    onClick={() => setConfirmingDelete(true)}
                   >
                     حذف
                   </Button>
@@ -373,6 +367,45 @@ export function AdminProgramCard({
       </form>
       {!editing && program && (
         <form ref={deleteFormRef} action={deleteProgramAction.bind(null, program.id)} hidden />
+      )}
+      {confirmingDelete && (
+        <div
+          className="modal-overlay"
+          role="presentation"
+          onMouseDown={(e) => {
+            if (e.currentTarget === e.target) setConfirmingDelete(false);
+          }}
+        >
+          <div
+            className="modal program-delete-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-program-title"
+          >
+            <span className="program-delete-modal-icon" aria-hidden="true">
+              <AlertTriangle size={22} />
+            </span>
+            <h2 id="delete-program-title">تأكيد الحذف</h2>
+            <p>
+              هل أنت متأكدة من حذف برنامج &quot;{program?.title}&quot;؟ هذا الإجراء لا يمكن
+              التراجع عنه.
+            </p>
+            <div className="modal-actions">
+              <Button variant="outline" onClick={() => setConfirmingDelete(false)}>
+                إلغاء
+              </Button>
+              <Button
+                className="btn-danger"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  deleteFormRef.current?.requestSubmit();
+                }}
+              >
+                حذف البرنامج
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </Card>
   );

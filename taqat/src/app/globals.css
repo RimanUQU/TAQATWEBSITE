@@ -2586,3 +2586,34 @@ h3 {
     width: 64px;
   }
 }
+
+/* نافذة تأكيد حذف البرنامج بالأدمن - نفس بنية .modal-overlay/.modal/.modal-actions
+   الجاهزة بالمشروع، بكلاسات مستقلة عن account-delete-modal (صفحة الحساب عند غلا)
+   حتى ما نلمس شي من تصميمها. */
+.program-delete-modal {
+  text-align: center;
+  padding: 34px 30px 28px;
+}
+.program-delete-modal-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff0ee;
+  color: var(--danger);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 14px;
+}
+.program-delete-modal h2 {
+  margin: 4px 0 10px;
+  font-size: 1.18rem;
+  color: #9c3b52;
+}
+.program-delete-modal p {
+  color: var(--muted);
+  margin: 0 auto;
+  max-width: 360px;
+}
+.program-delete-modal .modal-actions {
+  justify-content: center;
+}
