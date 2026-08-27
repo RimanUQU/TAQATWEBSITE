@@ -1113,6 +1113,14 @@ h3 {
   height: 70px; /* أكبر ما يسمح به ارتفاع الهيدر (82px) مع هامش تنفّس بسيط */
   width: auto;
 }
+.footer-logo {
+  display: inline-flex;
+  margin-bottom: 18px; /* نفس تباعد .site-footer .logo عند غلا اللي كان يفصلها عن الوصف تحتها */
+}
+.footer-logo img {
+  height: 92px; /* الشعار الحقيقي (مع كتابة "نادي طاقات للفتيات" تحت الرمز) بدل الاسم النصي القديم */
+  width: auto;
+}
 .main-nav {
   display: flex;
   align-items: center;
