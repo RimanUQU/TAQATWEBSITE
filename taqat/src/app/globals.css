@@ -1113,12 +1113,20 @@ h3 {
   height: 70px; /* أكبر ما يسمح به ارتفاع الهيدر (82px) مع هامش تنفّس بسيط */
   width: auto;
 }
-.footer-logo {
+.footer-brand a.footer-logo {
+  /* سلكتور بنفس قوة تحديد ".site-footer a:not(.logo)" عند غلا بالضبط (اللي صار ينطبق
+     على شعارنا بعد ما شلنا كلاس "logo" منه) عشان تنسيقاتنا هنا تفوز عليها فعليًا، مو
+     بس نفس الاسم صدفة. كانت مضيفة margin-top: 8px وmargin-bottom: 8px غير مقصودة،
+     وهذا سبب نزول الشعار عن باقي عناوين أعمدة الفوتر. */
   display: inline-flex;
-  margin-bottom: 18px; /* نفس تباعد .site-footer .logo عند غلا اللي كان يفصلها عن الوصف تحتها */
+  align-items: flex-start;
+  margin: 0 0 16px;
+  line-height: 0; /* يمنع أي فراغ خفي فوق/تحت الصورة بسبب line-height المورّث من body */
 }
 .footer-logo img {
-  height: 92px; /* الشعار الحقيقي (مع كتابة "نادي طاقات للفتيات" تحت الرمز) بدل الاسم النصي القديم */
+  display: block;
+  height: 84px; /* logo-mark-trim.png: نسخة مقصوصة بدون الهامش الشفاف حول الشعار، فالحجم المرئي
+    هنا يطابق فعليًا حجم الرسمة، بلا أي فراغ خفي يبعدها عن أعلى العمود */
   width: auto;
 }
 .main-nav {
