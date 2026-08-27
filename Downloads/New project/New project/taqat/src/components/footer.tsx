@@ -1,5 +1,22 @@
 import Link from "next/link";
-import { Instagram, Mail, MapPin, MessageCircle, Phone, Twitter } from "lucide-react";
+import { Instagram, Mail, MapPin, Phone } from "lucide-react";
+
+function XLogo({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.657l-5.214-6.817-5.964 6.817H1.684l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
+
+function WhatsAppLogo({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.45L3.5 20l1.08-4.2A8.5 8.5 0 1 1 20.5 11.5Z" />
+      <path d="M8.4 7.8c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c-.1.1-.1.3 0 .5.4.8 1 1.4 1.8 1.8.2.1.4.1.5-.1l.6-.7c.1-.2.3-.2.5-.1l1.7.8c.2.1.3.3.2.6l-.2.8c-.1.4-.5.7-.9.8-1 .1-2.3-.4-3.5-1.3-1.1-.8-2-1.8-2.5-2.8-.5-1-.6-2-.2-2.7Z" />
+    </svg>
+  );
+}
 
 export function Footer({ settings }: { settings: Record<string, string> }) {
   return (
@@ -36,13 +53,13 @@ export function Footer({ settings }: { settings: Record<string, string> }) {
           <p>{settings.footerDescription}</p>
           <div className="socials">
             <a href={settings.instagram} aria-label="إنستغرام">
-              <Instagram size={17} />
+              <Instagram size={18} />
             </a>
             <a href={settings.x} aria-label="منصة إكس">
-              <Twitter size={17} />
+              <XLogo />
             </a>
             <a href={settings.whatsapp} aria-label="واتساب">
-              <MessageCircle size={17} />
+              <WhatsAppLogo />
             </a>
           </div>
         </div>
