@@ -4,6 +4,7 @@ import { getSettings } from "@/lib/settings";
 import { HeroSlider } from "@/components/hero-slider";
 import { PartnerLogoCard, ProgramCard, TestimonialCard } from "@/components/cards";
 import { ButtonLink, SectionTitle } from "@/components/ui";
+import { PageHero } from "@/components/page-hero";
 
 export default async function HomePage() {
   const [slides, programs, partners, statistics, testimonials, settings] = await Promise.all([
@@ -25,6 +26,11 @@ export default async function HomePage() {
   ]);
   return (
     <>
+      <PageHero
+        eyebrow="جمعية طاقات الشبابية – مكة المكرمة"
+        title="نادي طاقات للفتيات"
+        subtitle="مركز تربوي يفتح لكِ أبواب النمو والانطلاق، ينمّي مهاراتكِ ويرسّخ قيمكِ ضمن بيئة آمنة وجاذبة تواكب روح العصر — لتكتشفي طاقتكِ الحقيقية وتصنعي أثرك الخاص معنا."
+      />
       <HeroSlider slides={slides} />
       {settings.showPrograms === "true" && (
         <section className="page-section soft-section">

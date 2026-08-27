@@ -1,13 +1,13 @@
 import { ButtonLink } from "@/components/ui";
+import { PageHero } from "@/components/page-hero";
 export default function NotFound() {
   return (
-    <div className="page-hero">
-      <div className="container">
-        <span className="eyebrow">404</span>
-        <h1>الصفحة غير موجودة</h1>
-        <p>يبدو أن الرابط الذي تبحثين عنه لم يعد متاحًا أو تم نقله.</p>
-        <ButtonLink href="/">العودة للرئيسية</ButtonLink>
-      </div>
-    </div>
+    <PageHero
+      eyebrow="404"
+      title="الصفحة غير موجودة"
+      subtitle="يبدو أن الرابط الذي تبحثين عنه لم يعد متاحًا أو تم نقله."
+    >
+      <ButtonLink href="/">العودة للرئيسية</ButtonLink>
+    </PageHero>
   );
 }

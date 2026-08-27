@@ -1,13 +1,13 @@
 "use client";
 import { Button } from "@/components/ui";
+import { PageHero } from "@/components/page-hero";
 export default function ErrorPage({ reset }: { reset: () => void }) {
   return (
-    <div className="page-hero">
-      <div className="container">
-        <h1>حدث خطأ غير متوقع</h1>
-        <p>يرجى المحاولة مرة أخرى. إذا استمرت المشكلة، تواصلي معنا.</p>
-        <Button onClick={reset}>إعادة المحاولة</Button>
-      </div>
-    </div>
+    <PageHero
+      title="حدث خطأ غير متوقع"
+      subtitle="يرجى المحاولة مرة أخرى. إذا استمرت المشكلة، تواصلي معنا."
+    >
+      <Button onClick={reset}>إعادة المحاولة</Button>
+    </PageHero>
   );
 }

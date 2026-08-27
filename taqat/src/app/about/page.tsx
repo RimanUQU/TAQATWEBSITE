@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { SectionTitle, Card } from "@/components/ui";
+import { PageHero } from "@/components/page-hero";
 export const metadata: Metadata = {
   title: "من نحن",
   description: "تعرّفي على رؤية ورسالة نادي طاقات للفتيات.",
@@ -17,13 +18,11 @@ export default async function AboutPage() {
   ];
   return (
     <>
-      <div className="page-hero">
-        <div className="container">
-          <span className="eyebrow">حكايتنا</span>
-          <h1>من نحن</h1>
-          <p>نؤمن أن في كل فتاة طاقة تستحق المساحة والدعم لتتحول إلى أثر.</p>
-        </div>
-      </div>
+      <PageHero
+        eyebrow="حكايتنا"
+        title="من نحن"
+        subtitle="نؤمن أن في كل فتاة طاقة تستحق المساحة والدعم لتتحول إلى أثر."
+      />
       <section className="page-section">
         <div className="container">
           <SectionTitle title="نصنع الفرص، ونحتفي بالإنجاز" />

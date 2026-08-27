@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/page-hero";
 export const metadata: Metadata = { title: "الأسئلة الشائعة" };
 const items = [
   [
@@ -25,12 +26,7 @@ const items = [
 export default function FaqPage() {
   return (
     <>
-      <div className="page-hero">
-        <div className="container">
-          <h1>الأسئلة الشائعة</h1>
-          <p>إجابات سريعة عن أكثر ما يهمك قبل البدء.</p>
-        </div>
-      </div>
+      <PageHero title="الأسئلة الشائعة" subtitle="إجابات سريعة عن أكثر ما يهمك قبل البدء." />
       <section className="page-section">
         <div className="container faq" style={{ maxWidth: 850 }}>
           {items.map(([q, a]) => (
