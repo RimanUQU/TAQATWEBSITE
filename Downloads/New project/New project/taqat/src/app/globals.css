@@ -401,3 +401,190 @@
     margin-top: 10px;
   }
 }
+/* Footer section*/
+
+/* ===== الفوتر: تحسين الشكل + تزيين بالورد (يلغي فوق التعريفات القديمة لأنه يُضاف لاحقًا في الملف) ===== */
+
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(165deg, var(--teal-800) 0%, #063f3f 100%);
+  padding-top: 68px;
+}
+
+.site-footer .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* وردة زخرفية + غصينة بسيطة بروح هوية النادي — واضحتان لكن لا تُشتّتان عن المحتوى */
+.footer-decor {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.footer-decor svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.footer-decor-left {
+  top: -22px;
+  left: -20px;
+  width: 230px;
+  opacity: 0.4;
+}
+
+.footer-decor-right {
+  top: 8px;
+  right: 4%;
+  width: 110px;
+  opacity: 0.3;
+  transform: rotate(-8deg);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  gap: 46px;
+  padding-bottom: 12px;
+}
+
+.footer-brand p {
+  max-width: 320px;
+}
+
+.site-footer .logo {
+  margin-bottom: 18px;
+}
+
+.site-footer h3 {
+  color: #fff;
+  font-size: 1.03rem;
+  position: relative;
+  padding-bottom: 13px;
+  margin-bottom: 4px;
+}
+
+.site-footer h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 3px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--pink-400), var(--teal-300));
+}
+
+.site-footer p {
+  color: #cfe4e2;
+}
+
+.site-footer a:not(.logo) {
+  display: block;
+  width: fit-content;
+  color: #d7e9e8;
+  margin: 8px 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.site-footer a:not(.logo):hover {
+  color: var(--pink-300);
+  transform: translateX(-3px);
+}
+
+.site-footer p svg {
+  vertical-align: middle;
+  margin-left: 6px;
+  color: var(--teal-300);
+}
+
+/* أيقونات التواصل الاجتماعي */
+.socials {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.socials a {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #e9f5f4;
+  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
+}
+
+.socials a:hover {
+  background: var(--pink-500);
+  border-color: var(--pink-500);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+.copyright {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  margin-top: 44px;
+  padding: 22px 0;
+  text-align: center;
+  color: #a9cac9;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-decor-left {
+    width: 160px;
+    opacity: 0.32;
+  }
+  .footer-decor-right {
+    width: 80px;
+    opacity: 0.24;
+  }
+}
+
+@media (max-width: 700px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  .footer-brand p {
+    max-width: none;
+    margin-inline: auto;
+  }
+  .socials {
+    justify-content: center;
+  }
+  .site-footer a:not(.logo) {
+    margin-inline: auto;
+  }
+  .site-footer h3::after {
+    right: 50%;
+    transform: translateX(50%);
+  }
+  .site-footer p svg {
+    margin-left: 0;
+    margin-inline-end: 6px;
+  }
+  .footer-decor-left {
+    top: -12px;
+    left: -12px;
+    width: 130px;
+    opacity: 0.26;
+  }
+  .footer-decor-right {
+    width: 70px;
+    opacity: 0.2;
+  }
+}
