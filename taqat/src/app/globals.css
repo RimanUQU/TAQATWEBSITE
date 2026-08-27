@@ -954,11 +954,7 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-button,
-input,
-textarea,
-select {
+}button, input, textarea, select {
   font: inherit;
 }
 button {
@@ -973,12 +969,7 @@ img {
 }
 .site-main {
   min-height: 60vh;
-}
-h1,
-h2,
-h3,
-h4,
-p {
+}h1, h2, h3, h4, p {
   margin-top: 0;
 }
 /* سلّم الطباعة (Taqat UI Style Guide) - كله بخط Noto Sans Arabic */
@@ -1141,9 +1132,7 @@ h3 {
   height: 3px;
   background: var(--pink-500);
   transition: 0.2s;
-}
-.main-nav > a:hover:after,
-.main-nav > a.active:after {
+}.main-nav > a:hover:after, .main-nav > a.active:after {
   width: 100%;
 }
 .auth-links {
@@ -1159,11 +1148,7 @@ h3 {
   border: 0;
   background: transparent;
   color: var(--muted);
-}
-.nav-toggle,
-.nav-close,
-.mobile-auth,
-.nav-backdrop {
+}.nav-toggle, .nav-close, .mobile-auth, .nav-backdrop {
   display: none;
 }
 .btn {
@@ -1184,11 +1169,7 @@ h3 {
 }
 .btn:hover {
   transform: translateY(-2px);
-}
-.btn:focus-visible,
-.input:focus-visible,
-a:focus-visible,
-button:focus-visible {
+}.btn:focus-visible, .input:focus-visible, a:focus-visible, button:focus-visible {
   outline: 3px solid var(--pink-300);
   outline-offset: 3px;
 }
@@ -1405,17 +1386,6 @@ button:focus-visible {
   justify-content: space-between;
   margin-top: 12px;
 }
-.staff-image {
-  height: 285px;
-  position: relative;
-  background: var(--pink-50);
-}
-.staff-image img {
-  object-fit: cover;
-}
-.staff-card strong {
-  color: var(--teal-700);
-}
 .testimonial {
   padding: 26px;
 }
@@ -1426,9 +1396,7 @@ button:focus-visible {
 }
 .testimonial p {
   min-height: 86px;
-}
-.testimonial strong,
-.testimonial small {
+}.testimonial strong, .testimonial small {
   display: block;
 }
 .testimonial small {
@@ -1444,9 +1412,7 @@ button:focus-visible {
   place-items: center;
   padding: 18px;
   text-align: center;
-}
-.partner-card a,
-.partner-card > span {
+}.partner-card a, .partner-card > span {
   display: grid;
   place-items: center;
   gap: 7px;
@@ -1525,61 +1491,11 @@ button:focus-visible {
   background: var(--pink-500);
   color: #fff;
 }
-.site-footer {
-  background: var(--teal-800);
-  color: #e9f5f4;
-  padding-top: 64px;
-}
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.4fr repeat(3, 1fr);
-  gap: 45px;
-}
-.site-footer .logo {
-  margin-bottom: 20px;
-}
-.logo.light b,
-.logo.light small {
-  color: #fff;
-}
-.site-footer h3 {
-  color: #fff;
-  font-size: 1.05rem;
-}
-.site-footer p {
-  color: #cce0df;
-}
-.site-footer a:not(.logo) {
-  display: block;
-  color: #d7e9e8;
-  margin: 7px 0;
-}
-.site-footer p svg {
-  vertical-align: middle;
-  margin-left: 5px;
-}
-.socials {
-  display: flex;
-  gap: 12px;
-}
-.socials a {
-  font-size: 0.78rem !important;
-  padding: 6px 10px;
-  border: 1px solid #3f7675;
-  border-radius: 8px;
-}
-.copyright {
-  border-top: 1px solid #2d6b69;
-  margin-top: 42px;
-  padding: 20px 0;
-  text-align: center;
-  color: #b8d3d2;
-  font-size: 0.85rem;
-}
 /* شريط الإعلانات (Hero) - شريط رفيع عائم بحواف دائرية، مستوحى من مرجع طويق بألوان طاقات المعتمدة */
 .hero-slider {
   position: relative;
   height: 108px; /* أطول شوي من 92px عشان تنسع لصف النقاط أسفل النص */
+  min-height: 108px; /* لازم نثبتها هنا وإلا ترجع لقيمة min-height:530px القديمة من قسم غلا فوق (السلايدر الكبير القديم)، لأن min-height له أولوية على height */
   margin-block: 20px 0; /* مسافة تفصله عن الهيدر، يبان "عائم" مو ملاصق */
   background: var(--teal-800);
   border-radius: var(--radius); /* حواف دائرية، نفس قيمة الاستدارة المستخدمة بباقي الكروت */
@@ -1596,11 +1512,15 @@ button:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }
+.hero-slide:after {
+  content: none; /* نلغي التدرج الغامق (:after) من قسم غلا فوق - كان مخصص لتصميم السلايدر الكبير القديم اللي فيه صورة خلفية كاملة، تصميمي الجديد شريط رفيع بخلفية تركوازية صافية فقط وما يحتاج تعتيم إضافي */
+}
 .hero-content {
   position: relative;
   z-index: 2;
   height: 100%;
   display: flex;
+  flex-direction: row; /* لازم نثبتها هنا وإلا ترجع لـ column من قسم غلا فوق (تصميم السلايدر الكبير القديم كان بيرصف العناصر عمودي) */
   align-items: center;
   justify-content: space-between;
   gap: 16px;
@@ -1734,9 +1654,7 @@ button:focus-visible {
   gap: 12px;
   color: var(--muted);
   margin: 20px 0;
-}
-.divider:before,
-.divider:after {
+}.divider:before, .divider:after {
   content: "";
   height: 1px;
   background: var(--line);
@@ -1781,9 +1699,7 @@ button:focus-visible {
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 12px;
-}
-.detail-box small,
-.detail-box strong {
+}.detail-box small, .detail-box strong {
   display: block;
 }
 .detail-box small {
@@ -1865,9 +1781,7 @@ button:focus-visible {
 .legal h2 {
   font-size: 1.35rem;
   margin-top: 30px;
-}
-.legal p,
-.legal li {
+}.legal p, .legal li {
   color: #566261;
 }
 .account-grid {
@@ -2001,14 +1915,7 @@ button:focus-visible {
     grid-template-columns: 1fr;
   }
 }
-@media print {
-  .site-header,
-  .site-footer,
-  .admin-sidebar,
-  .mobile-admin-nav,
-  .admin-header-actions,
-  .admin-stats-filters,
-  .pagination {
+@media print {.site-header, .admin-sidebar, .mobile-admin-nav, .admin-header-actions, .admin-stats-filters, .pagination {
     display: none !important;
   }
   .admin-table th a {
@@ -2044,9 +1951,7 @@ button:focus-visible {
   width: 100%;
   border-collapse: collapse;
   min-width: 720px;
-}
-.admin-table th,
-.admin-table td {
+}.admin-table th, .admin-table td {
   text-align: right;
   padding: 13px;
   border-bottom: 1px solid var(--line);
@@ -2244,9 +2149,7 @@ button:focus-visible {
     border-top: 1px solid var(--line);
     margin-top: 15px;
     padding-top: 15px;
-  }
-  .mobile-auth a,
-  .mobile-auth button {
+  }.mobile-auth a, .mobile-auth button {
     padding: 10px;
     background: none;
     border: 0;
@@ -2259,12 +2162,7 @@ button:focus-visible {
     z-index: 60;
     border: 0;
     background: rgba(0, 0, 0, 0.25);
-  }
-  .grid-4,
-  .dashboard-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .footer-grid {
+  }.grid-4, .dashboard-cards {
     grid-template-columns: repeat(2, 1fr);
   }
   .admin-shell {
@@ -2307,18 +2205,12 @@ button:focus-visible {
   }
   .page-section {
     padding: 52px 0;
-  }
-  .grid-3,
-  .grid-4,
-  .two-col,
-  .account-grid,
-  .content-cards,
-  .footer-grid,
-  .admin-form {
+  }.grid-3, .grid-4, .two-col, .account-grid, .content-cards, .admin-form {
     grid-template-columns: 1fr;
   }
   .hero-slider {
     height: 132px; /* رقم ثابت بدل auto - العنصر الداخلي مطلق الموضع فما يقدر يحدد ارتفاع تلقائي */
+    min-height: 132px; /* نفس سبب النسخة المكتبية: نلغي min-height:540px القديمة من قسم غلا فوق */
   }
   .hero-content {
     padding: 10px 16px 30px;
@@ -2340,9 +2232,6 @@ button:focus-visible {
   }
   .search-bar {
     grid-template-columns: 1fr;
-  }
-  .footer-grid {
-    gap: 25px;
   }
   .auth-page {
     grid-template-columns: 1fr;
@@ -2412,9 +2301,7 @@ button:focus-visible {
 /* لوحة تحكم الكادر الإداري */
 .staff-admin-create {
   margin-bottom: 24px;
-}
-.staff-admin-create h2,
-.staff-admin-group h2 {
+}.staff-admin-create h2, .staff-admin-group h2 {
   font-size: 1.25rem;
   margin-bottom: 16px;
 }
@@ -2424,9 +2311,7 @@ button:focus-visible {
 }
 .staff-admin-group {
   padding: 26px;
-}
-.staff-admin-group-heading,
-.staff-members-heading {
+}.staff-admin-group-heading, .staff-members-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2527,270 +2412,15 @@ button:focus-visible {
 }
 
 /* ===== تنسيق وتصميم كروت الكادر الوظيفي الجديد المطابق للصورة ===== */
-.staff-groups {
-  display: grid;
-  gap: 48px;
-}
-
-/* المجموعات غير المسمّاة لا يظهر لها عنوان، لكنها تبدأ صفًا جديدًا. */
-.staff-section-unnamed + .staff-section-unnamed {
-  margin-top: -24px;
-}
-
-.staff-group-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--teal-700);
-  margin-bottom: 26px;
-  text-align: center;
-}
-
-.staff-section:first-child .staff-group-title {
-  color: var(--pink-600);
-}
-
-.staff-group-title::before,
-.staff-group-title::after {
-  content: "";
-  height: 2px;
-  width: 140px;
-  max-width: 25%;
-  background: var(--teal-100);
-  border-radius: 99px;
-}
-
-.staff-section:first-child .staff-group-title::before,
-.staff-section:first-child .staff-group-title::after {
-  background: var(--pink-300);
-}
-
-/* شبكة الكروت وتوسيط العناصر تلقائياً */
-.staff-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 24px;
-}
-
-.staff-grid .staff-card {
-  width: 100%;
-  max-width: 380px;
-  flex: 0 1 calc(33.333% - 16px);
-  min-width: 290px;
-}
-
-.staff-grid.staff-grid-lg {
-  max-width: 820px;
-  margin-inline: auto;
-}
-
-.staff-grid.staff-grid-lg .staff-card {
-  flex: 0 1 calc(50% - 12px);
-  max-width: 390px;
-}
-
-.staff-card {
-  position: relative;
-  background: #ffffff;
-  border: 1px solid #edf2f1;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.staff-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-}
-
-.staff-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: var(--teal-700);
-}
-
-.staff-card-pink::before {
-  background: var(--pink-500);
-}
-
-.staff-card .card-body {
-  padding: 36px 20px 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.staff-icon-wrap {
-  margin-bottom: 20px;
-}
-
-.staff-card .staff-mark {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: #eef8f7;
-  display: grid;
-  place-items: center;
-  margin: 0;
-}
-
-.staff-card-pink .staff-mark {
-  background: #fff0f5;
-}
-
-.staff-card .staff-mark img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-}
-
-.staff-mark-fallback {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--teal-700);
-}
-
-.staff-card-pink .staff-mark-fallback {
-  color: var(--pink-600);
-}
-
-.staff-card h3 {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--teal-700);
-  margin: 0 0 12px;
-}
-
-.staff-card-pink h3 {
-  color: var(--pink-600);
-}
-
-.staff-divider {
-  display: block;
-  width: 24px;
-  height: 2.5px;
-  background: var(--teal-700);
-  border-radius: 4px;
-  margin-bottom: 14px;
-}
-
-.staff-card-pink .staff-divider {
-  background: var(--pink-500);
-}
-
-.staff-name {
-  color: #3b4847;
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.staff-hero {
-  position: relative;
-  overflow: hidden;
-  text-align: right;
-}
-
-.staff-hero h1 {
-  position: relative;
-  display: inline-block;
-}
-
-.staff-hero h1:after {
-  content: "";
-  display: block;
-  width: 64px;
-  height: 4px;
-  border-radius: 99px;
-  background: var(--pink-500);
-  margin-top: 16px;
-}
-
-.staff-hero .blob-a,
-.staff-hero .blob-b,
-.staff-hero .blob-c {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.staff-hero .blob-a {
-  width: 260px;
-  height: 260px;
-  left: -90px;
-  top: -60px;
-  background: radial-gradient(circle at 35% 35%, var(--pink-100), rgba(255, 227, 237, 0) 72%);
-}
-
-.staff-hero .blob-b {
-  width: 140px;
-  height: 140px;
-  left: 40px;
-  bottom: -50px;
-  background: radial-gradient(circle at 40% 40%, var(--pink-100), rgba(255, 227, 237, 0) 70%);
-}
-
-.staff-hero .blob-c {
-  width: 34px;
-  height: 34px;
-  left: 150px;
-  top: 38%;
-  background: var(--teal-100);
-  opacity: 0.8;
-}
-
-.staff-hero .container {
-  position: relative;
-  z-index: 1;
-}
+/* .staff-groups و.staff-section-unnamed و.staff-grid: محذوفة من هنا لأنها مكررة
+   بنفس القيم تقريبًا من نسخة غلا بأول الملف (سطر 159، 165، 205) - صفحة الكادر
+   العامة صارت بالكامل من تصميمها، فما فيه داعي لنسخة ثانية هنا. */
 
 @media (max-width: 900px) {
-  .staff-grid .staff-card,
-  .staff-grid.staff-grid-lg .staff-card {
-    flex: 0 1 calc(50% - 12px);
-    max-width: 100%;
-  }
 }
 
 @media (max-width: 700px) {
-  .staff-hero {
-    text-align: center;
-  }
-  .staff-hero h1:after {
-    margin-inline: auto;
-  }
-  .staff-hero .blob-a {
-    width: 180px;
-    height: 180px;
-    left: -70px;
-  }
-  .staff-hero .blob-b {
-    width: 100px;
-    height: 100px;
-  }
 }
 
 @media (max-width: 600px) {
-  .staff-grid .staff-card,
-  .staff-grid.staff-grid-lg .staff-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-  .staff-group-title::before,
-  .staff-group-title::after {
-    width: 50px;
-  }
 }
