@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/page-hero";
 export const metadata: Metadata = { title: "سياسة الخصوصية" };
 export default function Privacy() {
   return (
     <>
-      <div className="page-hero">
-        <div className="container">
-          <h1>سياسة الخصوصية</h1>
-          <p>نحترم خصوصيتك ونوضح هنا كيف نتعامل مع بياناتك.</p>
-        </div>
-      </div>
+      <PageHero title="سياسة الخصوصية" subtitle="نحترم خصوصيتك ونوضح هنا كيف نتعامل مع بياناتك." />
       <article className="container page-section legal">
         <h2>البيانات التي نجمعها</h2>
         <p>

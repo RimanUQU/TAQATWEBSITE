@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { ProgramCard } from "@/components/cards";
 import { EmptyState, Input, Pagination, Select } from "@/components/ui";
+import { PageHero } from "@/components/page-hero";
 export const metadata: Metadata = {
   title: "البرامج",
   description: "تصفحي برامج نادي طاقات للفتيات وسجلي في البرنامج الأنسب لك.",
@@ -34,12 +35,7 @@ export default async function ProgramsPage({
   ]);
   return (
     <>
-      <div className="page-hero">
-        <div className="container">
-          <h1>تصفّح البرامج</h1>
-          <p>اكتشفي تجربة تناسب شغفك وخطوتك القادمة.</p>
-        </div>
-      </div>
+      <PageHero title="تصفّح البرامج" subtitle="اكتشفي تجربة تناسب شغفك وخطوتك القادمة." />
       <section className="page-section">
         <div className="container">
           <form className="search-bar" role="search">

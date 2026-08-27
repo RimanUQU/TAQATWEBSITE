@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/page-hero";
 export const metadata: Metadata = { title: "الشروط والأحكام" };
 export default function Terms() {
   return (
     <>
-      <div className="page-hero">
-        <div className="container">
-          <h1>الشروط والأحكام</h1>
-          <p>قواعد واضحة لتجربة آمنة ومثمرة في مجتمع طاقات.</p>
-        </div>
-      </div>
+      <PageHero title="الشروط والأحكام" subtitle="قواعد واضحة لتجربة آمنة ومثمرة في مجتمع طاقات." />
       <article className="container page-section legal">
         <h2>استخدام المنصة</h2>
         <p>
