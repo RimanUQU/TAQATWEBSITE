@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 
 function XLogo({ size = 18 }: { size?: number }) {
@@ -45,10 +46,8 @@ export function Footer({ settings }: { settings: Record<string, string> }) {
 
       <div className="container footer-grid">
         <div className="footer-brand">
-          <Link href="/" className="logo light">
-            <span>ط</span>
-            <b>طاقات</b>
-            <small>للفتيات</small>
+          <Link href="/" className="footer-logo" aria-label="نادي طاقات للفتيات">
+            <Image src="/brand/logo-mark.png" alt="" width={720} height={720} />
           </Link>
           <p>{settings.footerDescription}</p>
           <div className="socials">
