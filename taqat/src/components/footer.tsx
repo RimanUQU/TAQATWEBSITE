@@ -47,7 +47,7 @@ export function Footer({ settings }: { settings: Record<string, string> }) {
       <div className="container footer-grid">
         <div className="footer-brand">
           <Link href="/" className="footer-logo" aria-label="نادي طاقات للفتيات">
-            <Image src="/brand/logo-mark.png" alt="" width={720} height={720} />
+            <Image src="/brand/logo-mark-trim.png" alt="" width={663} height={561} />
           </Link>
           <p>{settings.footerDescription}</p>
           <div className="socials">
