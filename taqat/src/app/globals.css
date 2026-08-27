@@ -2617,3 +2617,92 @@ h3 {
 .program-delete-modal .modal-actions {
   justify-content: center;
 }
+
+/* ============================================================
+   كاروسيل "البرامج المميزة" بالرئيسية (programs-carousel) - منفصل
+   تمامًا عن شريط الإعلانات (hero-slider)، يستخدم ProgramCard كما هو
+   بدون أي تعديل عليه. البطاقة النشطة أكبر وواضحة، والمجاورة أصغر
+   وشفافة شوي وتبين جزئيًا من الطرفين.
+   ============================================================ */
+.programs-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.programs-carousel-track {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 10px 8% 22px; /* مسافة جانبية تكشف "بروز" البطاقات المجاورة بالطرفين، بدون تجاوز حدود .container */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.programs-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+.programs-carousel-slide {
+  flex: 0 0 clamp(240px, 30vw, 340px);
+  scroll-snap-align: center;
+  opacity: 0.55;
+  transform: scale(0.9);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.programs-carousel-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+.programs-carousel-arrow {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--pink-700);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 14px rgba(64, 42, 51, 0.08);
+  z-index: 2;
+}
+.programs-carousel-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.programs-carousel-dots {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.programs-carousel-dots button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: var(--pink-200);
+  transition: 0.2s;
+}
+.programs-carousel-dots button.active {
+  width: 20px;
+  background: var(--pink-500);
+}
+
+@media (max-width: 700px) {
+  .programs-carousel-slide {
+    flex-basis: 78vw;
+  }
+  .programs-carousel-arrow {
+    display: none; /* على الجوال: سحب باللمس بس، بدون أسهم تزاحم المساحة */
+  }
+  .programs-carousel-track {
+    padding-inline: 11vw;
+  }
+}
