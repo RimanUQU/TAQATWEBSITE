@@ -11,15 +11,159 @@
 .staff-admin-create{margin-bottom:24px}.staff-admin-create h2,.staff-admin-group h2{font-size:1.25rem;margin-bottom:16px}.staff-admin-groups{display:grid;gap:24px}.staff-admin-group{padding:26px}.staff-admin-group-heading,.staff-members-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.staff-admin-group-heading{padding-bottom:18px;border-bottom:1px solid var(--line)}.staff-admin-group-heading h2{margin:2px 0 0}.staff-group-form{padding:22px 0;border-bottom:1px solid var(--line)}.staff-members-heading{padding:22px 0 12px}.staff-members-heading h3{margin:0}.staff-members-heading span{color:var(--muted);font-size:.9rem}.staff-members-list{display:grid;gap:14px}.staff-member-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:20px;border:1px solid var(--line);border-radius:14px;background:#fbfdfc}.staff-member-editor .full{grid-column:1/-1}.staff-member-actions{display:flex;align-items:end;gap:8px}.staff-add-member{margin-top:20px;padding:18px;background:var(--pink-50);border-radius:14px}.staff-add-member summary{font-weight:700;cursor:pointer;color:var(--pink-700)}.staff-add-member form{margin-top:18px}.staff-icon-picker{display:flex;align-items:center;gap:12px}.staff-icon-picker select{flex:1}.staff-icon-preview{width:48px;height:48px;flex:0 0 48px;border-radius:12px;display:grid;place-items:center;background:var(--teal-50);color:var(--teal-800);font-weight:800}
 @media(max-width:700px){.staff-admin-group{padding:20px}.staff-member-editor{grid-template-columns:1fr}.staff-member-actions{align-items:center}.staff-icon-picker{align-items:flex-start;flex-direction:column}.staff-icon-picker select{width:100%}}
 
-/* ===== تنسيق وتصميم كروت الكادر الوظيفي الجديد المطابق للصورة ===== */
-.staff-groups {
-  display: grid;
-  gap: 48px;
+/* ===== الكادر الوظيفي: Hero + الكروت (تصميم محدّث) ===== */
+
+/* ---------- Hero ---------- */
+.staff-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: right;
+  padding: 46px 0 42px;
+  background:
+    radial-gradient(620px 260px at 88% -10%, rgba(217, 95, 147, 0.10), transparent 70%),
+    radial-gradient(520px 240px at 8% 120%, rgba(62, 150, 148, 0.10), transparent 70%),
+    linear-gradient(160deg, var(--pink-50) 0%, #fffdfd 45%, var(--teal-50) 100%);
 }
 
-/* المجموعات غير المسمّاة لا يظهر لها عنوان، لكنها تبدأ صفًا جديدًا. */
+.staff-hero .container {
+  position: relative;
+  z-index: 2;
+}
+
+.staff-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* في RTL: flex-start = يمين، وهو ما نريده هنا */
+}
+
+.staff-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pink-700);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--pink-100);
+  padding: 6px 14px;
+  border-radius: 99px;
+  margin-bottom: 14px;
+}
+
+.staff-hero-eyebrow svg {
+  width: 14px;
+  height: 14px;
+  color: var(--teal-500);
+}
+
+.staff-hero h1 {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+}
+
+.staff-hero h1:after {
+  content: "";
+  display: block;
+  width: 68px;
+  height: 4px;
+  border-radius: 99px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, var(--pink-500), var(--teal-500));
+}
+
+.staff-hero-sub {
+  color: var(--muted);
+  max-width: 480px;
+  margin: 14px 0 0;
+  font-size: 0.98rem;
+}
+
+/* زخارف نباتية مستوحاة من هوية النادي — خفيفة ولا تشتت عن العنوان */
+.staff-hero-decor {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.staff-hero-decor svg {
+  display: block;
+}
+
+.staff-hero-sprig-left {
+  left: -18px;
+  bottom: -22px;
+  width: 150px;
+  opacity: 0.55;
+}
+
+.staff-hero-sprig-right {
+  right: 4%;
+  top: -18px;
+  width: 92px;
+  opacity: 0.4;
+  transform: rotate(18deg);
+}
+
+.staff-hero-dot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.staff-hero-dot-a {
+  width: 8px;
+  height: 8px;
+  left: 22%;
+  top: 22%;
+  background: var(--teal-300);
+  opacity: 0.6;
+}
+
+.staff-hero-dot-b {
+  width: 6px;
+  height: 6px;
+  left: 40%;
+  bottom: 18%;
+  background: var(--pink-400);
+  opacity: 0.55;
+}
+
+@media (max-width: 700px) {
+  .staff-hero {
+    text-align: center;
+    padding: 40px 0 34px;
+  }
+  .staff-hero-inner {
+    align-items: center;
+  }
+  .staff-hero h1:after {
+    margin-inline: auto;
+  }
+  .staff-hero-sub {
+    margin-inline: auto;
+  }
+  .staff-hero-sprig-left {
+    width: 100px;
+    opacity: 0.4;
+  }
+  .staff-hero-sprig-right {
+    width: 64px;
+  }
+}
+
+/* ---------- المسافة بين الهيرو والكروت ---------- */
+.staff-groups {
+  display: grid;
+  gap: 52px;
+  padding-top: 6px;
+}
+
 .staff-section-unnamed + .staff-section-unnamed {
-  margin-top: -24px;
+  margin-top: -26px;
 }
 
 .staff-group-title {
@@ -27,10 +171,10 @@
   align-items: center;
   justify-content: center;
   gap: 18px;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--teal-700);
-  margin-bottom: 26px;
+  margin-bottom: 30px;
   text-align: center;
 }
 
@@ -53,44 +197,73 @@
   background: var(--pink-300);
 }
 
-/* شبكة الكروت وتوسيط العناصر تلقائياً */
+/* ---------- شبكة الكروت ----------
+   نستخدم Flexbox مع wrap + justify-content:center بدل CSS Grid الصِرف،
+   لأن Grid يوزّع الصف الأخير الناقص من جهة البداية (يمين) تاركًا فراغًا واضحًا
+   على اليسار عندما يكون عدد الأعضاء غير مكتمل لعدد الأعمدة. Flexbox يوسّط
+   كل صف — بما فيه الصف الأخير الناقص — تلقائيًا، وهو المطلوب هنا. */
 .staff-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 24px;
+  gap: 26px;
 }
 
-.staff-grid .staff-card {
-  width: 100%;
+/* غلاف الحركة (motion) — يحمل الكرت ويتحكم بعرضه ضمن الشبكة */
+.staff-card-anim {
+  height: 100%;
+  flex: 0 1 calc(33.333% - 18px);
+  min-width: 280px;
   max-width: 380px;
-  flex: 0 1 calc(33.333% - 16px);
-  min-width: 290px;
 }
 
 .staff-grid.staff-grid-lg {
-  max-width: 820px;
+  max-width: 780px;
   margin-inline: auto;
 }
 
-.staff-grid.staff-grid-lg .staff-card {
-  flex: 0 1 calc(50% - 12px);
+.staff-grid.staff-grid-lg .staff-card-anim {
+  flex: 0 1 calc(50% - 13px);
   max-width: 390px;
 }
 
+@media (max-width: 900px) {
+  .staff-grid .staff-card-anim,
+  .staff-grid.staff-grid-lg .staff-card-anim {
+    flex: 0 1 calc(50% - 13px);
+    max-width: 390px;
+  }
+}
+
+@media (max-width: 600px) {
+  .staff-grid .staff-card-anim,
+  .staff-grid.staff-grid-lg .staff-card-anim {
+    flex: 1 1 100%;
+    max-width: 380px;
+    min-width: 0;
+  }
+}
+
+/* ---------- الكرت ---------- */
 .staff-card {
   position: relative;
+  height: 100%;
   background: #ffffff;
   border: 1px solid #edf2f1;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  box-shadow: 0 3px 14px rgba(38, 51, 50, 0.05);
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease;
 }
 
 .staff-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 34px rgba(38, 51, 50, 0.1);
+  border-color: var(--teal-100);
+}
+
+.staff-card-pink:hover {
+  border-color: var(--pink-100);
 }
 
 .staff-card::before {
@@ -99,48 +272,64 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 5px;
-  background: var(--teal-700);
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal-500), var(--teal-300));
+  transform: scaleX(0.35);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.staff-card:hover::before {
+  transform: scaleX(1);
 }
 
 .staff-card-pink::before {
-  background: var(--pink-500);
+  background: linear-gradient(90deg, var(--pink-500), var(--pink-300));
 }
 
 .staff-card .card-body {
-  padding: 36px 20px 28px;
+  padding: 38px 24px 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  height: 100%;
 }
 
 .staff-icon-wrap {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .staff-card .staff-mark {
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
-  background: #eef8f7;
+  background: linear-gradient(160deg, var(--teal-50), #ffffff);
+  border: 1px solid var(--teal-100);
   display: grid;
   place-items: center;
   margin: 0;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
 }
 
 .staff-card-pink .staff-mark {
-  background: #fff0f5;
+  background: linear-gradient(160deg, var(--pink-50), #ffffff);
+  border-color: var(--pink-100);
+}
+
+.staff-card:hover .staff-mark {
+  transform: scale(1.07);
+  box-shadow: 0 8px 18px rgba(38, 51, 50, 0.08);
 }
 
 .staff-card .staff-mark img {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
 }
 
 .staff-mark-fallback {
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 800;
   color: var(--teal-700);
 }
@@ -150,10 +339,10 @@
 }
 
 .staff-card h3 {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 800;
   color: var(--teal-700);
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 }
 
 .staff-card-pink h3 {
@@ -162,11 +351,12 @@
 
 .staff-divider {
   display: block;
-  width: 24px;
+  width: 22px;
   height: 2.5px;
   background: var(--teal-700);
   border-radius: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  opacity: 0.55;
 }
 
 .staff-card-pink .staff-divider {
@@ -175,103 +365,39 @@
 
 .staff-name {
   color: #3b4847;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   margin: 0;
 }
 
-.staff-hero {
-  position: relative;
+.staff-description {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin: 12px 0 0;
+  max-height: 0;
+  opacity: 0;
   overflow: hidden;
-  text-align: right;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
 }
 
-.staff-hero h1 {
-  position: relative;
-  display: inline-block;
-}
-
-.staff-hero h1:after {
-  content: "";
-  display: block;
-  width: 64px;
-  height: 4px;
-  border-radius: 99px;
-  background: var(--pink-500);
-  margin-top: 16px;
-}
-
-.staff-hero .blob-a, .staff-hero .blob-b, .staff-hero .blob-c {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.staff-hero .blob-a {
-  width: 260px;
-  height: 260px;
-  left: -90px;
-  top: -60px;
-  background: radial-gradient(circle at 35% 35%, var(--pink-100), rgba(255, 227, 237, 0) 72%);
-}
-
-.staff-hero .blob-b {
-  width: 140px;
-  height: 140px;
-  left: 40px;
-  bottom: -50px;
-  background: radial-gradient(circle at 40% 40%, var(--pink-100), rgba(255, 227, 237, 0) 70%);
-}
-
-.staff-hero .blob-c {
-  width: 34px;
-  height: 34px;
-  left: 150px;
-  top: 38%;
-  background: var(--teal-100);
-  opacity: 0.8;
-}
-
-.staff-hero .container {
-  position: relative;
-  z-index: 1;
+.staff-card:hover .staff-description,
+.staff-card:focus-within .staff-description {
+  max-height: 90px;
+  opacity: 1;
 }
 
 @media (max-width: 900px) {
-  .staff-grid .staff-card,
-  .staff-grid.staff-grid-lg .staff-card {
-    flex: 0 1 calc(50% - 12px);
-    max-width: 100%;
+  .staff-card .card-body {
+    padding: 32px 20px 26px;
   }
 }
 
-@media (max-width: 700px) {
-  .staff-hero {
-    text-align: center;
-  }
-  .staff-hero h1:after {
-    margin-inline: auto;
-  }
-  .staff-hero .blob-a {
-    width: 180px;
-    height: 180px;
-    left: -70px;
-  }
-  .staff-hero .blob-b {
-    width: 100px;
-    height: 100px;
-  }
-}
-
-@media (max-width: 600px) {
-  .staff-grid .staff-card,
-  .staff-grid.staff-grid-lg .staff-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-  .staff-group-title::before,
-  .staff-group-title::after {
-    width: 50px;
+@media (hover: none) {
+  /* على الأجهزة اللمسية أظهري الوصف دائمًا بدل انتظار hover */
+  .staff-description {
+    max-height: 90px;
+    opacity: 1;
+    margin-top: 10px;
   }
 }
