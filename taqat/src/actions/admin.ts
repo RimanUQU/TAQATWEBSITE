@@ -131,6 +131,7 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
   else await db.program.create({ data: { ...data, createdById: admin.id, updatedById: admin.id } });
   revalidatePath("/programs");
   revalidatePath("/");
+  revalidatePath("/admin/programs");
   redirect("/admin/programs?saved=1");
 }
 export async function archiveProgramAction(id: string) {
