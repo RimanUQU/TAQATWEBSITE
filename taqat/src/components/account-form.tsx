@@ -1,23 +1,18 @@
 "use client";
+
 import { useActionState, useState } from "react";
+import { AlertTriangle } from "lucide-react";
 import { deleteAccountAction, updateAccountAction } from "@/actions/auth";
 import { Alert, Button, FormField, Input } from "./ui";
-export function AccountForm({
-  user,
-}: {
-  user: { name: string; email: string; phone: string | null };
-}) {
+
+export function AccountForm({ user }: { user: { name: string; email: string; phone: string | null } }) {
   const [state, action, pending] = useActionState(updateAccountAction, {});
   return (
-    <form action={action}>
+    <form action={action} className="account-form">
       <FormField label="الاسم الكامل" htmlFor="name">
         <Input id="name" name="name" defaultValue={user.name} required />
       </FormField>
-      <FormField
-        label="البريد الإلكتروني"
-        htmlFor="email"
-        hint="لتغيير البريد، تواصلي مع الدعم لحماية حسابك."
-      >
+      <FormField label="البريد الإلكتروني" htmlFor="email" hint="لتغيير البريد، تواصلي مع الدعم لحماية حسابك.">
         <Input id="email" value={user.email} readOnly dir="ltr" />
       </FormField>
       <FormField label="رقم الجوال" htmlFor="phone">
@@ -28,11 +23,12 @@ export function AccountForm({
     </form>
   );
 }
+
 export function DeleteAccount() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button type="button" className="btn-danger" onClick={() => setOpen(true)}>
+      <Button type="button" variant="outline" className="btn-account-delete" onClick={() => setOpen(true)}>
         حذف الحساب
       </Button>
       {open && (
@@ -43,19 +39,17 @@ export function DeleteAccount() {
             if (e.currentTarget === e.target) setOpen(false);
           }}
         >
-          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+          <div className="modal account-delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+            <span className="account-delete-modal-icon" aria-hidden="true">
+              <AlertTriangle size={22} />
+            </span>
             <h2 id="delete-title">تأكيد حذف الحساب</h2>
-            <p>
-              حذف حسابك نهائي ولا يمكن التراجع عنه. ستفقدين جميع التسجيلات والتعليقات المرتبطة
-              بالحساب.
-            </p>
+            <p>حذف حسابك نهائي ولا يمكن التراجع عنه. ستفقدين جميع التسجيلات والتعليقات المرتبطة بالحساب.</p>
             <div className="modal-actions">
               <form action={deleteAccountAction}>
                 <Button className="btn-danger">نعم، حذف حسابي نهائيًا</Button>
               </form>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                إلغاء
-              </Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>إلغاء</Button>
             </div>
           </div>
         </div>
