@@ -1120,14 +1120,21 @@ h3 {
      وهذا سبب نزول الشعار عن باقي عناوين أعمدة الفوتر. */
   display: inline-flex;
   align-items: flex-start;
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   line-height: 0; /* يمنع أي فراغ خفي فوق/تحت الصورة بسبب line-height المورّث من body */
+  position: relative;
+  z-index: 2; /* يخليه فوق زخرفة الغصينة (.footer-decor، z-index:0) بدل ما تتراكب فوقه */
 }
 .footer-logo img {
   display: block;
   height: 84px; /* logo-mark-trim.png: نسخة مقصوصة بدون الهامش الشفاف حول الشعار، فالحجم المرئي
     هنا يطابق فعليًا حجم الرسمة، بلا أي فراغ خفي يبعدها عن أعلى العمود */
   width: auto;
+}
+.footer-decor-right {
+  /* نفس سلكتور غلا بالضبط (اسم واحد بدرجة تحديد واحدة)، فقاعدتي هنا تفوز لأنها الأخيرة
+     بالملف - ننزّلها شوي عشان توضح كزخرفة خلف الشعار بدل ما تلتصق بأعلى الشعار مباشرة */
+  top: 34px;
 }
 .main-nav {
   display: flex;
