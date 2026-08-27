@@ -2,9 +2,10 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { HeroSlider } from "@/components/hero-slider";
-import { PartnerLogoCard, ProgramCard, TestimonialCard } from "@/components/cards";
+import { PartnerLogoCard, TestimonialCard } from "@/components/cards";
 import { ButtonLink, SectionTitle } from "@/components/ui";
 import { PageHero } from "@/components/page-hero";
+import { ProgramsCarousel } from "@/components/programs-carousel";
 
 export default async function HomePage() {
   const [slides, programs, partners, statistics, testimonials, settings] = await Promise.all([
@@ -14,10 +15,10 @@ export default async function HomePage() {
       take: 5,
     }),
     db.program.findMany({
-      where: { status: "PUBLISHED" },
+      where: { status: "PUBLISHED", featured: true },
       include: { _count: { select: { registrations: true } } },
-      orderBy: [{ featured: "desc" }, { startDate: "desc" }],
-      take: 3,
+      orderBy: { startDate: "desc" },
+      take: 5,
     }),
     db.partner.findMany({ where: { active: true }, orderBy: { displayOrder: "asc" }, take: 4 }),
     db.statistic.findMany({ where: { active: true }, orderBy: { displayOrder: "asc" } }),
@@ -40,11 +41,7 @@ export default async function HomePage() {
               subtitle={settings.programsSubtitle}
               eyebrow={settings.sectionEyebrow}
             />
-            <div className="grid-3">
-              {programs.map((p) => (
-                <ProgramCard key={p.id} program={p} />
-              ))}
-            </div>
+            <ProgramsCarousel programs={programs} />
             <div className="home-section-cta">
               <ButtonLink href="/programs" variant="outline">
                 {settings.programsCta}
