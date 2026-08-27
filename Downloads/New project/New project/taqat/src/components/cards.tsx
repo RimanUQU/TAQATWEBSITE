@@ -66,11 +66,20 @@ export function ProgramCard({ program }: { program: ProgramCardData }) {
   );
 }
 
+export type StaffMember = {
+  id: string;
+  name: string;
+  jobTitle: string;
+  icon: string;
+  // اختياري: يبقى غير مستخدم حاليًا إذا لم توفّره قاعدة البيانات، دون أي كسر.
+  description?: string | null;
+};
+
 export function StaffCard({
   member,
   tone = "teal",
 }: {
-  member: { name: string; jobTitle: string; icon: string };
+  member: { name: string; jobTitle: string; icon: string; description?: string | null };
   tone?: "pink" | "teal";
 }) {
   return (
@@ -84,6 +93,7 @@ export function StaffCard({
         <h3>{member.jobTitle}</h3>
         <span className="staff-divider" aria-hidden="true" />
         <p className="staff-name">{member.name}</p>
+        {member.description && <p className="staff-description">{member.description}</p>}
       </div>
     </Card>
   );
