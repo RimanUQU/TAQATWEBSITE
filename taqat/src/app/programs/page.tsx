@@ -59,7 +59,7 @@ export default async function ProgramsPage({
           </form>
           {programs.length ? (
             <>
-              <div className="grid-3">
+              <div className="grid-3 programs-listing-grid">
                 {programs.map((p) => (
                   <ProgramCard key={p.id} program={p} />
                 ))}
