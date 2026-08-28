@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { AlertTriangle, CalendarDays, MapPin, Users } from "lucide-react";
+import { AlertTriangle, CalendarDays, FileText, MapPin, Users } from "lucide-react";
 import type { Program } from "@prisma/client";
 import { Button, Card } from "./ui";
 import { formatDate } from "@/lib/utils";
@@ -34,6 +34,9 @@ export function AdminProgramCard({
   const [showInSlider, setShowInSlider] = useState(program?.showInSlider || false);
   const [uploading, setUploading] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [description, setDescription] = useState(program?.description || "");
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [draftDescription, setDraftDescription] = useState(description);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const deleteFormRef = useRef<HTMLFormElement>(null);
   const canDelete = !program || program._count.registrations === 0;
@@ -48,7 +51,18 @@ export function AdminProgramCard({
     setFeatured(program.featured);
     setIsNewBadge(program.isNew);
     setShowInSlider(program.showInSlider);
+    setDescription(program.description);
     setEditing(false);
+  }
+
+  function openDetailsModal() {
+    setDraftDescription(description);
+    setDetailsOpen(true);
+  }
+
+  function saveDetailsModal() {
+    setDescription(draftDescription);
+    setDetailsOpen(false);
   }
 
   async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
@@ -290,13 +304,28 @@ export function AdminProgramCard({
             )}
           </div>
 
+          {editing && (
+            <button
+              type="button"
+              className="admin-details-btn"
+              onClick={openDetailsModal}
+            >
+              <FileText size={15} />
+              {description ? "تعديل تفاصيل البرنامج" : "إضافة تفاصيل البرنامج"}
+              {!description && <span className="admin-details-btn-warn">لسا ما أُضيفت</span>}
+            </button>
+          )}
+
           {editing && !isNewProgram && (
             <>
               {/* حقول موجودة بالبرنامج بس مو معروضة على الكارد - تُحفظ بقيمتها الحالية بدون تغيير */}
               <input type="hidden" name="slug" value={program!.slug} />
               <input type="hidden" name="shortDescription" value={program!.shortDescription} />
-              <input type="hidden" name="description" value={program!.description} />
-              <input type="hidden" name="coverImage" value={program!.coverImage} />
+              <input type="hidden" name="description" value={description} />
+              {/* الغلاف بصفحة تفاصيل البرنامج يتبع نفس صورة الكارد دائمًا - قبل هالسطر كان
+                  يرسل صورة الغلاف القديمة دايمًا حتى لو رفعتِ صورة جديدة من الكارد، فتصير
+                  صورة الكارد والصفحة التفصيلية مختلفتين عن بعض */}
+              <input type="hidden" name="coverImage" value={cardImage} />
               <input type="hidden" name="cardImage" value={cardImage} />
               <input type="hidden" name="categoryId" value={program!.categoryId || ""} />
               <input type="hidden" name="endDate" value={toDateTimeLocal(program!.endDate)} />
@@ -308,7 +337,12 @@ export function AdminProgramCard({
               <input type="hidden" name="price" value={program!.price} />
             </>
           )}
-          {isNewProgram && <input type="hidden" name="cardImage" value={cardImage} />}
+          {isNewProgram && (
+            <>
+              <input type="hidden" name="cardImage" value={cardImage} />
+              <input type="hidden" name="description" value={description} />
+            </>
+          )}
 
           <div className="admin-program-actions">
             {/* كل زر هنا له key صريح ومختلف بين وضع العرض ووضع التعديل، عمدًا:
@@ -418,10 +452,11 @@ export function AdminProgramCard({
               التراجع عنه.
             </p>
             <div className="modal-actions">
-              <Button variant="outline" onClick={() => setConfirmingDelete(false)}>
+              <Button type="button" variant="outline" onClick={() => setConfirmingDelete(false)}>
                 إلغاء
               </Button>
               <Button
+                type="button"
                 className="btn-danger"
                 onClick={() => {
                   setConfirmingDelete(false);
@@ -429,6 +464,43 @@ export function AdminProgramCard({
                 }}
               >
                 حذف البرنامج
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {detailsOpen && (
+        <div
+          className="modal-overlay"
+          role="presentation"
+          onMouseDown={(e) => {
+            if (e.currentTarget === e.target) setDetailsOpen(false);
+          }}
+        >
+          <div
+            className="modal program-details-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="details-title"
+          >
+            <h2 id="details-title">تفاصيل البرنامج</h2>
+            <p className="upload-hint">
+              هذا النص يظهر بقسم &quot;عن البرنامج&quot; بصفحة تفاصيل البرنامج العامة (اللي
+              يشوفها الزوار)، منفصل عن الوصف المختصر اللي يبان على الكارد.
+            </p>
+            <textarea
+              className="input textarea"
+              rows={8}
+              value={draftDescription}
+              onChange={(e) => setDraftDescription(e.target.value)}
+              placeholder="اكتبي الوصف التفصيلي الكامل للبرنامج هنا..."
+            />
+            <div className="modal-actions">
+              <Button type="button" variant="outline" onClick={() => setDetailsOpen(false)}>
+                إلغاء
+              </Button>
+              <Button type="button" onClick={saveDetailsModal}>
+                حفظ التفاصيل
               </Button>
             </div>
           </div>
