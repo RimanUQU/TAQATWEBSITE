@@ -311,20 +311,41 @@ export function AdminProgramCard({
           {isNewProgram && <input type="hidden" name="cardImage" value={cardImage} />}
 
           <div className="admin-program-actions">
+            {/* كل زر هنا له key صريح ومختلف بين وضع العرض ووضع التعديل، عمدًا:
+                بدون key، React كان يعيد استخدام نفس عنصر <button> بالـDOM بين
+                الوضعين (زر "تعديل" وزر "حفظ" بنفس الموضع بالضبط)، ولأن زر
+                "حفظ" بدون type صريح فهو submit تلقائيًا، كان React يغيّر نوع
+                الزر مباشرة أثناء معالجة نقرة "تعديل" نفسها - قبل ما يخلص
+                المتصفح من تنفيذ سلوك النقرة الافتراضي - فيصير الزر submit
+                فجأة ويرسل الفورم فورًا بمجرد الضغط على "تعديل"! (هذا سبب
+                "يحفظ لحاله" اللي وصفتيه). الحل: key مختلف يجبر React يشيل
+                الزر القديم ويطلع زر جديد بدل ما يعدّل نفس العنصر. */}
             {editing ? (
               <>
-                <Button size="sm">{isNewProgram ? "إضافة البرنامج" : "حفظ"}</Button>
-                <Button type="button" variant="outline" size="sm" onClick={cancelEdit}>
+                <Button key="save" type="submit" size="sm">
+                  {isNewProgram ? "إضافة البرنامج" : "حفظ"}
+                </Button>
+                <Button key="cancel" type="button" variant="outline" size="sm" onClick={cancelEdit}>
                   إلغاء
                 </Button>
               </>
             ) : (
               <>
-                <Button type="button" variant="outline" size="sm" onClick={() => setEditing(true)}>
+                <Button
+                  key="edit"
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setEditing(true);
+                  }}
+                >
                   تعديل
                 </Button>
                 {program!.status !== "ARCHIVED" ? (
                   <Button
+                    key="archive"
                     type="submit"
                     formAction={archiveProgramAction.bind(null, program!.id)}
                     variant="text"
@@ -334,6 +355,7 @@ export function AdminProgramCard({
                   </Button>
                 ) : (
                   <Button
+                    key="restore"
                     type="submit"
                     formAction={restoreProgramAction.bind(null, program!.id)}
                     variant="text"
@@ -344,16 +366,21 @@ export function AdminProgramCard({
                 )}
                 {canDelete ? (
                   <Button
+                    key="delete"
                     type="button"
                     variant="text"
                     size="sm"
                     className="danger-text"
-                    onClick={() => setConfirmingDelete(true)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setConfirmingDelete(true);
+                    }}
                   >
                     حذف
                   </Button>
                 ) : (
                   <span
+                    key="delete-protected"
                     className="upload-hint"
                     title="ما تقدرين تحذفين برنامج فيه تسجيلات حقيقية، استخدمي الأرشفة"
                   >
