@@ -354,8 +354,26 @@ export async function deleteStaffAction(id: string) {
 export async function moderateCommentAction(id: string, status: "APPROVED" | "HIDDEN" | "DELETE") {
   await requireAdmin();
   if (status === "DELETE") await db.programComment.delete({ where: { id } });
-  else await db.programComment.update({ where: { id }, data: { status } });
+  else
+    await db.programComment.update({
+      where: { id },
+      data: { status, ...(status !== "APPROVED" ? { featured: false } : {}) },
+    });
   revalidatePath("/admin/comments");
+  revalidatePath("/");
+}
+// نفس ميزة "إبراز تعليق بالرئيسية" اللي بنتها غلا - تعديل واحد فقط ممكن
+// يكون فعّال (تعليق معتمد)، تبديل بسيط بين مُبرز/غير مُبرز
+export async function toggleCommentFeaturedAction(id: string) {
+  await requireAdmin();
+  const comment = await db.programComment.findUnique({
+    where: { id },
+    select: { status: true, featured: true },
+  });
+  if (!comment || comment.status !== "APPROVED") return;
+  await db.programComment.update({ where: { id }, data: { featured: !comment.featured } });
+  revalidatePath("/admin/comments");
+  revalidatePath("/");
 }
 export async function updateUserAction(id: string, formData: FormData) {
   const admin = await requireAdmin();

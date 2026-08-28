@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { moderateCommentAction } from "@/actions/admin";
+import { moderateCommentAction, toggleCommentFeaturedAction } from "@/actions/admin";
 import { AdminHeader } from "@/components/admin-ui";
 import { Badge, Button } from "@/components/ui";
 import { formatDate } from "@/lib/utils";
@@ -22,6 +22,7 @@ export default async function Comments({
     <>
       <AdminHeader
         title="تعليقات البرامج"
+        subtitle="راجعي آراء المستفيدات، ثم اعتمدي المناسب وأبرزيه في الصفحة الرئيسية."
         actions={
           <div className="table-actions">
             <a className="btn btn-outline btn-sm" href="/admin/comments?status=PENDING">
@@ -40,7 +41,7 @@ export default async function Comments({
         <table className="admin-table">
           <thead>
             <tr>
-              <th>المستخدمة</th>
+              <th>المستفيدة</th>
               <th>البرنامج</th>
               <th>التعليق</th>
               <th>التاريخ</th>
@@ -56,7 +57,10 @@ export default async function Comments({
                 <td>{i.body}</td>
                 <td>{formatDate(i.createdAt)}</td>
                 <td>
-                  <Badge>{i.status}</Badge>
+                  <Badge tone={i.featured ? "teal" : "pink"}>
+                    {i.status}
+                    {i.featured ? " · ظاهر في الرئيسية" : ""}
+                  </Badge>
                 </td>
                 <td className="table-actions">
                   <form action={moderateCommentAction.bind(null, i.id, "APPROVED")}>
@@ -64,6 +68,13 @@ export default async function Comments({
                       اعتماد
                     </Button>
                   </form>
+                  {i.status === "APPROVED" && (
+                    <form action={toggleCommentFeaturedAction.bind(null, i.id)}>
+                      <Button size="sm" variant={i.featured ? "outline" : "primary"}>
+                        {i.featured ? "إزالة من الرئيسية" : "إبراز في الرئيسية"}
+                      </Button>
+                    </form>
+                  )}
                   <form action={moderateCommentAction.bind(null, i.id, "HIDDEN")}>
                     <Button size="sm" variant="outline">
                       إخفاء

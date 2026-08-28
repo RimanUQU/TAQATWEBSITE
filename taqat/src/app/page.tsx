@@ -8,7 +8,8 @@ import { PageHero } from "@/components/page-hero";
 import { ProgramsCarousel } from "@/components/programs-carousel";
 
 export default async function HomePage() {
-  const [slides, programs, partners, statistics, testimonials, settings] = await Promise.all([
+  const [slides, programs, partners, statistics, testimonials, featuredComments, settings] =
+    await Promise.all([
     db.program.findMany({
       where: { status: "PUBLISHED", showInSlider: true },
       orderBy: { startDate: "desc" },
@@ -23,6 +24,14 @@ export default async function HomePage() {
     db.partner.findMany({ where: { active: true }, orderBy: { displayOrder: "asc" }, take: 4 }),
     db.statistic.findMany({ where: { active: true }, orderBy: { displayOrder: "asc" } }),
     db.testimonial.findMany({ where: { active: true }, orderBy: { displayOrder: "asc" }, take: 3 }),
+    // نفس ميزة "التعليقات المُبرزة" اللي بنتها غلا - تعليقات معتمدة اختارت
+    // الأدمن تبرزها، تنعرض مع آراء العميلات بالرئيسية
+    db.programComment.findMany({
+      where: { status: "APPROVED", featured: true },
+      include: { user: true, program: true },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    }),
     getSettings(),
   ]);
   return (
@@ -99,9 +108,20 @@ export default async function HomePage() {
               eyebrow={settings.sectionEyebrow}
             />
             <div className="grid-3">
-              {testimonials.map((t) => (
-                <TestimonialCard key={t.id} item={t} />
-              ))}
+              {[
+                ...featuredComments.map((c) => ({
+                  id: `comment-${c.id}`,
+                  quote: c.body,
+                  name: c.user.name,
+                  title: c.program.title,
+                  rating: 5,
+                })),
+                ...testimonials,
+              ]
+                .slice(0, 3)
+                .map((t) => (
+                  <TestimonialCard key={t.id} item={t} />
+                ))}
             </div>
           </div>
         </section>
