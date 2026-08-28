@@ -2706,3 +2706,40 @@ h3 {
     padding-inline: 11vw;
   }
 }
+
+/* زر "تفاصيل البرنامج" بكارد الأدمن + نافذة تعديل الوصف التفصيلي الكامل
+   (اللي يظهر بصفحة تفاصيل البرنامج العامة تحت "عن البرنامج") - كان غير
+   قابل للتعديل إطلاقًا من الكارد قبل هذا. */
+.admin-details-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px dashed var(--pink-300);
+  border-radius: 10px;
+  background: var(--pink-50);
+  color: var(--pink-700);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.admin-details-btn:hover {
+  border-style: solid;
+  background: var(--pink-100);
+}
+.admin-details-btn-warn {
+  margin-inline-start: auto;
+  color: var(--danger);
+  font-weight: 700;
+}
+.program-details-modal {
+  width: min(100%, 560px);
+  text-align: right;
+}
+.program-details-modal p.upload-hint {
+  margin: 6px 0 16px;
+}
+.program-details-modal textarea {
+  width: 100%;
+}
