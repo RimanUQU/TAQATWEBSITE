@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProgramStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  CANCELLED
+  WAITLIST
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+model User {
+  id            String                @id @default(cuid())
+  name          String
+  email         String                @unique
+  phone         String?
+  avatar        String?
+  passwordHash  String
+  role          Role                  @default(USER)
+  active        Boolean               @default(true)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  registrations   ProgramRegistration[]
+  comments        ProgramComment[]
+  resetTokens     PasswordResetToken[]
+  createdPrograms Program[]             @relation("ProgramCreatedBy")
+  updatedPrograms Program[]             @relation("ProgramUpdatedBy")
+}
+
+model ProgramCategory {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  programs Program[]
+}
+
+model Program {
+  id                   String                @id @default(cuid())
+  title                String
+  slug                 String                @unique
+  shortDescription     String
+  description          String
+  coverImage           String
+  cardImage            String
+  location             String
+  startDate            DateTime
+  endDate              DateTime
+  registrationDeadline DateTime
+  capacity             Int
+  price                Float                 @default(0)
+  status               ProgramStatus         @default(DRAFT)
+  featured             Boolean               @default(false)
+  showInSlider         Boolean               @default(false)
+  isNew                Boolean               @default(false)
+  backgroundColor      String                @default("#075658")
+  sliderOrder          Int                   @default(0)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  categoryId           String?
+  category             ProgramCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdById          String?
+  createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById          String?
+  updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  registrations        ProgramRegistration[]
+  comments             ProgramComment[]
+}
+
+model ProgramRegistration {
+  id        String             @id @default(cuid())
+  userId    String
+  programId String
+  status    RegistrationStatus @default(CONFIRMED)
+  createdAt DateTime           @default(now())
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program   Program            @relation(fields: [programId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, programId])
+  @@index([programId, status])
+}
+
+model ProgramComment {
+  id        String        @id @default(cuid())
+  body      String
+  status    CommentStatus @default(PENDING)
+  userId    String
+  programId String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  featured  Boolean       @default(false)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program   Program       @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([programId, status])
+}
+
+model Partner {
+  id           String   @id @default(cuid())
+  name         String
+  logo         String
+  url          String?
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  quote        String
+  name         String
+  title        String?
+  rating       Int      @default(5)
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model StaffGroup {
+  id           String        @id @default(cuid())
+  name         String?
+  displayOrder Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  members      StaffMember[]
+}
+
+model StaffMember {
+  id           String     @id @default(cuid())
+  name         String
+  jobTitle     String
+  icon         String     @default("")
+  displayOrder Int        @default(0)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  groupId      String
+  group        StaffGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, displayOrder])
+}
+
+model Statistic {
+  id           String   @id @default(cuid())
+  title        String
+  value        Int
+  prefix       String?
+  suffix       String?
+  icon         String?
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+}
+
+model AboutContent {
+  id           String   @id @default("main")
+  introduction String
+  vision       String
+  mission      String
+  goals        String
+  values       String
+  updatedAt    DateTime @updatedAt
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
