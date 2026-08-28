@@ -1,0 +1,96 @@
+import type { ReactNode } from "react";
+import { FormField, Input, Textarea, Select, ToggleSwitch } from "./ui";
+export function AdminHeader({
+  title,
+  subtitle,
+  actions,
+}: {
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
+}) {
+  return (
+    <div className="admin-top">
+      <div>
+        <span className="eyebrow">إدارة المحتوى</span>
+        <h1>{title}</h1>
+        {subtitle && <p>{subtitle}</p>}
+      </div>
+      {actions && <div className="admin-header-actions">{actions}</div>}
+    </div>
+  );
+}
+export function TextField({
+  name,
+  label,
+  value = "",
+  type = "text",
+  required = false,
+  full = false,
+  hint,
+}: {
+  name: string;
+  label: string;
+  value?: string | number;
+  type?: string;
+  required?: boolean;
+  full?: boolean;
+  hint?: string;
+}) {
+  return (
+    <div className={full ? "full" : ""}>
+      <FormField label={label} htmlFor={name} hint={hint}>
+        <Input id={name} name={name} type={type} defaultValue={value} required={required} />
+      </FormField>
+    </div>
+  );
+}
+export function AreaField({
+  name,
+  label,
+  value = "",
+  full = true,
+}: {
+  name: string;
+  label: string;
+  value?: string;
+  full?: boolean;
+}) {
+  return (
+    <div className={full ? "full" : ""}>
+      <FormField label={label} htmlFor={name}>
+        <Textarea id={name} name={name} rows={5} defaultValue={value} required />
+      </FormField>
+    </div>
+  );
+}
+export function SelectField({
+  name,
+  label,
+  value,
+  children,
+}: {
+  name: string;
+  label: string;
+  value?: string;
+  children: ReactNode;
+}) {
+  return (
+    <FormField label={label} htmlFor={name}>
+      <Select id={name} name={name} defaultValue={value}>
+        {children}
+      </Select>
+    </FormField>
+  );
+}
+export function ActiveToggle({
+  name = "active",
+  checked = true,
+  label = "نشط",
+}: {
+  name?: string;
+  checked?: boolean;
+  label?: string;
+}) {
+  return <ToggleSwitch name={name} defaultChecked={checked} label={label} />;
+}
