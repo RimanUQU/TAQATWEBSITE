@@ -2743,3 +2743,68 @@ h3 {
 .program-details-modal textarea {
   width: 100%;
 }
+
+/* منتقي لون البرنامج (بشارات الأدمن بوضع التعديل) + نقطة اللون بوضع العرض */
+.color-swatch-picker {
+  position: relative;
+}
+.color-swatch-trigger {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--line);
+  padding: 0;
+}
+.color-swatch-view-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.color-swatch-panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+.color-swatch-presets {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.color-swatch-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  padding: 0;
+}
+.color-swatch-dot.active {
+  border-color: var(--ink);
+}
+.color-swatch-hex-row {
+  display: flex;
+  gap: 8px;
+}
+.color-swatch-hex-input {
+  height: 38px;
+  font-size: 0.85rem;
+}
+.color-swatch-error {
+  display: block;
+  color: var(--danger);
+  margin-top: 6px;
+}
+.color-swatch-panel .upload-hint {
+  display: block;
+  margin-top: 10px;
+}

@@ -16,6 +16,7 @@ type ProgramCardData = {
   price: number;
   isNew: boolean;
   featured: boolean;
+  backgroundColor: string;
   _count: { registrations: number };
 };
 
@@ -25,6 +26,9 @@ export function ProgramCard({ program }: { program: ProgramCardData }) {
       <Link
         href={`/programs/${program.slug}`}
         className={`card-image ${program.cardImage ? "" : "no-image"}`}
+        // طبقة خلفية حقيقية دائمة بلون البرنامج نفسه، تحت الصورة مباشرة - تبان
+        // فورًا أثناء تحميل الصورة أو لو ما فيه صورة، مو بس صدفة لو الصورة شفافة
+        style={{ backgroundColor: program.backgroundColor }}
       >
         {program.cardImage ? (
           <Image

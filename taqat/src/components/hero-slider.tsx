@@ -12,6 +12,7 @@ type Slide = {
   shortDescription: string;
   coverImage: string;
   price: number;
+  backgroundColor: string;
 };
 export function HeroSlider({ slides }: { slides: Slide[] }) {
   const [current, setCurrent] = useState(0),
@@ -48,6 +49,9 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
           key={slide.id}
           className={`hero-slide ${index === current ? "active" : ""}`}
           aria-hidden={index !== current}
+          // نفس لون البرنامج المحدد من لوحة التحكم - مصدر واحد للون يُستخدم
+          // بالكارد وبالشريط سوا، بدون إدخال لون ثانٍ منفصل هنا إطلاقًا
+          style={{ backgroundColor: slide.backgroundColor }}
         >
           <div className="hero-content">
             <div className="hero-text">

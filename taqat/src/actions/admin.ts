@@ -101,6 +101,7 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
   const shortDescription = text(formData, "shortDescription");
   const endDate = new Date(text(formData, "endDate"));
   const registrationDeadlineRaw = text(formData, "registrationDeadline");
+  const backgroundColorRaw = text(formData, "backgroundColor");
   const data = {
     title: text(formData, "title"),
     slug: slugify(text(formData, "slug") || text(formData, "title")),
@@ -121,12 +122,18 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
     showInSlider: bool(formData, "showInSlider"),
     isNew: bool(formData, "isNew"),
     categoryId: text(formData, "categoryId") || null,
+    // بدون لون محدد: نبقي اللون التركوازي الافتراضي (نفس القيمة الافتراضية بقاعدة البيانات)
+    backgroundColor: backgroundColorRaw || "#075658",
   };
   if (!data.title || !data.slug || !data.description || !data.shortDescription || !data.location)
     throw new Error("بيانات البرنامج الأساسية غير مكتملة");
   if (data.capacity < 1) throw new Error("السعة يجب أن تكون رقمًا أكبر من صفر");
   if (data.endDate < data.startDate)
     throw new Error("تاريخ النهاية يجب أن يكون بعد تاريخ البداية");
+  // نفس التحقق من صيغة اللون اللي بواجهة الأدمن، بس هنا على السيرفر - حماية
+  // من أي طلب يوصل بدون المرور بالواجهة (Validation على الطبقتين)
+  if (!/^#[0-9A-Fa-f]{6}$/.test(data.backgroundColor))
+    throw new Error("صيغة لون البرنامج غير صحيحة، لازم تكون مثل #FB5E96");
   if (id) await db.program.update({ where: { id }, data: { ...data, updatedById: admin.id } });
   else await db.program.create({ data: { ...data, createdById: admin.id, updatedById: admin.id } });
   revalidatePath("/programs");
