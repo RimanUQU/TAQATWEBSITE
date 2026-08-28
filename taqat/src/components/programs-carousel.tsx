@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProgramCard } from "./cards";
+import { CarouselProgramCard } from "./carousel-program-card";
 
 // نفس نوع بيانات program اللي يتوقعه ProgramCard بالضبط، بدون أي تعديل على cards.tsx
 // نفسه ولا حتى تصدير نوع جديد منه - الكاروسيل مكوّن خارجي مستقل تمامًا يغلّف
@@ -87,7 +88,7 @@ export function ProgramsCarousel({ programs }: { programs: CarouselProgram[] }) 
             role="listitem"
             className={`programs-carousel-slide ${index === activeIndex ? "active" : ""}`}
           >
-            <ProgramCard program={program} />
+            <CarouselProgramCard program={program} />
           </div>
         ))}
       </div>
