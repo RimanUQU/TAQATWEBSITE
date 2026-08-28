@@ -2881,3 +2881,24 @@ h3 {
     height: 400px;
   }
 }
+
+/* كروت صفحة "تصفّح البرامج" - كانت كبيرة (3 أعمدة بعرض كامل)، صغّرناها
+   لتقارب حجم كروت الرئيسية (4 أعمدة بدل 3) - كلاس مستقل بدل تعديل .grid-3
+   المشتركة مع أقسام ثانية (آراء العميلات، لوحة الأدمن، شاشة التحميل). */
+.programs-listing-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+.programs-listing-grid .card-image {
+  height: 170px;
+}
+
+@media (max-width: 1024px) {
+  .programs-listing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .programs-listing-grid {
+    grid-template-columns: 1fr;
+  }
+}
