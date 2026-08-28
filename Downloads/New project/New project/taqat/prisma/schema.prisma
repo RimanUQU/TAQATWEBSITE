@@ -97,6 +97,7 @@ model ProgramComment {
   id        String        @id @default(cuid())
   body      String
   status    CommentStatus @default(PENDING)
+  featured  Boolean       @default(false)
   userId    String
   programId String
   createdAt DateTime      @default(now())

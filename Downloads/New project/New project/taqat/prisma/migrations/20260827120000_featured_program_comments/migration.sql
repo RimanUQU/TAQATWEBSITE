@@ -1,0 +1,1 @@
+ALTER TABLE "ProgramComment" ADD COLUMN "featured" BOOLEAN NOT NULL DEFAULT false;
