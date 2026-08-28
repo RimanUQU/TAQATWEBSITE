@@ -74,6 +74,8 @@ model Program {
   featured             Boolean               @default(false)
   showInSlider         Boolean               @default(false)
   isNew                Boolean               @default(false)
+  backgroundColor      String                @default("#075658")
+  sliderOrder          Int                   @default(0)
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   categoryId           String?
