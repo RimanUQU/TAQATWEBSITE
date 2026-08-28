@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/utils";
 import { getPublicImageUrl } from "@/lib/images";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { archiveProgramAction, restoreProgramAction, deleteProgramAction, saveProgramAction } from "@/actions/admin";
+import { ColorSwatchPicker } from "./color-swatch-picker";
 
 type AdminProgram = Program & { _count: { registrations: number } };
 type Status = Program["status"];
@@ -35,6 +36,7 @@ export function AdminProgramCard({
   const [uploading, setUploading] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [description, setDescription] = useState(program?.description || "");
+  const [backgroundColor, setBackgroundColor] = useState(program?.backgroundColor || "#075658");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [draftDescription, setDraftDescription] = useState(description);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,6 +54,7 @@ export function AdminProgramCard({
     setIsNewBadge(program.isNew);
     setShowInSlider(program.showInSlider);
     setDescription(program.description);
+    setBackgroundColor(program.backgroundColor);
     setEditing(false);
   }
 
@@ -197,6 +200,8 @@ export function AdminProgramCard({
                 <option value="PUBLISHED">منشور</option>
                 <option value="ARCHIVED">مؤرشف</option>
               </select>
+              <ColorSwatchPicker value={backgroundColor} onChange={setBackgroundColor} />
+              <input type="hidden" name="backgroundColor" value={backgroundColor} />
             </>
           ) : (
             <>
@@ -205,6 +210,12 @@ export function AdminProgramCard({
               <span className={`badge ${statusBadgeClass[program!.status]}`}>
                 {statusLabel[program!.status]}
               </span>
+              <span
+                className="color-swatch-view-dot"
+                style={{ background: program!.backgroundColor }}
+                title="لون البرنامج"
+                aria-hidden="true"
+              />
             </>
           )}
         </div>
