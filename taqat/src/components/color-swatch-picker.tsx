@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 
-// 5 درجات من نفس نظام الألوان الرسمي المعتمد بـTaqat UI Style Guide (سكيلتي
-// Pink وGreen/Teal بس - الدليل الرسمي ما فيه بنفسجي ولا أزرق ولا أصفر منفصل)،
-// نفس القيم المستخدمة فعليًا بمتغيرات CSS بالمشروع (--pink-500 إلخ).
+// اختصارات سريعة لألوان الهوية (تبقى موجودة للسرعة بس)، بجانب منتقي الطيف
+// الكامل الاحترافي (input type="color" - نفس أداة نظام التشغيل/المتصفح
+// الأصلية، فيها شريط الألوان كامل + تدرجات كل لون تلقائيًا عند التمرير).
 const PRESETS = [
   { hex: "#fb5e96", label: "وردي" },
   { hex: "#c9366c", label: "وردي غامق" },
@@ -25,15 +25,14 @@ export function ColorSwatchPicker({
   const [hexDraft, setHexDraft] = useState(value);
   const [error, setError] = useState("");
 
-  function applyHex() {
-    const hex = hexDraft.trim();
+  function applyHex(raw: string) {
+    const hex = raw.trim();
     if (!HEX_PATTERN.test(hex)) {
       setError("صيغة اللون غير صحيحة، مثال: #FB5E96");
       return;
     }
     onChange(hex);
     setError("");
-    setOpen(false);
   }
 
   return (
@@ -52,6 +51,22 @@ export function ColorSwatchPicker({
       />
       {open && (
         <div className="color-swatch-panel" role="dialog" aria-label="اختيار لون البرنامج">
+          {/* منتقي الطيف الكامل - يفتح أداة الألوان الأصلية بالمتصفح/النظام،
+              فيها كل الألوان وتدرجاتها بالتمرير، بدون أي قيد على لون معيّن */}
+          <label className="color-swatch-spectrum-label">
+            <input
+              type="color"
+              className="color-swatch-spectrum"
+              value={HEX_PATTERN.test(value) ? value : "#075658"}
+              onChange={(e) => {
+                setHexDraft(e.target.value);
+                onChange(e.target.value);
+                setError("");
+              }}
+            />
+            اختاري أي لون بحرية
+          </label>
+
           <div className="color-swatch-presets">
             {PRESETS.map((preset) => (
               <button
@@ -62,9 +77,9 @@ export function ColorSwatchPicker({
                 title={preset.label}
                 aria-label={preset.label}
                 onClick={() => {
+                  setHexDraft(preset.hex);
                   onChange(preset.hex);
                   setError("");
-                  setOpen(false);
                 }}
               />
             ))}
@@ -75,21 +90,21 @@ export function ColorSwatchPicker({
               className="input color-swatch-hex-input"
               value={hexDraft}
               onChange={(e) => setHexDraft(e.target.value)}
+              onBlur={(e) => applyHex(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  applyHex();
+                  applyHex(hexDraft);
                 }
               }}
               placeholder="#RRGGBB"
               dir="ltr"
             />
-            <button type="button" className="btn btn-outline btn-sm" onClick={applyHex}>
-              تطبيق
+            <button type="button" className="btn btn-outline btn-sm" onClick={() => setOpen(false)}>
+              تم
             </button>
           </div>
           {error && <small className="color-swatch-error">{error}</small>}
-          <small className="upload-hint">يُفضّل استخدام الألوان الجاهزة أعلاه للحفاظ على هوية طاقات.</small>
         </div>
       )}
     </div>
