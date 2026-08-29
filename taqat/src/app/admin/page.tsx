@@ -1,13 +1,12 @@
 import { db } from "@/lib/db";
 import { Badge } from "@/components/ui";
 export default async function Dashboard() {
-  const [users, programs, active, registrations, pending, partners, testimonials, recent] =
+  const [users, programs, active, registrations, partners, testimonials, recent] =
     await Promise.all([
       db.user.count(),
       db.program.count(),
       db.program.count({ where: { status: "PUBLISHED" } }),
       db.programRegistration.count(),
-      db.programComment.count({ where: { status: "PENDING" } }),
       db.partner.count(),
       db.testimonial.count(),
       db.programRegistration.findMany({
@@ -21,7 +20,6 @@ export default async function Dashboard() {
     ["البرامج", programs],
     ["البرامج المنشورة", active],
     ["التسجيلات", registrations],
-    ["تعليقات تنتظر المراجعة", pending],
     ["الشركاء", partners],
     ["الشهادات", testimonials],
   ];

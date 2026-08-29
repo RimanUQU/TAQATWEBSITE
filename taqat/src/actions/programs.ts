@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/auth";
-import type { ActionState } from "@/lib/utils";
 
 export async function registerProgramAction(programId: string): Promise<void> {
   const user = await getUser();
@@ -27,20 +26,4 @@ export async function registerProgramAction(programId: string): Promise<void> {
   }
   revalidatePath(`/programs/${program.slug}`);
   redirect(`/programs/${program.slug}?success=registered`);
-}
-
-export async function addCommentAction(
-  programId: string,
-  slug: string,
-  _: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const user = await getUser();
-  if (!user) return { message: "يرجى تسجيل الدخول لإضافة تعليق" };
-  const body = String(formData.get("body") || "").trim();
-  if (body.length < 5 || body.length > 1000)
-    return { message: "يجب أن يكون التعليق بين 5 و1000 حرف" };
-  await db.programComment.create({ data: { body, programId, userId: user.id } });
-  revalidatePath(`/programs/${slug}`);
-  return { ok: true, message: "تم إرسال تعليقك للمراجعة، شكرًا لمشاركتك." };
 }

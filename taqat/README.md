@@ -89,7 +89,7 @@ npm start
 
 العامة: `/`، `/about`، `/programs`، `/programs/[slug]`، `/staff`، `/login`، `/register`، `/forgot-password`، `/account`، `/privacy`، `/terms`، `/faq`.
 
-الإدارة: `/admin`، `/admin/settings`، `/admin/homepage`، `/admin/programs`، `/admin/programs/new`، `/admin/programs/[id]/edit`، `/admin/partners`، `/admin/statistics`، `/admin/testimonials`، `/admin/staff`، `/admin/about`، `/admin/comments`، `/admin/users`، `/admin/registrations`.
+الإدارة: `/admin`، `/admin/settings`، `/admin/homepage`، `/admin/programs`، `/admin/programs/new`، `/admin/programs/[id]/edit`، `/admin/partners`، `/admin/statistics`، `/admin/testimonials`، `/admin/staff`، `/admin/about`، `/admin/users`، `/admin/registrations`.
 
 ## المصادقة والأمان
 
@@ -98,7 +98,6 @@ npm start
 - تفحص جميع إجراءات الإدارة دور `ADMIN` على الخادم، وليس في الواجهة فقط.
 - تمنع قاعدة البيانات تكرار التسجيل في البرنامج نفسه بقيد مركب فريد.
 - تتحقق عملية التسجيل خادميًا من النشر والموعد والسعة والتسجيل السابق.
-- تستقبل التعليقات بحالة انتظار وتظهر بعد اعتماد الإدارة.
 - لا يكشف تدفق «نسيت كلمة المرور» وجود البريد من عدمه. طبقة التوكن جاهزة لربط موفر بريد إنتاجي.
 
 ## الصور والتخزين
