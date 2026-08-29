@@ -44,7 +44,7 @@ export function DeleteAccount() {
               <AlertTriangle size={22} />
             </span>
             <h2 id="delete-title">تأكيد حذف الحساب</h2>
-            <p>حذف حسابك نهائي ولا يمكن التراجع عنه. ستفقدين جميع التسجيلات والتعليقات المرتبطة بالحساب.</p>
+            <p>حذف حسابك نهائي ولا يمكن التراجع عنه. ستفقدين جميع التسجيلات المرتبطة بالحساب.</p>
             <div className="modal-actions">
               <form action={deleteAccountAction}>
                 <Button className="btn-danger">نعم، حذف حسابي نهائيًا</Button>

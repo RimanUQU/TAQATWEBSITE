@@ -10,7 +10,6 @@ const items = [
   ["/admin/testimonials", "قالوا عنا"],
   ["/admin/staff", "الكادر الوظيفي"],
   ["/admin/about", "من نحن"],
-  ["/admin/comments", "تعليقات البرامج"],
   ["/admin/users", "المستخدمون"],
   ["/admin/registrations", "التسجيلات"],
   ["/account", "الحساب"],

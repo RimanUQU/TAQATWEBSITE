@@ -1132,12 +1132,8 @@ h3 {
   width: auto;
 }
 .footer-decor-right {
-  /* نفس سلكتور غلا بالضبط (اسم واحد بدرجة تحديد واحدة)، فقاعدتي هنا تفوز لأنها الأخيرة
-     بالملف. المساحة تحت الشعار ضيقة جدًا (فقط ~48px بين الأيقونات وسطر الحقوق) فما
-     تكفي هالزخرفة (110px)، فحطيناها بجانب الشعار باليسار بمساحة فاضية فعلًا (الشعار
-     نفسه عرضه ~99px بس وملاصق يمين العمود، فيفضل يسارها ~250px فاضية تمامًا) */
-  top: 60px;
-  right: 15%; /* يبعدها عن يمين الصفحة لين توقف بمنتصف الفراغ يسار الشعار، بعيد عن النص والأيقونات */
+  top: 8px;
+  right: 4%;
 }
 .main-nav {
   display: flex;
@@ -1739,40 +1735,6 @@ h3 {
 .register-box .btn {
   width: 100%;
   margin-top: 18px;
-}
-.comments {
-  display: grid;
-  gap: 14px;
-  margin-top: 30px;
-}
-.comment {
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-}
-.comment-head {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--pink-100);
-  color: var(--pink-700);
-  font-weight: 800;
-}
-.comment small {
-  color: var(--muted);
-}
-.comment-form {
-  display: grid;
-  gap: 14px;
-  margin-top: 30px;
 }
 .content-cards {
   display: grid;
