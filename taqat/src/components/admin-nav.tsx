@@ -8,6 +8,7 @@ const items = [
   ["/admin/partners", "الشركاء"],
   ["/admin/statistics", "الإحصائيات"],
   ["/admin/testimonials", "قالوا عنا"],
+  ["/admin/feedback", "آراء المستفيدات"],
   ["/admin/staff", "الكادر الوظيفي"],
   ["/admin/about", "من نحن"],
   ["/admin/users", "المستخدمون"],
