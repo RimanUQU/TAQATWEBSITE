@@ -9,6 +9,7 @@ const links = [
   ["/", "الرئيسية"],
   ["/about", "من نحن"],
   ["/programs", "البرامج"],
+  ["/feedback", "شاركينا رأيك"],
   ["/staff", "الكادر الوظيفي"],
 ];
 export function Navigation({ user }: { user: { name: string; role: string } | null }) {

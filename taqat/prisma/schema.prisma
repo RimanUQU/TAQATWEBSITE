@@ -40,6 +40,8 @@ model User {
   resetTokens     PasswordResetToken[]
   createdPrograms Program[]             @relation("ProgramCreatedBy")
   updatedPrograms Program[]             @relation("ProgramUpdatedBy")
+
+  feedbacks Feedback[]
 }
 
 model ProgramCategory {
@@ -78,6 +80,7 @@ model Program {
   updatedById          String?
   updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   registrations        ProgramRegistration[]
+  feedbacks            Feedback[]
 }
 
 model ProgramRegistration {
@@ -179,4 +182,44 @@ model PasswordResetToken {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+enum FeedbackType {
+  GENERAL // رأي عام عن طاقات
+  PROGRAM // رأي عن برنامج محدد
+  SUGGESTION // اقتراح أو فكرة جديدة
+  ISSUE // ملاحظة أو مشكلة
+  OTHER // أخرى
+}
+
+enum FeedbackStatus {
+  PENDING // قيد المراجعة
+  APPROVED // معتمد (قد يُنشر أو لا)
+  HIDDEN // مخفي (لن يظهر للعامة)
+}
+
+model Feedback {
+  id        String         @id @default(cuid())
+  type      FeedbackType
+  message   String
+  email     String
+  name      String?
+  consent   Boolean        @default(false) // موافقة المستفيدة على العرض العام
+  status    FeedbackStatus @default(PENDING)
+  adminNote String? // ملاحظة داخلية للإدارة، غير معروضة للعامة
+
+  // يصير true بعد ما تنشرها الإدارة كشهادة في "قالوا عنا" — يمنع النشر المكرر
+  publishedAsTestimonial Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programId String?
+  program   Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, type])
+  @@index([email, createdAt]) // يستخدم لمنع تكرار الإرسال السريع (anti-spam)
 }
