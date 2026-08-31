@@ -11,8 +11,14 @@ const tabs: { id: TabId; label: string; icon: typeof UserRound }[] = [
   { id: "security", label: "الأمان وكلمة المرور", icon: LockKeyhole },
 ];
 
-export function AccountTabs({ sections }: { sections: Record<TabId, ReactNode> }) {
-  const [active, setActive] = useState<TabId>("profile");
+export function AccountTabs({
+  sections,
+  defaultTab = "profile",
+}: {
+  sections: Record<TabId, ReactNode>;
+  defaultTab?: TabId;
+}) {
+  const [active, setActive] = useState<TabId>(defaultTab);
   return (
     <div className="account-layout">
       <nav className="account-tabs" aria-label="أقسام الحساب">

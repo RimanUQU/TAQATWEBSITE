@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CalendarDays, LayoutDashboard } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { formatDate } from "@/lib/utils";
 import { AccountForm, ChangePasswordForm, DeleteAccount } from "@/components/account-form";
 import { AccountTabs } from "@/components/account-tabs";
 import { FavoritesList } from "@/components/favorites-list";
 import { FeedbackList } from "@/components/feedback-list";
-import { Badge, ButtonLink } from "@/components/ui";
+import { Alert, ButtonLink } from "@/components/ui";
 
 export const metadata: Metadata = { title: "حسابي الشخصي", robots: { index: false } };
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ passwordChanged?: string }>;
+}) {
   const user = await requireUser();
+  const { passwordChanged } = await searchParams;
 
-  const [registrations, favorites, feedbacks] = await Promise.all([
-    db.programRegistration.findMany({
-      where: { userId: user.id },
-      include: { program: true },
-      orderBy: { createdAt: "desc" },
-    }),
+  const [favorites, feedbacks] = await Promise.all([
     db.favorite.findMany({
       where: { userId: user.id },
       include: { program: true },
@@ -35,40 +33,10 @@ export default async function AccountPage() {
 
   const sections = {
     profile: (
-      <>
-        <section className="panel">
-          <h2>البيانات الشخصية</h2>
-          <AccountForm user={user} />
-        </section>
-
-        <section className="panel account-programs">
-          <h2>برامجي المسجلة</h2>
-          {registrations.length ? (
-            <div className="registration-list">
-              {registrations.map((r) => (
-                <div className="registration-item" key={r.id}>
-                  <span className="registration-icon" aria-hidden="true">
-                    <CalendarDays size={18} />
-                  </span>
-                  <div className="registration-info">
-                    <Link href={`/programs/${r.program.slug}`}>
-                      <strong>{r.program.title}</strong>
-                    </Link>
-                    <small>سُجل في {formatDate(r.createdAt)}</small>
-                  </div>
-                  <Badge tone={r.status === "CONFIRMED" ? "teal" : "gray"}>
-                    {r.status === "CONFIRMED" ? "مؤكد" : r.status === "WAITLIST" ? "انتظار" : "ملغي"}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="registration-empty">
-              لم تسجلي في أي برنامج بعد. <Link className="card-link" href="/programs">اكتشفي البرامج ←</Link>
-            </p>
-          )}
-        </section>
-      </>
+      <section className="panel">
+        <h2>البيانات الشخصية</h2>
+        <AccountForm user={user} />
+      </section>
     ),
 
     favorites: (
@@ -87,6 +55,9 @@ export default async function AccountPage() {
 
     security: (
       <>
+        {passwordChanged && (
+          <Alert type="success">تم تغيير كلمة المرور بنجاح.</Alert>
+        )}
         <section className="panel">
           <h2>تغيير كلمة المرور</h2>
           <ChangePasswordForm />
@@ -94,7 +65,7 @@ export default async function AccountPage() {
 
         <section className="panel account-delete">
           <h2>حذف الحساب</h2>
-          <p>هذا إجراء نهائي يزيل بياناتك وتسجيلاتك من المنصة، ولا يمكن التراجع عنه.</p>
+          <p>هذا إجراء نهائي يزيل بياناتك من المنصة، ولا يمكن التراجع عنه.</p>
           <DeleteAccount />
         </section>
       </>
@@ -131,7 +102,7 @@ export default async function AccountPage() {
             حسابك في طاقات
           </span>
           <h1>حسابي الشخصي</h1>
-          <p className="account-hero-sub">أديري بياناتك وتابعي البرامج التي انضممتِ إليها.</p>
+          <p className="account-hero-sub">أديري بياناتك وتابعي برامجك المفضلة.</p>
           {user.role === "ADMIN" && (
             <ButtonLink href="/admin" variant="outline" className="account-admin-link">
               <LayoutDashboard size={18} aria-hidden="true" />
@@ -144,7 +115,7 @@ export default async function AccountPage() {
 
     <section className="page-section">
       <div className="container">
-        <AccountTabs sections={sections} />
+        <AccountTabs sections={sections} defaultTab={passwordChanged ? "security" : "profile"} />
       </div>
     </section>
   </>;
