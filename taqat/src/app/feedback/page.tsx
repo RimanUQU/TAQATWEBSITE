@@ -64,7 +64,7 @@ export default async function FeedbackPage({
             <div>
               {sent === "1" && (
                 <div className="alert alert-success">
-                  شكرًا لمشاركتنا رأيك 💛 وصل فريق طاقات وبنراجعه قريبًا.
+                  شكرًا لمشاركتنا رأيك 🩷 وصل فريق طاقات وبنراجعه قريبًا.
                 </div>
               )}
               {error && (
