@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 import { changePasswordAction, deleteAccountAction, updateAccountAction } from "@/actions/auth";
 import { Alert, Button, FormField, Input } from "./ui";
@@ -30,6 +31,7 @@ export function ChangePasswordForm() {
   return (
     <form action={action} className="account-form">
       <PasswordInput id="currentPassword" name="currentPassword" label="كلمة المرور الحالية" />
+      <Link href="/forgot-password" className="forgot-password-link">نسيتِ كلمة المرور الحالية؟</Link>
       <PasswordInput id="newPassword" name="password" label="كلمة المرور الجديدة" />
       <PasswordInput id="confirmPassword" name="confirmPassword" label="تأكيد كلمة المرور الجديدة" />
       {state.message && <Alert type={state.ok ? "success" : "error"}>{state.message}</Alert>}
@@ -58,7 +60,7 @@ export function DeleteAccount() {
               <AlertTriangle size={22} />
             </span>
             <h2 id="delete-title">تأكيد حذف الحساب</h2>
-            <p>حذف حسابك نهائي ولا يمكن التراجع عنه. ستفقدين جميع التسجيلات المرتبطة بالحساب.</p>
+            <p>حذف حسابك نهائي ولا يمكن التراجع عنه. ستفقدين جميع بياناتك المرتبطة بالحساب.</p>
             <div className="modal-actions">
               <form action={deleteAccountAction}>
                 <Button className="btn-danger">نعم، حذف حسابي نهائيًا</Button>

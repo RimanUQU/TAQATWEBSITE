@@ -83,6 +83,12 @@ export async function resetPasswordAction(
     }),
     db.passwordResetToken.update({ where: { id: record.id }, data: { usedAt: new Date() } }),
   ]);
+
+  // لو المستخدمة لسا بجلسة نشطة (مثلاً جت من صفحة الحساب وهي مسجلة دخول)،
+  // نرجّعها مباشرة لحسابها بدل رسالة "سجلي دخول" اللي ما تنطبق عليها
+  const activeUser = await getUser();
+  if (activeUser && activeUser.id === record.userId) redirect("/account?passwordChanged=1");
+
   return { ok: true, message: "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول." };
 }
 
