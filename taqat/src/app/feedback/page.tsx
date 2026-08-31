@@ -59,23 +59,38 @@ export default async function FeedbackPage({
       </div>
 
       <section className="page-section">
-        <div className="container" style={{ maxWidth: 640, marginInline: "auto" }}>
-          {sent === "1" && (
-            <div className="alert alert-success">
-              شكرًا لمشاركتنا رأيك 🩷 وصل فريق طاقات وبنراجعه قريبًا.
-            </div>
-          )}
-          {error && (
-            <div className="alert alert-error">
-              {ERROR_MESSAGES[error] || "حدث خطأ، الرجاء المحاولة مرة أخرى."}
-            </div>
-          )}
+        <div className="container">
+          <div className="two-col">
+            <div>
+              {sent === "1" && (
+                <div className="alert alert-success">
+                  شكرًا لمشاركتنا رأيك 💛 وصل فريق طاقات وبنراجعه قريبًا.
+                </div>
+              )}
+              {error && (
+                <div className="alert alert-error">
+                  {ERROR_MESSAGES[error] || "حدث خطأ، الرجاء المحاولة مرة أخرى."}
+                </div>
+              )}
 
-          <FeedbackForm
-            programs={programs}
-            defaultName={currentUser?.name}
-            defaultEmail={currentUser?.email}
-          />
+              <FeedbackForm
+                programs={programs}
+                defaultName={currentUser?.name}
+                defaultEmail={currentUser?.email}
+              />
+            </div>
+
+            <div style={{ position: "sticky", top: 104, display: "grid", gap: 16 }}>
+              <div className="card card-body">
+                <h3>ليش رأيك يهمنا؟</h3>
+                <p>
+                  كل رأي يوصلنا يساعد فريق طاقات يفهم شو يعجبكِ وشو يحتاج تطوير، سواء
+                  كان عن برنامج معين أو عن تجربتكِ العامة معنا.
+                </p>
+              </div>
+            
+            </div>
+          </div>
         </div>
       </section>
     </>
