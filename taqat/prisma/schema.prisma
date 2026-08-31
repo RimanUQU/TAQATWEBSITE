@@ -42,6 +42,7 @@ model User {
   updatedPrograms Program[]             @relation("ProgramUpdatedBy")
 
   feedbacks Feedback[]
+  favorites Favorite[]
 }
 
 model ProgramCategory {
@@ -81,6 +82,7 @@ model Program {
   updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   registrations        ProgramRegistration[]
   feedbacks            Feedback[]
+  favorites            Favorite[]
 }
 
 model ProgramRegistration {
@@ -94,6 +96,18 @@ model ProgramRegistration {
 
   @@unique([userId, programId])
   @@index([programId, status])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  programId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program   Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, programId])
+  @@index([programId])
 }
 
 model Partner {

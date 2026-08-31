@@ -100,6 +100,25 @@ export async function updateAccountAction(
   return { ok: true, message: "تم حفظ التغييرات بنجاح." };
 }
 
+export async function changePasswordAction(
+  _: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await getUser();
+  if (!user) return { message: "انتهت الجلسة، يرجى تسجيل الدخول" };
+  const currentPassword = String(formData.get("currentPassword") || "");
+  const password = String(formData.get("password") || "");
+  const confirm = String(formData.get("confirmPassword") || "");
+  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
+  if (!account || !(await bcrypt.compare(currentPassword, account.passwordHash)))
+    return { message: "كلمة المرور الحالية غير صحيحة" };
+  if (password.length < 8 || !/[A-Z]/.test(password) || !/\d/.test(password))
+    return { message: "كلمة المرور يجب ألا تقل عن 8 أحرف وتحتوي على حرف كبير ورقم" };
+  if (password !== confirm) return { message: "كلمتا المرور غير متطابقتين" };
+  await db.user.update({ where: { id: user.id }, data: { passwordHash: await bcrypt.hash(password, 12) } });
+  return { ok: true, message: "تم تغيير كلمة المرور بنجاح." };
+}
+
 export async function deleteAccountAction() {
   const user = await getUser();
   if (!user) redirect("/login");

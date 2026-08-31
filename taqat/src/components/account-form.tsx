@@ -2,8 +2,9 @@
 
 import { useActionState, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { deleteAccountAction, updateAccountAction } from "@/actions/auth";
+import { changePasswordAction, deleteAccountAction, updateAccountAction } from "@/actions/auth";
 import { Alert, Button, FormField, Input } from "./ui";
+import { PasswordInput } from "./forms";
 
 export function AccountForm({ user }: { user: { name: string; email: string; phone: string | null } }) {
   const [state, action, pending] = useActionState(updateAccountAction, {});
@@ -20,6 +21,19 @@ export function AccountForm({ user }: { user: { name: string; email: string; pho
       </FormField>
       {state.message && <Alert type={state.ok ? "success" : "error"}>{state.message}</Alert>}
       <Button disabled={pending}>{pending ? "جاري الحفظ..." : "حفظ التغييرات"}</Button>
+    </form>
+  );
+}
+
+export function ChangePasswordForm() {
+  const [state, action, pending] = useActionState(changePasswordAction, {});
+  return (
+    <form action={action} className="account-form">
+      <PasswordInput id="currentPassword" name="currentPassword" label="كلمة المرور الحالية" />
+      <PasswordInput id="newPassword" name="password" label="كلمة المرور الجديدة" />
+      <PasswordInput id="confirmPassword" name="confirmPassword" label="تأكيد كلمة المرور الجديدة" />
+      {state.message && <Alert type={state.ok ? "success" : "error"}>{state.message}</Alert>}
+      <Button disabled={pending}>{pending ? "جاري الحفظ..." : "تغيير كلمة المرور"}</Button>
     </form>
   );
 }

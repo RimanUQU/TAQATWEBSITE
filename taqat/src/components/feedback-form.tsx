@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { submitFeedbackAction } from "@/actions/feedback";
 import { Button } from "@/components/ui";
 
@@ -24,7 +24,8 @@ export function FeedbackForm({
   defaultEmail?: string;
 }) {
   const [type, setType] = useState("GENERAL");
-  const [loadedAt] = useState(() => Date.now());
+  // قيمة ثابتة تُحسب مرة واحدة عند أول تصيير، بدون useEffect ولا إعادة تصيير إضافية
+  const loadedAtRef = useRef<number>(Date.now());
 
   return (
     <form action={submitFeedbackAction} className="panel" style={{ display: "grid", gap: 22 }}>
@@ -35,7 +36,7 @@ export function FeedbackForm({
           <input type="text" name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
-      <input type="hidden" name="loadedAt" value={loadedAt} />
+      <input type="hidden" name="loadedAt" value={loadedAtRef.current} />
 
       <div className="field">
         <label>ما نوع رأيك؟</label>
@@ -114,15 +115,6 @@ export function FeedbackForm({
         <input type="checkbox" name="consent" />
         أوافق على عرض رأيي ضمن «قالوا عنا» في الصفحة الرئيسية، إن اختارت إدارة طاقات ذلك.
       </label>
-
-      <div className="feedback-privacy-note">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z" stroke="currentColor" strokeWidth="1.6" />
-        </svg>
-        <span>
-          رأيك يصل مباشرة لفريق طاقات للمراجعة، ولن يُنشر إلا بموافقتك الصريحة أعلاه، وبنفس نصه دون أي تعديل.
-        </span>
-      </div>
 
       <Button size="lg">إرسال رأيي</Button>
     </form>
