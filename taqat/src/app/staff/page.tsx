@@ -10,9 +10,13 @@ export default async function StaffPage() {
     orderBy: { displayOrder: "asc" },
     include: { members: { where: { active: true }, orderBy: { displayOrder: "asc" } } },
   });
-  const hasMembers = groups.some((group) => group.members.length);
-
-  const groupsWithMembers = groups.filter((group) => group.members.length > 0);
+  const rootGroups = groups.filter((group) => !group.parentId);
+  const visibleSections = rootGroups
+    .map((root) => ({
+      root,
+      rows: [root, ...groups.filter((group) => group.parentId === root.id)],
+    }))
+    .filter(({ rows }) => rows.some((row) => row.members.length > 0));
 
   return <>
     <div className="page-hero staff-hero">
@@ -50,16 +54,19 @@ export default async function StaffPage() {
     </div>
     <section className="page-section">
       <div className="container">
-        {hasMembers ? (
+        {visibleSections.length > 0 ? (
           <div className="staff-groups">
-            {groupsWithMembers.map((group, sectionIndex) => {
+            {visibleSections.map(({ root, rows }, sectionIndex) => {
               const tone: "pink" | "teal" = sectionIndex === 0 ? "pink" : "teal";
-              const isLead = sectionIndex === 0;
 
               return (
-                <section key={group.id} className={`staff-section${group.name ? "" : " staff-section-unnamed"}`}>
-                  {group.name && <h2 className="staff-group-title">{group.name}</h2>}
-                  <StaffGrid members={group.members} tone={tone} isLead={isLead} />
+                <section key={root.id} className={`staff-section${root.name ? "" : " staff-section-unnamed"}`}>
+                  {root.name && <h2 className="staff-group-title">{root.name}</h2>}
+                  {rows.map((row, rowIndex) =>
+                    row.members.length > 0 ? (
+                      <StaffGrid key={row.id} members={row.members} tone={tone} isLead={sectionIndex === 0 && rowIndex === 0} />
+                    ) : null,
+                  )}
                 </section>
               );
             })}

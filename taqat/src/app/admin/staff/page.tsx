@@ -5,6 +5,7 @@ import {
   deleteStaffGroupAction,
   saveStaffAction,
   saveStaffGroupAction,
+  saveStaffGroupsOrderAction,
 } from "@/actions/admin";
 import { ActiveToggle, AdminHeader, TextField } from "@/components/admin-ui";
 import { StaffIconPicker } from "@/components/staff-icon-picker";
@@ -22,7 +23,33 @@ function PositionSelect({ name, total, value }: { name: string; total: number; v
   );
 }
 
-export default async function StaffAdminPage() {
+function ParentSelect({
+  groups,
+  value,
+  excludeId,
+}: {
+  groups: { id: string; name: string | null; parentId: string | null; displayOrder: number }[];
+  value: string | null;
+  excludeId?: string;
+}) {
+  const categories = groups.filter((group) => !group.parentId && group.id !== excludeId);
+  return (
+    <select className="input" name="parentId" defaultValue={value || ""}>
+      <option value="">فئة رئيسية / بدون فئة</option>
+      {categories.map((group) => (
+        <option key={group.id} value={group.id}>
+          {group.name || `فئة بدون عنوان (ترتيب ${group.displayOrder})`}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+export default async function StaffAdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ordered?: string }>;
+}) {
   const [groups, icons] = await Promise.all([
     db.staffGroup.findMany({
       orderBy: { displayOrder: "asc" },
@@ -30,12 +57,39 @@ export default async function StaffAdminPage() {
     }),
     getStaffIcons(),
   ]);
+  const { ordered } = await searchParams;
   return (
     <>
       <AdminHeader
         title="الكادر الوظيفي"
         subtitle="رتّبي المجموعات والأعضاء من القوائم؛ الخيارات المتاحة فقط تمنع الترتيب غير الواضح."
       />
+      {ordered === "1" && <p className="admin-success">تم حفظ ترتيب المجموعات، ويمكنك الآن فتح الصفحة العامة للتأكد من النتيجة.</p>}
+      {groups.length > 0 && (
+        <section className="panel staff-order-panel">
+          <div className="staff-order-heading">
+            <div>
+              <span className="eyebrow">خطوة واحدة</span>
+              <h2>ترتيب ظهور المجموعات</h2>
+              <p>اختاري رقمًا لكل فئة أو صف. الرقم 1 يظهر أولًا، ثم 2، ثم 3. الصف المرتبط بفئة يظهر تحت عنوانها.</p>
+            </div>
+            <span className="staff-order-badge">يظهر في صفحة الكادر</span>
+          </div>
+          <form action={saveStaffGroupsOrderAction} className="staff-order-form">
+            {groups.map((group) => (
+              <div className="staff-order-row" key={group.id}>
+                <span>{group.name || `صف بدون اسم (ترتيب ${group.displayOrder})`}</span>
+                <label>
+                  <span>الموضع</span>
+                  <PositionSelect name="displayOrder" total={groups.length} value={group.displayOrder} />
+                </label>
+                <input type="hidden" name="groupId" value={group.id} />
+              </div>
+            ))}
+            <Button>حفظ ترتيب المجموعات</Button>
+          </form>
+        </section>
+      )}
       <section className="panel staff-admin-create">
         <h2>إضافة مجموعة</h2>
         <form action={saveStaffGroupAction} className="admin-form">
@@ -45,6 +99,11 @@ export default async function StaffAdminPage() {
             hint="اختياري — لن يظهر أي عنوان في الصفحة العامة عند تركه فارغًا."
           />
           <div className="field">
+            <label>الفئة الظاهرة</label>
+            <ParentSelect groups={groups} value={null} />
+            <small className="field-hint">اختاري فئة لعرض هذا الصف تحت عنوانها، أو اتركيه فئة رئيسية.</small>
+          </div>
+          <div className="field">
             <label>ترتيب المجموعة</label>
             <PositionSelect
               name="displayOrder"
@@ -52,19 +111,19 @@ export default async function StaffAdminPage() {
               value={groups.length + 1}
             />
           </div>
-          <Button>إضافة مجموعة</Button>
+          <Button size="sm">إضافة مجموعة</Button>
         </form>
       </section>
       <section className="staff-admin-groups">
         {groups.length === 0 ? (
           <p className="empty">ابدئي بإضافة مجموعة، ثم أضيفي أعضاءها.</p>
         ) : (
-          groups.map((group, groupIndex) => (
+          groups.map((group) => (
             <article className="panel staff-admin-group" key={group.id}>
               <div className="staff-admin-group-heading">
                 <div>
-                  <span className="eyebrow">مجموعة {groupIndex + 1}</span>
-                  <h2>{group.name || "مجموعة بدون اسم"}</h2>
+                  <span className="eyebrow">ترتيب الظهور: {group.displayOrder}</span>
+                  <h2>{group.name || "صف بدون اسم"}</h2>
                 </div>
                 <form action={deleteStaffGroupAction.bind(null, group.id)}>
                   <Button variant="text" size="sm">
@@ -81,14 +140,11 @@ export default async function StaffAdminPage() {
                   hint="اختياري، ولا يظهر للزوار عند تركه فارغًا."
                 />
                 <div className="field">
-                  <label>الترتيب</label>
-                  <PositionSelect
-                    name="displayOrder"
-                    total={groups.length}
-                    value={group.displayOrder}
-                  />
+                  <label>الفئة الظاهرة</label>
+                  <ParentSelect groups={groups} value={group.parentId} excludeId={group.id} />
+                  <small className="field-hint">لإظهار هذا الصف تحت فئة موجودة، اختاري اسم الفئة هنا.</small>
                 </div>
-                <Button variant="outline">حفظ بيانات المجموعة</Button>
+                <Button variant="outline" size="sm">حفظ بيانات المجموعة</Button>
               </form>
               <div className="staff-members-heading">
                 <h3>الأعضاء</h3>

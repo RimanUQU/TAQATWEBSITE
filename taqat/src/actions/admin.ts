@@ -242,29 +242,78 @@ async function orderMembers(tx: Prisma.TransactionClient, ids: string[]) {
   for (const [index, id] of ids.entries())
     await tx.staffMember.update({ where: { id }, data: { displayOrder: index + 1 } });
 }
+const staffTransactionOptions = { maxWait: 10_000, timeout: 30_000 };
 export async function saveStaffGroupAction(formData: FormData) {
   await requireAdmin();
   const id = text(formData, "id"),
     name = text(formData, "name") || null,
-    requested = num(formData, "displayOrder");
+    parentId = text(formData, "parentId") || null,
+    requested = formData.has("displayOrder") ? num(formData, "displayOrder") : null;
+  if (id && parentId === id) throw new Error("لا يمكن ربط الفئة بنفسها");
   await db.$transaction(async (tx) => {
+    if (parentId) {
+      let current = await tx.staffGroup.findUnique({ where: { id: parentId }, select: { parentId: true } });
+      while (current?.parentId) {
+        if (current.parentId === id) throw new Error("لا يمكن إنشاء ربط دائري بين الفئات");
+        current = await tx.staffGroup.findUnique({ where: { id: current.parentId }, select: { parentId: true } });
+      }
+    }
     const groups = await tx.staffGroup.findMany({
       orderBy: { displayOrder: "asc" },
       select: { id: true },
     });
     if (id) {
+      if (requested === null) {
+        await tx.staffGroup.update({ where: { id }, data: { name, parentId } });
+        return;
+      }
       const ids = groups.map((group) => group.id).filter((groupId) => groupId !== id);
       ids.splice(boundedPosition(requested, ids.length) - 1, 0, id);
-      await tx.staffGroup.update({ where: { id }, data: { name } });
+      await tx.staffGroup.update({ where: { id }, data: { name, parentId } });
       await orderGroups(tx, ids);
     } else {
-      const group = await tx.staffGroup.create({ data: { name } });
+      const group = await tx.staffGroup.create({ data: { name, parentId } });
       const ids = groups.map((item) => item.id);
-      ids.splice(boundedPosition(requested, ids.length) - 1, 0, group.id);
+      ids.splice(boundedPosition(requested ?? ids.length + 1, ids.length) - 1, 0, group.id);
       await orderGroups(tx, ids);
     }
-  });
+  }, staffTransactionOptions);
   staffPaths();
+}
+export async function saveStaffGroupsOrderAction(formData: FormData) {
+  await requireAdmin();
+  const ids = formData.getAll("groupId").map(String);
+  const requestedOrders = formData.getAll("displayOrder").map((value) => Number(value));
+
+  await db.$transaction(async (tx) => {
+    const groups = await tx.staffGroup.findMany({
+      orderBy: { displayOrder: "asc" },
+      select: { id: true, displayOrder: true },
+    });
+    const currentOrder = new Map(groups.map((group) => [group.id, group.displayOrder]));
+    const reserved = new Map<number, string>();
+    const maxPosition = groups.length;
+
+    // A changed position owns its slot; unchanged groups are shifted around it.
+    ids.forEach((id, index) => {
+      const requested = requestedOrders[index];
+      const current = currentOrder.get(id);
+      if (!current || !Number.isFinite(requested) || requested === current) return;
+      const position = Math.max(1, Math.min(Math.floor(requested), maxPosition));
+      if (!reserved.has(position)) reserved.set(position, id);
+    });
+
+    const reservedIds = new Set(reserved.values());
+    const remainingIds = groups.map((group) => group.id).filter((id) => !reservedIds.has(id));
+    const orderedIds: string[] = [];
+    for (let position = 1, remainingIndex = 0; position <= maxPosition; position += 1) {
+      const reservedId = reserved.get(position);
+      orderedIds.push(reservedId ?? remainingIds[remainingIndex++]);
+    }
+    await orderGroups(tx, orderedIds);
+  }, staffTransactionOptions);
+  staffPaths();
+  redirect("/admin/staff?ordered=1");
 }
 export async function deleteStaffGroupAction(id: string) {
   await requireAdmin();
@@ -278,7 +327,7 @@ export async function deleteStaffGroupAction(id: string) {
       tx,
       groups.map((group) => group.id),
     );
-  });
+  }, staffTransactionOptions);
   staffPaths();
 }
 export async function saveStaffAction(formData: FormData) {
@@ -332,7 +381,7 @@ export async function saveStaffAction(formData: FormData) {
         source.map((member) => member.id),
       );
     }
-  });
+  }, staffTransactionOptions);
   staffPaths();
 }
 export async function deleteStaffAction(id: string) {
@@ -348,7 +397,7 @@ export async function deleteStaffAction(id: string) {
       tx,
       members.map((item) => item.id),
     );
-  });
+  }, staffTransactionOptions);
   staffPaths();
 }
 export async function updateUserAction(id: string, formData: FormData) {
