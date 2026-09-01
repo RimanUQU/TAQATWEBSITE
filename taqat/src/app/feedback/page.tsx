@@ -39,8 +39,18 @@ export default async function FeedbackPage({
             <ellipse cx="60" cy="70" rx="16" ry="10" fill="var(--teal-500)" transform="rotate(-35 60 70)" />
             <ellipse cx="72" cy="96" rx="14" ry="9" fill="var(--pink-400)" transform="rotate(-20 72 96)" />
             <ellipse cx="68" cy="130" rx="15" ry="9" fill="var(--teal-300)" transform="rotate(-30 68 130)" />
+            <ellipse cx="78" cy="160" rx="13" ry="8" fill="var(--pink-300)" transform="rotate(-15 78 160)" />
           </svg>
         </span>
+        <span className="staff-hero-decor staff-hero-sprig-right" aria-hidden="true">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 90 C 30 70, 45 55, 55 20" stroke="var(--teal-500)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            <ellipse cx="55" cy="20" rx="11" ry="7" fill="var(--pink-400)" transform="rotate(-40 55 20)" />
+            <ellipse cx="44" cy="42" rx="10" ry="6" fill="var(--teal-300)" transform="rotate(-25 44 42)" />
+          </svg>
+        </span>
+        <span className="staff-hero-dot staff-hero-dot-a" aria-hidden="true" />
+        <span className="staff-hero-dot staff-hero-dot-b" aria-hidden="true" />
         <div className="container">
           <div className="staff-hero-inner">
             <span className="staff-hero-eyebrow">
