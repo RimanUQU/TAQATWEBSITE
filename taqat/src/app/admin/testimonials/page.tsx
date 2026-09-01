@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { deleteTestimonialAction, saveTestimonialAction } from "@/actions/admin";
 import { ActiveToggle, AdminHeader, AreaField, TextField } from "@/components/admin-ui";
 import { Button } from "@/components/ui";
+import { TestimonialDetailsDialog } from "@/components/testimonial-details-dialog";
 export default async function Testimonials({
   searchParams,
 }: {
@@ -51,7 +52,15 @@ export default async function Testimonials({
               {items.map((i) => (
                 <tr key={i.id}>
                   <td>{i.name}</td>
-                  <td>{i.quote.slice(0, 80)}</td>
+                  <td className="text-preview-cell">
+                    <TestimonialDetailsDialog
+                      name={i.name}
+                      title={i.title}
+                      quote={i.quote}
+                      rating={i.rating}
+                      active={i.active}
+                    />
+                  </td>
                   <td>{i.rating}/5</td>
                   <td className="table-actions">
                     <Link
