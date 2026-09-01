@@ -2583,17 +2583,86 @@ h3 {
 }
 .staff-add-member {
   margin-top: 20px;
-  padding: 18px;
-  background: var(--pink-50);
+  padding: 0;
+  border: 1px solid var(--pink-200, #f7b6ce);
+  background: linear-gradient(135deg, var(--pink-50), #fff);
   border-radius: 14px;
+  overflow: hidden;
 }
-.staff-add-member summary {
-  font-weight: 700;
+.staff-add-member-summary {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 76px;
+  padding: 15px 18px;
+  list-style: none;
   cursor: pointer;
   color: var(--pink-700);
+  transition: background .18s, box-shadow .18s;
+}
+.staff-add-member-summary::-webkit-details-marker {
+  display: none;
+}
+.staff-add-member-summary:hover,
+.staff-add-member[open] .staff-add-member-summary {
+  background: var(--pink-100);
+}
+.staff-add-member-summary:focus-visible {
+  outline: 3px solid var(--pink-300);
+  outline-offset: -3px;
+}
+.staff-add-member-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--pink-500);
+  color: #fff;
+  font-size: 1.7rem;
+  line-height: 1;
+  box-shadow: 0 6px 14px rgba(248, 94, 150, .2);
+}
+.staff-add-member-copy {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+}
+.staff-add-member-copy strong {
+  color: var(--ink);
+}
+.staff-add-member-copy small,
+.staff-add-member-hint {
+  color: var(--muted);
+  font-size: .82rem;
+}
+.staff-add-member-action {
+  padding: 8px 13px;
+  border: 1px solid var(--pink-500);
+  border-radius: 9px;
+  background: #fff;
+  font-size: .85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.staff-add-member-hint {
+  margin: 0;
+  padding: 0 18px;
 }
 .staff-add-member form {
-  margin-top: 18px;
+  margin: 12px 18px 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--pink-200, #f7b6ce);
+}
+.staff-members-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: #fbfdfc;
+  color: var(--muted);
+  text-align: center;
 }
 .staff-icon-picker {
   display: flex;
@@ -2630,6 +2699,18 @@ h3 {
   }
   .staff-icon-picker select {
     width: 100%;
+  }
+  .staff-add-member-summary {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .staff-add-member-copy {
+    min-width: calc(100% - 58px);
+  }
+  .staff-add-member-action {
+    width: 100%;
+    text-align: center;
+    margin-top: 2px;
   }
 }
 

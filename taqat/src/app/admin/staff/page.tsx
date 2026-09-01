@@ -95,6 +95,9 @@ export default async function StaffAdminPage() {
                 <span>{group.members.length} عضو</span>
               </div>
               <div className="staff-members-list">
+                {group.members.length === 0 && (
+                  <p className="staff-members-empty">لا يوجد أعضاء في هذه المجموعة بعد. ابدئي بإضافة أول عضو.</p>
+                )}
                 {group.members.map((member) => (
                   <form key={member.id} action={saveStaffAction} className="staff-member-editor">
                     <input type="hidden" name="id" value={member.id} />
@@ -139,7 +142,15 @@ export default async function StaffAdminPage() {
                 ))}
               </div>
               <details className="staff-add-member">
-                <summary>إضافة عضو إلى هذه المجموعة</summary>
+                <summary className="staff-add-member-summary">
+                  <span className="staff-add-member-icon" aria-hidden="true">+</span>
+                  <span className="staff-add-member-copy">
+                    <strong>إضافة عضو إلى هذه المجموعة</strong>
+                    <small>أضيفي بيانات العضو ليظهر ضمن الكادر في الصفحة العامة.</small>
+                  </span>
+                  <span className="staff-add-member-action">إضافة عضو</span>
+                </summary>
+                <p className="staff-add-member-hint">املئي البيانات الأساسية ثم اضغطي على زر الإضافة.</p>
                 <form action={saveStaffAction} className="admin-form">
                   <input type="hidden" name="groupId" value={group.id} />
                   <TextField name="name" label="الاسم" required />
