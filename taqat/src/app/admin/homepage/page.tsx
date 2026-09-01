@@ -1,5 +1,5 @@
 import { saveHomepageAction } from "@/actions/admin";
-import { AdminHeader, ActiveToggle, TextField } from "@/components/admin-ui";
+import { AdminHeader, ActiveToggle, TextField, AreaField } from "@/components/admin-ui";
 import { Alert, Button } from "@/components/ui";
 import { getSettings } from "@/lib/settings";
 export default async function HomepageSettings({
@@ -16,6 +16,15 @@ export default async function HomepageSettings({
       />
       {sp.saved && <Alert type="success">تم حفظ إعدادات الصفحة الرئيسية.</Alert>}
       <form action={saveHomepageAction} className="panel admin-form">
+        <TextField
+          name="heroEyebrow"
+          label="الشريط العلوي فوق العنوان الرئيسي"
+          value={s.heroEyebrow}
+          full
+        />
+        <TextField name="heroTitle" label="العنوان الرئيسي" value={s.heroTitle} full />
+        <AreaField name="heroSubtitle" label="النص الفرعي الرئيسي" value={s.heroSubtitle} />
+
         <TextField
           name="sectionEyebrow"
           label="الشريط العلوي فوق كل عنوان قسم"

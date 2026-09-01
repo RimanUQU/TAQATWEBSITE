@@ -19,6 +19,22 @@ function WhatsAppLogo({ size = 18 }: { size?: number }) {
   );
 }
 
+function TikTokLogo({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M13.5 2h2.6c.2 1.5 1.1 2.8 2.5 3.5.6.3 1.3.5 2 .5v2.7c-1.5 0-2.9-.4-4.1-1.2v6.6c0 3.1-2.5 5.6-5.6 5.6S5.3 16.9 5.3 13.8c0-2.9 2.2-5.3 5-5.5v2.7c-1.4.2-2.5 1.4-2.5 2.8 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9V2Z" />
+    </svg>
+  );
+}
+
+function SnapchatLogo({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M12 2.5c2.9 0 5.1 2.3 5.1 5.4v2.1c0 .4.3.7.9 1 .6.3 1.4.5 1.9.6.3.1.5.3.5.6 0 .4-.4.7-1.2 1-.5.2-1.1.3-1.4.6-.2.2-.1.5 0 .8.2.6.6 1.4 1.6 1.7.3.1.3.4.1.6-.4.4-1.3.6-1.9.7-.1.3-.2.7-.3 1-.1.3-.3.4-.6.4-.4 0-.9-.1-1.6-.1-.6 0-1 .2-1.5.5-.6.4-1.3.9-2.6.9s-2-.5-2.6-.9c-.5-.3-.9-.5-1.5-.5-.7 0-1.2.1-1.6.1-.3 0-.5-.1-.6-.4-.1-.3-.2-.7-.3-1-.6-.1-1.5-.3-1.9-.7-.2-.2-.2-.5.1-.6 1-.3 1.4-1.1 1.6-1.7.1-.3.2-.6 0-.8-.3-.3-.9-.4-1.4-.6-.8-.3-1.2-.6-1.2-1 0-.3.2-.5.5-.6.5-.1 1.3-.3 1.9-.6.6-.3.9-.6.9-1V7.9c0-3.1 2.2-5.4 5.1-5.4Z" />
+    </svg>
+  );
+}
+
 export function Footer({ settings }: { settings: Record<string, string> }) {
   return (
     <footer className="site-footer">
@@ -60,6 +76,16 @@ export function Footer({ settings }: { settings: Record<string, string> }) {
             <a href={settings.whatsapp} aria-label="واتساب">
               <WhatsAppLogo />
             </a>
+            {settings.tiktok && (
+              <a href={settings.tiktok} aria-label="تيك توك">
+                <TikTokLogo />
+              </a>
+            )}
+            {settings.snapchat && (
+              <a href={settings.snapchat} aria-label="سناب شات">
+                <SnapchatLogo />
+              </a>
+            )}
           </div>
         </div>
 

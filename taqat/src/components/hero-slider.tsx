@@ -3,15 +3,13 @@ import Image from "next/image";
 import { getPublicImageUrl } from "@/lib/images";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft } from "lucide-react";
-import { ButtonLink, Badge } from "./ui";
+import { ButtonLink } from "./ui";
 
 type Slide = {
   id: string;
-  title: string;
   slug: string;
-  shortDescription: string;
   coverImage: string;
-  price: number;
+  bannerImage: string | null;
   backgroundColor: string;
 };
 export function HeroSlider({ slides }: { slides: Slide[] }) {
@@ -44,53 +42,54 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
         touch.current = null;
       }}
     >
-      {slides.map((slide, index) => (
-        <article
-          key={slide.id}
-          className={`hero-slide ${index === current ? "active" : ""}`}
-          aria-hidden={index !== current}
-          // نفس لون البرنامج المحدد من لوحة التحكم - مصدر واحد للون يُستخدم
-          // بالكارد وبالشريط سوا، بدون إدخال لون ثانٍ منفصل هنا إطلاقًا
-          style={{ backgroundColor: slide.backgroundColor }}
-        >
-          <div className="hero-content">
-            <div className="hero-text">
-              {slide.coverImage && (
-                <span className="hero-thumb">
-                  <Image
-                    src={getPublicImageUrl(slide.coverImage)}
-                    alt=""
-                    fill
-                    priority={index === 0}
-                    sizes="60px"
+      {slides.map((slide, index) => {
+        // صورة الإعلان المخصصة لشريط الإعلانات أولًا، ولو ما رُفعت بعد
+        // نستخدم صورة الكارد كحل احتياطي مؤقت بدل ما يطلع الشريط فاضي
+        const image = slide.bannerImage || slide.coverImage;
+        return (
+          <article
+            key={slide.id}
+            className={`hero-slide ${index === current ? "active" : ""}`}
+            aria-hidden={index !== current}
+            // نفس لون البرنامج المحدد من لوحة التحكم - يبان أثناء تحميل
+            // الصورة أو لو ما فيه صورة إطلاقًا
+            style={{ backgroundColor: slide.backgroundColor }}
+          >
+            {image && (
+              <Image
+                src={getPublicImageUrl(image)}
+                alt=""
+                fill
+                priority={index === 0}
+                sizes="100vw"
+              />
+            )}
+            {/* بدون اسم البرنامج أو شارة السعر هنا - صورة الإعلان نفسها فيها كل
+                النص/التصميم المطلوب من تصميم البانر، والزر بس يوديك للتفاصيل */}
+            <div className="hero-content">
+              <div className="hero-actions">
+                <ButtonLink href={`/programs/${slide.slug}`} size="sm">
+                  عرض التفاصيل <ChevronLeft size={16} />
+                </ButtonLink>
+              </div>
+            </div>
+            {slides.length > 1 && (
+              <div className="hero-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
+                {slides.map((s, i) => (
+                  <button
+                    key={s.id}
+                    role="tab"
+                    aria-selected={i === current}
+                    aria-label={`عرض الإعلان ${i + 1}`}
+                    className={i === current ? "active" : ""}
+                    onClick={() => setCurrent(i)}
                   />
-                </span>
-              )}
-              <Badge tone="teal">{slide.price === 0 ? "برنامج مجاني" : "برنامج مدفوع"}</Badge>
-              <h1>{slide.title}</h1>
-            </div>
-            <div className="hero-actions">
-              <ButtonLink href={`/programs/${slide.slug}`} size="sm">
-                عرض التفاصيل <ChevronLeft size={16} />
-              </ButtonLink>
-            </div>
-          </div>
-          {slides.length > 1 && (
-            <div className="hero-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
-              {slides.map((s, i) => (
-                <button
-                  key={s.id}
-                  role="tab"
-                  aria-selected={i === current}
-                  aria-label={`عرض برنامج ${s.title}`}
-                  className={i === current ? "active" : ""}
-                  onClick={() => setCurrent(i)}
-                />
-              ))}
-            </div>
-          )}
-        </article>
-      ))}
+                ))}
+              </div>
+            )}
+          </article>
+        );
+      })}
     </section>
   );
 }

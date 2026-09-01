@@ -1,16 +1,21 @@
 "use client";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { AlertTriangle, CalendarDays, FileText, MapPin, Users } from "lucide-react";
-import type { Program } from "@prisma/client";
-import { Button, Card } from "./ui";
+import { AlertTriangle, CalendarDays, FileText, GraduationCap, MapPin, Tag, Users } from "lucide-react";
+import type { Program, ProgramCategory, TargetAudience } from "@prisma/client";
+import { Button, Card, FormField, Input } from "./ui";
 import { formatDate } from "@/lib/utils";
 import { getPublicImageUrl } from "@/lib/images";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { archiveProgramAction, restoreProgramAction, deleteProgramAction, saveProgramAction } from "@/actions/admin";
 import { ColorSwatchPicker } from "./color-swatch-picker";
+import { ImageCropModal } from "./image-crop-modal";
 
-type AdminProgram = Program & { _count: { registrations: number } };
+type AdminProgram = Program & {
+  _count: { registrations: number };
+  category: ProgramCategory | null;
+  targetAudience: TargetAudience | null;
+};
 type Status = Program["status"];
 
 const statusLabel = { DRAFT: "مسودة", PUBLISHED: "منشور", ARCHIVED: "مؤرشف" } as const;
@@ -21,14 +26,22 @@ const toDateTimeLocal = (date: Date) =>
 
 export function AdminProgramCard({
   program,
+  categories,
+  audiences,
+  sliderCount,
   onCancelNew,
 }: {
   program?: AdminProgram;
+  categories: ProgramCategory[];
+  audiences: TargetAudience[];
+  sliderCount: number;
   onCancelNew?: () => void;
 }) {
   const isNewProgram = !program;
   const [editing, setEditing] = useState(isNewProgram);
   const [cardImage, setCardImage] = useState(program?.cardImage || "");
+  const [bannerImage, setBannerImage] = useState(program?.bannerImage || "");
+  const [bannerUploading, setBannerUploading] = useState(false);
   const [status, setStatus] = useState<Status>(program?.status || "DRAFT");
   const [featured, setFeatured] = useState(program?.featured || false);
   const [isNewBadge, setIsNewBadge] = useState(program?.isNew || false);
@@ -36,12 +49,17 @@ export function AdminProgramCard({
   const [uploading, setUploading] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [description, setDescription] = useState(program?.description || "");
+  const [slug, setSlug] = useState(program?.slug || "");
   const [backgroundColor, setBackgroundColor] = useState(program?.backgroundColor || "#075658");
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [draftDescription, setDraftDescription] = useState(description);
+  // القص مفعّل بس لصورة بانر شريط الإعلانات (نسبتها العريضة جدًا تحتاج
+  // تحديد يدوي)، مو لصورة الكارد - رفعها يبقى مباشر زي ما كان.
+  const [croppingBanner, setCroppingBanner] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bannerFileInputRef = useRef<HTMLInputElement>(null);
   const deleteFormRef = useRef<HTMLFormElement>(null);
   const canDelete = !program || program._count.registrations === 0;
+  const otherSliderCount = sliderCount - (program?.showInSlider ? 1 : 0);
 
   function cancelEdit() {
     if (isNewProgram) {
@@ -54,24 +72,22 @@ export function AdminProgramCard({
     setIsNewBadge(program.isNew);
     setShowInSlider(program.showInSlider);
     setDescription(program.description);
+    setSlug(program.slug);
     setBackgroundColor(program.backgroundColor);
+    setBannerImage(program.bannerImage || "");
     setEditing(false);
   }
 
-  function openDetailsModal() {
-    setDraftDescription(description);
-    setDetailsOpen(true);
-  }
-
-  function saveDetailsModal() {
-    setDescription(draftDescription);
-    setDetailsOpen(false);
-  }
-
-  async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
+  // منطق رفع الصورة مشترك بين صورة الكارد وصورة بانر شريط الإعلانات - نفس
+  // الخطوات بالضبط (تجهيز رابط موقّع، رفع، حذف الصورة القديمة)، فرق بس
+  // بالقيمة الحالية/الدالة المستخدمة لكل وحدة.
+  async function uploadImage(
+    file: Blob,
+    previous: string,
+    setValue: (path: string) => void,
+    setBusy: (busy: boolean) => void,
+  ) {
+    setBusy(true);
     try {
       const response = await fetch("/api/admin/upload", {
         method: "POST",
@@ -87,8 +103,7 @@ export function AdminProgramCard({
           cacheControl: "3600",
         });
       if (error) throw error;
-      const previous = cardImage;
-      setCardImage(payload.path);
+      setValue(payload.path);
       if (previous && !previous.startsWith("/") && !/^https?:\/\//i.test(previous)) {
         await fetch("/api/admin/delete-image", {
           method: "POST",
@@ -99,9 +114,22 @@ export function AdminProgramCard({
     } catch (err) {
       alert(err instanceof Error ? err.message : "تعذر رفع الصورة");
     } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      setBusy(false);
     }
+  }
+
+  async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadImage(file, cardImage, setCardImage, setUploading);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function handleBannerPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (bannerFileInputRef.current) bannerFileInputRef.current.value = "";
+    if (!file) return;
+    setCroppingBanner(file);
   }
 
   return (
@@ -202,6 +230,7 @@ export function AdminProgramCard({
               </select>
               <ColorSwatchPicker value={backgroundColor} onChange={setBackgroundColor} />
               <input type="hidden" name="backgroundColor" value={backgroundColor} />
+              <input type="hidden" name="bannerImage" value={bannerImage} />
             </>
           ) : (
             <>
@@ -219,6 +248,55 @@ export function AdminProgramCard({
             </>
           )}
         </div>
+        {editing && (
+          <small
+            className="upload-hint slider-count-hint"
+            style={otherSliderCount >= 5 ? { color: "var(--danger)" } : undefined}
+          >
+            {otherSliderCount} من 5 برامج أخرى مفعّلة بالسلايدر حاليًا
+            {otherSliderCount >= 5
+              ? " — السلايدر يعرض 5 كحد أقصى، هذا البرنامج لن يظهر إن فعّلتِه"
+              : ""}
+          </small>
+        )}
+        {editing && showInSlider && (
+          <div className="admin-banner-upload">
+            <button
+              type="button"
+              className="card-image admin-image-edit admin-banner-image"
+              onClick={() => bannerFileInputRef.current?.click()}
+              disabled={bannerUploading}
+            >
+              {bannerImage ? (
+                <Image
+                  src={getPublicImageUrl(bannerImage)}
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              ) : (
+                <span className="image-empty" aria-hidden="true">
+                  طاقات
+                </span>
+              )}
+              <span className="admin-image-edit-hint">
+                {bannerUploading ? "جاري الرفع..." : "اضغطي لإضافة بانر شريط الإعلانات"}
+              </span>
+            </button>
+            <input
+              ref={bannerFileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={handleBannerPick}
+              style={{ display: "none" }}
+            />
+            <small className="upload-hint">
+              يُفضّل مقاس أفقي عريض جدًا بنسبة 5:1 تقريبًا (١٢٠٠×٢٤٠ بكسل تقريبًا) ليملأ شريط
+              الإعلانات بوضوح على الشاشات الكبيرة — بعد اختيار الصورة تقدرين تحددين منطقة القص
+              بنفس النسبة. لو ما رفعتِ صورة هنا، يُستخدم مؤقتًا نفس صورة الكارد.
+            </small>
+          </div>
+        )}
 
         <div className="card-body">
           <h3>
@@ -313,13 +391,51 @@ export function AdminProgramCard({
                 />
               </span>
             )}
+            <span>
+              <Tag />
+              {editing ? (
+                <select
+                  name="categoryId"
+                  defaultValue={program?.categoryId || ""}
+                  className="inline-input inline-input-meta"
+                >
+                  <option value="">بدون تصنيف</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                program!.category?.name || "بدون تصنيف"
+              )}
+            </span>
+            <span>
+              <GraduationCap />
+              {editing ? (
+                <select
+                  name="targetAudienceId"
+                  defaultValue={program?.targetAudienceId || ""}
+                  className="inline-input inline-input-meta"
+                >
+                  <option value="">بدون فئة</option>
+                  {audiences.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                program!.targetAudience?.name || "بدون فئة"
+              )}
+            </span>
           </div>
 
           {editing && (
             <button
               type="button"
               className="admin-details-btn"
-              onClick={openDetailsModal}
+              onClick={() => setDetailsOpen(true)}
             >
               <FileText size={15} />
               {description ? "تعديل تفاصيل البرنامج" : "إضافة تفاصيل البرنامج"}
@@ -330,7 +446,7 @@ export function AdminProgramCard({
           {editing && !isNewProgram && (
             <>
               {/* حقول موجودة بالبرنامج بس مو معروضة على الكارد - تُحفظ بقيمتها الحالية بدون تغيير */}
-              <input type="hidden" name="slug" value={program!.slug} />
+              <input type="hidden" name="slug" value={slug} />
               <input type="hidden" name="shortDescription" value={program!.shortDescription} />
               <input type="hidden" name="description" value={description} />
               {/* الغلاف بصفحة تفاصيل البرنامج يتبع نفس صورة الكارد دائمًا - قبل هالسطر كان
@@ -338,7 +454,6 @@ export function AdminProgramCard({
                   صورة الكارد والصفحة التفصيلية مختلفتين عن بعض */}
               <input type="hidden" name="coverImage" value={cardImage} />
               <input type="hidden" name="cardImage" value={cardImage} />
-              <input type="hidden" name="categoryId" value={program!.categoryId || ""} />
               <input type="hidden" name="endDate" value={toDateTimeLocal(program!.endDate)} />
               <input
                 type="hidden"
@@ -352,6 +467,7 @@ export function AdminProgramCard({
             <>
               <input type="hidden" name="cardImage" value={cardImage} />
               <input type="hidden" name="description" value={description} />
+              <input type="hidden" name="slug" value={slug} />
             </>
           )}
 
@@ -480,6 +596,17 @@ export function AdminProgramCard({
           </div>
         </div>
       )}
+      {croppingBanner && (
+        <ImageCropModal
+          file={croppingBanner}
+          aspectRatio={5 / 1}
+          onCancel={() => setCroppingBanner(null)}
+          onCropped={(blob) => {
+            setCroppingBanner(null);
+            uploadImage(blob, bannerImage, setBannerImage, setBannerUploading);
+          }}
+        />
+      )}
       {detailsOpen && (
         <div
           className="modal-overlay"
@@ -495,23 +622,28 @@ export function AdminProgramCard({
             aria-labelledby="details-title"
           >
             <h2 id="details-title">تفاصيل البرنامج</h2>
+            <FormField
+              label="الرابط المختصر (Slug)"
+              htmlFor="program-slug"
+              hint="يُولّد تلقائيًا من الاسم عند تركه فارغًا"
+            >
+              <Input id="program-slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
+            </FormField>
             <p className="upload-hint">
               هذا النص يظهر بقسم &quot;عن البرنامج&quot; بصفحة تفاصيل البرنامج العامة (اللي
-              يشوفها الزوار)، منفصل عن الوصف المختصر اللي يبان على الكارد.
+              يشوفها الزوار)، منفصل عن الوصف المختصر اللي يبان على الكارد. يُحفظ فورًا أثناء
+              الكتابة.
             </p>
             <textarea
               className="input textarea"
               rows={8}
-              value={draftDescription}
-              onChange={(e) => setDraftDescription(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="اكتبي الوصف التفصيلي الكامل للبرنامج هنا..."
             />
             <div className="modal-actions">
-              <Button type="button" variant="outline" onClick={() => setDetailsOpen(false)}>
-                إلغاء
-              </Button>
-              <Button type="button" onClick={saveDetailsModal}>
-                حفظ التفاصيل
+              <Button type="button" onClick={() => setDetailsOpen(false)}>
+                تم
               </Button>
             </div>
           </div>

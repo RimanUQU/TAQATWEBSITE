@@ -28,6 +28,8 @@ export default async function Settings({
         <TextField name="instagram" label="Instagram" value={s.instagram} />
         <TextField name="x" label="X / Twitter" value={s.x} />
         <TextField name="whatsapp" label="WhatsApp" value={s.whatsapp} />
+        <TextField name="tiktok" label="TikTok" value={s.tiktok} />
+        <TextField name="snapchat" label="Snapchat" value={s.snapchat} />
         <h2 className="full">التذييل وSEO</h2>
         <AreaField name="footerDescription" label="وصف التذييل" value={s.footerDescription} />
         <TextField name="copyright" label="نص الحقوق" value={s.copyright} full />
