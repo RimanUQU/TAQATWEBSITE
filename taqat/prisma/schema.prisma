@@ -149,6 +149,11 @@ model StaffGroup {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   members      StaffMember[]
+  parentId     String?
+  parent       StaffGroup?   @relation("StaffGroupRows", fields: [parentId], references: [id], onDelete: SetNull)
+  rows         StaffGroup[]   @relation("StaffGroupRows")
+
+  @@index([parentId, displayOrder])
 }
 
 model StaffMember {

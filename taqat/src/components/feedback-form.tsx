@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { submitFeedbackAction } from "@/actions/feedback";
 import { Button } from "@/components/ui";
 
@@ -25,7 +25,7 @@ export function FeedbackForm({
 }) {
   const [type, setType] = useState("GENERAL");
   // قيمة ثابتة تُحسب مرة واحدة عند أول تصيير، بدون useEffect ولا إعادة تصيير إضافية
-  const loadedAtRef = useRef<number>(Date.now());
+  const [loadedAt] = useState(() => Date.now());
 
   return (
     <form action={submitFeedbackAction} className="panel" style={{ display: "grid", gap: 22 }}>
@@ -36,7 +36,7 @@ export function FeedbackForm({
           <input type="text" name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
-      <input type="hidden" name="loadedAt" value={loadedAtRef.current} />
+      <input type="hidden" name="loadedAt" value={loadedAt} />
 
       <div className="field">
         <label>ما نوع رأيك؟</label>
