@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -25,28 +25,24 @@ enum RegistrationStatus {
   WAITLIST
 }
 
-enum CommentStatus {
-  PENDING
-  APPROVED
-  HIDDEN
-}
-
 model User {
-  id            String                @id @default(cuid())
-  name          String
-  email         String                @unique
-  phone         String?
-  avatar        String?
-  passwordHash  String
-  role          Role                  @default(USER)
-  active        Boolean               @default(true)
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
+  id              String                @id @default(cuid())
+  name            String
+  email           String                @unique
+  phone           String?
+  avatar          String?
+  passwordHash    String
+  role            Role                  @default(USER)
+  active          Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
   registrations   ProgramRegistration[]
-  comments        ProgramComment[]
   resetTokens     PasswordResetToken[]
   createdPrograms Program[]             @relation("ProgramCreatedBy")
   updatedPrograms Program[]             @relation("ProgramUpdatedBy")
+
+  feedbacks Feedback[]
+  favorites Favorite[]
 }
 
 model ProgramCategory {
@@ -85,7 +81,8 @@ model Program {
   updatedById          String?
   updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   registrations        ProgramRegistration[]
-  comments             ProgramComment[]
+  feedbacks            Feedback[]
+  favorites            Favorite[]
 }
 
 model ProgramRegistration {
@@ -101,19 +98,16 @@ model ProgramRegistration {
   @@index([programId, status])
 }
 
-model ProgramComment {
-  id        String        @id @default(cuid())
-  body      String
-  status    CommentStatus @default(PENDING)
+model Favorite {
+  id        String   @id @default(cuid())
   userId    String
   programId String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  featured  Boolean       @default(false)
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  program   Program       @relation(fields: [programId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program   Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
 
-  @@index([programId, status])
+  @@unique([userId, programId])
+  @@index([programId])
 }
 
 model Partner {
@@ -202,4 +196,44 @@ model PasswordResetToken {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+enum FeedbackType {
+  GENERAL // رأي عام عن طاقات
+  PROGRAM // رأي عن برنامج محدد
+  SUGGESTION // اقتراح أو فكرة جديدة
+  ISSUE // ملاحظة أو مشكلة
+  OTHER // أخرى
+}
+
+enum FeedbackStatus {
+  PENDING // قيد المراجعة
+  APPROVED // معتمد (قد يُنشر أو لا)
+  HIDDEN // مخفي (لن يظهر للعامة)
+}
+
+model Feedback {
+  id        String         @id @default(cuid())
+  type      FeedbackType
+  message   String
+  email     String
+  name      String?
+  consent   Boolean        @default(false) // موافقة المستفيدة على العرض العام
+  status    FeedbackStatus @default(PENDING)
+  adminNote String? // ملاحظة داخلية للإدارة، غير معروضة للعامة
+
+  // يصير true بعد ما تنشرها الإدارة كشهادة في "قالوا عنا" — يمنع النشر المكرر
+  publishedAsTestimonial Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programId String?
+  program   Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, type])
+  @@index([email, createdAt]) // يستخدم لمنع تكرار الإرسال السريع (anti-spam)
 }

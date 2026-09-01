@@ -882,6 +882,235 @@
   justify-content: center;
 }
 
+/* ---------- رابط نسيت كلمة المرور داخل نموذج تغيير كلمة المرور ---------- */
+.forgot-password-link {
+  display: block;
+  width: fit-content;
+  margin-top: -10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pink-700);
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.account-admin-link {
+  margin-top: 20px;
+}
+
+/* ---------- رابط نسيت كلمة المرور داخل نموذج تغيير كلمة المرور ---------- */
+.forgot-password-link {
+  display: inline-block;
+  margin-top: -8px;
+  color: var(--pink-700);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- تبويبات الحساب (بياناتي / المفضلة / آرائي / الأمان) ---------- */
+.account-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.account-tabs {
+  display: grid;
+  gap: 4px;
+  position: sticky;
+  top: 100px;
+}
+
+.account-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  text-align: right;
+  transition: background 0.18s, color 0.18s;
+}
+
+.account-tabs button svg {
+  flex: 0 0 auto;
+}
+
+.account-tabs button:hover {
+  background: var(--pink-50);
+  color: var(--pink-700);
+}
+
+.account-tabs button.active {
+  background: var(--pink-500);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(248, 94, 150, 0.22);
+}
+
+.account-tab-content {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+  .account-tabs {
+    position: static;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .account-tabs button {
+    width: auto;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+}
+
+/* ---------- البرامج المفضلة ---------- */
+.favorites-list {
+  display: grid;
+}
+
+.favorite-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.favorite-item:last-child {
+  border-bottom: 0;
+}
+
+.favorite-item-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--pink-50);
+  color: var(--pink-600);
+}
+
+.favorite-item-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.favorite-item-info small {
+  color: var(--muted);
+}
+
+.favorite-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 0 auto;
+}
+
+.favorite-item-actions .card-link {
+  margin: 0;
+}
+
+.favorites-empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 30px 10px;
+}
+
+@media (max-width: 700px) {
+  .favorite-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .favorite-item-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ---------- آرائي ومقترحاتي ---------- */
+.feedback-list {
+  display: grid;
+  gap: 16px;
+}
+
+.feedback-item {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.feedback-item-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--teal-50);
+  color: var(--teal-700);
+}
+
+.feedback-item-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.feedback-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.feedback-item-program {
+  color: var(--pink-700);
+  font-weight: 600;
+  font-size: 0.88rem;
+  width: fit-content;
+}
+
+.feedback-item-info p {
+  color: var(--ink);
+  margin: 0;
+}
+
+.feedback-item-info small {
+  color: var(--muted);
+}
+
+.feedback-list-empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 30px 10px;
+}
+
 /* ============================================================
    تنسيقات حِصّة (من فرع HESSA-TAQATSTYLE) - قسم مضاف بالكامل
    بدون أي تعديل على القسم اللي فوق (من غلا). أي قاعدة هنا
@@ -1132,12 +1361,8 @@ h3 {
   width: auto;
 }
 .footer-decor-right {
-  /* نفس سلكتور غلا بالضبط (اسم واحد بدرجة تحديد واحدة)، فقاعدتي هنا تفوز لأنها الأخيرة
-     بالملف. المساحة تحت الشعار ضيقة جدًا (فقط ~48px بين الأيقونات وسطر الحقوق) فما
-     تكفي هالزخرفة (110px)، فحطيناها بجانب الشعار باليسار بمساحة فاضية فعلًا (الشعار
-     نفسه عرضه ~99px بس وملاصق يمين العمود، فيفضل يسارها ~250px فاضية تمامًا) */
-  top: 60px;
-  right: 15%; /* يبعدها عن يمين الصفحة لين توقف بمنتصف الفراغ يسار الشعار، بعيد عن النص والأيقونات */
+  top: 8px;
+  right: 4%;
 }
 .main-nav {
   display: flex;
@@ -1739,40 +1964,6 @@ h3 {
 .register-box .btn {
   width: 100%;
   margin-top: 18px;
-}
-.comments {
-  display: grid;
-  gap: 14px;
-  margin-top: 30px;
-}
-.comment {
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-}
-.comment-head {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--pink-100);
-  color: var(--pink-700);
-  font-weight: 800;
-}
-.comment small {
-  color: var(--muted);
-}
-.comment-form {
-  display: grid;
-  gap: 14px;
-  margin-top: 30px;
 }
 .content-cards {
   display: grid;
@@ -2902,3 +3093,18 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+/* أضيفي هذا المقطع في نهاية globals.css — يعتمد كليًا على المتغيرات الموجودة أصلًا */
+
+.feedback-type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:6px}
+.feedback-type{position:relative;border:2px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:8px;cursor:pointer;background:#fff;transition:.18s}
+.feedback-type input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.feedback-type svg{width:24px;height:24px;color:var(--pink-500)}
+.feedback-type strong{font-size:.95rem}
+.feedback-type small{color:var(--muted);font-size:.8rem;line-height:1.5}
+.feedback-type:has(input:checked){border-color:var(--pink-500);background:var(--pink-50);box-shadow:0 6px 16px rgba(248,94,150,.14)}
+.feedback-type:has(input:focus-visible){outline:3px solid var(--pink-300);outline-offset:2px}
+
+.feedback-honeypot{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.feedback-privacy-note{display:flex;gap:10px;background:var(--teal-50);color:var(--teal-800);border-radius:12px;padding:14px 16px;font-size:.85rem;line-height:1.7}
+.feedback-privacy-note svg{width:18px;flex-shrink:0;margin-top:2px}

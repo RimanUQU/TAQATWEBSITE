@@ -351,12 +351,6 @@ export async function deleteStaffAction(id: string) {
   });
   staffPaths();
 }
-export async function moderateCommentAction(id: string, status: "APPROVED" | "HIDDEN" | "DELETE") {
-  await requireAdmin();
-  if (status === "DELETE") await db.programComment.delete({ where: { id } });
-  else await db.programComment.update({ where: { id }, data: { status } });
-  revalidatePath("/admin/comments");
-}
 export async function updateUserAction(id: string, formData: FormData) {
   const admin = await requireAdmin();
   if (id === admin.id && text(formData, "role") !== "ADMIN")

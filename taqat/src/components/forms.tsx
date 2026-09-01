@@ -1,7 +1,7 @@
 "use client";
 import { useActionState, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Button, FormField, Input, Textarea, Alert } from "./ui";
+import { Button, FormField, Input, Alert } from "./ui";
 import type { ActionState } from "@/lib/utils";
 
 export function PasswordInput({
@@ -35,7 +35,6 @@ export function PasswordInput({
     </FormField>
   );
 }
-
 export function ActionForm({
   action,
   children,
@@ -59,24 +58,3 @@ export function ActionForm({
   );
 }
 
-export function CommentForm({
-  action,
-}: {
-  action: (state: ActionState, data: FormData) => Promise<ActionState>;
-}) {
-  return (
-    <ActionForm action={action} submitLabel="إرسال التعليق" className="comment-form">
-      <FormField label="أضف تعليقك" htmlFor="body">
-        <Textarea
-          id="body"
-          name="body"
-          minLength={5}
-          maxLength={1000}
-          required
-          rows={4}
-          placeholder="شاركينا رأيك وتجربتك..."
-        />
-      </FormField>
-    </ActionForm>
-  );
-}

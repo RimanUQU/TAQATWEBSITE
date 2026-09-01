@@ -4,9 +4,8 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/auth";
 import { formatDate } from "@/lib/utils";
-import { addCommentAction, registerProgramAction } from "@/actions/programs";
+import { registerProgramAction } from "@/actions/programs";
 import { Alert, Badge, Breadcrumb, Button, Card } from "@/components/ui";
-import { CommentForm } from "@/components/forms";
 import { getPublicImageUrl } from "@/lib/images";
 
 const differenceInDays = (end: Date, start: Date) =>
@@ -45,11 +44,6 @@ export default async function ProgramDetails({
     include: {
       category: true,
       registrations: { select: { userId: true, status: true } },
-      comments: {
-        where: { status: "APPROVED" },
-        include: { user: { select: { name: true } } },
-        orderBy: { createdAt: "desc" },
-      },
     },
   });
   if (!program || program.status !== "PUBLISHED") notFound();
@@ -139,36 +133,6 @@ export default async function ProgramDetails({
             )}
             <small>آخر موعد للتسجيل: {formatDate(program.registrationDeadline)}</small>
           </Card>
-        </div>
-      </section>
-      <section className="page-section soft-section">
-        <div className="container" style={{ maxWidth: 850 }}>
-          <h2>تعليقات الزوار</h2>
-          <p>نرحب بتجربتك ورأيك. تظهر التعليقات بعد مراجعتها.</p>
-          {user ? (
-            <CommentForm action={addCommentAction.bind(null, program.id, program.slug)} />
-          ) : (
-            <Alert>
-              يرجى <a href={`/login?next=/programs/${program.slug}`}>تسجيل الدخول</a> لإضافة تعليق.
-            </Alert>
-          )}
-          <div className="comments">
-            {program.comments.map((comment) => (
-              <article className="comment" key={comment.id}>
-                <div className="comment-head">
-                  <span className="avatar">{comment.user.name.charAt(0)}</span>
-                  <div>
-                    <strong>{comment.user.name}</strong>
-                    <small>{formatDate(comment.createdAt)}</small>
-                  </div>
-                </div>
-                <p>{comment.body}</p>
-              </article>
-            ))}
-            {!program.comments.length && (
-              <p>لا توجد تعليقات منشورة بعد. كوني أول من يشارك تجربته.</p>
-            )}
-          </div>
         </div>
       </section>
     </>
