@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { loginAction } from "@/actions/auth";
 import { ActionForm, PasswordInput } from "@/components/forms";
@@ -17,10 +18,8 @@ export default async function LoginPage({
       </aside>
       <section className="auth-panel">
         <div className="auth-box">
-          <Link href="/" className="logo">
-            <span>ط</span>
-            <b>طاقات</b>
-            <small>للفتيات</small>
+          <Link href="/" className="auth-logo" aria-label="نادي طاقات للفتيات">
+            <Image src="/brand/logo-mark.png" alt="" width={720} height={720} />
           </Link>
           <h1>أهلًا بعودتك</h1>
           <p>سجّلي الدخول للمتابعة إلى حسابك وبرامجك.</p>

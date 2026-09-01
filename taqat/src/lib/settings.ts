@@ -1,6 +1,10 @@
 import { db } from "./db";
 
 export const defaults = {
+  heroEyebrow: "جمعية طاقات الشبابية – مكة المكرمة",
+  heroTitle: "نادي طاقات للفتيات",
+  heroSubtitle:
+    "مركز تربوي يفتح لكِ أبواب النمو والانطلاق، ينمّي مهاراتكِ ويرسّخ قيمكِ ضمن بيئة آمنة وجاذبة تواكب روح العصر — لتكتشفي طاقتكِ الحقيقية وتصنعي أثرك الخاص معنا.",
   clubName: "نادي طاقات للفتيات",
   email: "hello@taqat.sa",
   phone: "011 000 0000",
@@ -11,6 +15,8 @@ export const defaults = {
   instagram: "https://instagram.com",
   x: "https://x.com",
   whatsapp: "https://wa.me/966500000000",
+  tiktok: "",
+  snapchat: "",
   siteTitle: "نادي طاقات للفتيات",
   metaDescription: "نصنع بيئة ملهمة للفتيات لاكتشاف طاقاتهن وبناء مستقبلهن.",
   logo: "",
@@ -19,6 +25,10 @@ export const defaults = {
   showPartners: "true",
   showStatistics: "true",
   showTestimonials: "true",
+  showStatBeneficiaries: "true",
+  showStatPartners: "true",
+  showStatPrograms: "true",
+  showStatSatisfaction: "true",
   programsHeading: "برامج صنعت لتُلهمك",
   partnersHeading: "شركاؤنا",
   statisticsHeading: "أثرٌ يكبر مع كل طاقة",

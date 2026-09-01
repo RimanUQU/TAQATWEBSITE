@@ -1342,6 +1342,36 @@ h3 {
   height: 70px; /* أكبر ما يسمح به ارتفاع الهيدر (82px) مع هامش تنفّس بسيط */
   width: auto;
 }
+/* الشعار الحقيقي (شعار طاقات الرسمي) بصفحتي تسجيل الدخول وإنشاء حساب -
+   نفس ملف الشعار المستخدم فعليًا بالهيدر (logo-mark.png)، الاسم الكامل
+   "نادي طاقات للفتيات" مرسوم جوا الصورة نفسها فما نحتاج نص إضافي جنبه. */
+.auth-logo {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+.auth-logo img {
+  height: 90px;
+  width: auto;
+  display: block;
+}
+/* نفس الشعار الحقيقي، بس بالنسخة المقصوصة الشفافة (logo-mark-trim.png)
+   المصممة للخلفيات الغامقة - نفس الملف المستخدم فعليًا بفوتر الموقع
+   (background: var(--teal-800))، ولوحة تحكم الأدمن نفس هالخلفية بالضبط. */
+.admin-logo {
+  display: block;
+  margin: 0 8px 25px;
+}
+.admin-logo img {
+  height: 60px;
+  width: auto;
+  display: block;
+}
+.admin-logo small {
+  display: block;
+  margin-top: 6px;
+  color: #d8e9e8;
+  font-size: 0.75rem;
+}
 .footer-brand a.footer-logo {
   /* سلكتور بنفس قوة تحديد ".site-footer a:not(.logo)" عند غلا بالضبط (اللي صار ينطبق
      على شعارنا بعد ما شلنا كلاس "logo" منه) عشان تنسيقاتنا هنا تفوز عليها فعليًا، مو
@@ -1565,6 +1595,25 @@ h3 {
   background: #fff3d6;
   color: #8b5a00;
 }
+.favorite-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--pink-500);
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    background 0.15s;
+}
+.favorite-toggle-btn:hover {
+  transform: translateY(-2px);
+  background: var(--pink-50);
+}
 .card {
   background: white;
   border: 1px solid var(--line);
@@ -1638,15 +1687,17 @@ h3 {
   margin-top: 12px;
 }
 .testimonial {
-  padding: 26px;
+  padding: 22px;
 }
 .testimonial .quote {
-  font-size: 4rem;
+  font-size: 3.2rem;
   line-height: 0.6;
   color: var(--pink-300);
 }
 .testimonial p {
-  min-height: 86px;
+  min-height: 70px;
+  font-size: 0.94rem;
+  overflow-wrap: break-word; /* لو النص بدون مسافات (زي بيانات تجريبية)، يلف داخل حدود البطاقة بدل ما يوسّعها */
 }.testimonial strong, .testimonial small {
   display: block;
 }
@@ -1742,11 +1793,13 @@ h3 {
   background: var(--pink-500);
   color: #fff;
 }
-/* شريط الإعلانات (Hero) - شريط رفيع عائم بحواف دائرية، مستوحى من مرجع طويق بألوان طاقات المعتمدة */
+/* شريط الإعلانات (Hero) - صورة إعلان كاملة (Full-bleed) لكل شريحة، بنفس
+   أسلوب صورة الخلفية بصفحة تفاصيل البرنامج (.details-hero): تدرّج شفاف
+   فوقها لوضوح النص، والنص والزر بأسفل الصورة. بطاقة عائمة بحواف دائرية. */
 .hero-slider {
   position: relative;
-  height: 108px; /* أطول شوي من 92px عشان تنسع لصف النقاط أسفل النص */
-  min-height: 108px; /* لازم نثبتها هنا وإلا ترجع لقيمة min-height:530px القديمة من قسم غلا فوق (السلايدر الكبير القديم)، لأن min-height له أولوية على height */
+  height: min(250px, calc(100vh - 82px));
+  min-height: 220px; /* لازم نثبتها هنا وإلا ترجع لقيمة min-height:530px القديمة من قسم غلا فوق، لأن min-height له أولوية على height */
   margin-block: 20px 0; /* مسافة تفصله عن الهيدر، يبان "عائم" مو ملاصق */
   background: var(--teal-800);
   border-radius: var(--radius); /* حواف دائرية، نفس قيمة الاستدارة المستخدمة بباقي الكروت */
@@ -1755,6 +1808,8 @@ h3 {
 .hero-slide {
   position: absolute;
   inset: 0;
+  display: flex;
+  align-items: flex-end;
   opacity: 0;
   transition: opacity 0.55s;
   pointer-events: none;
@@ -1763,46 +1818,39 @@ h3 {
   opacity: 1;
   pointer-events: auto;
 }
+.hero-slide img {
+  object-fit: cover;
+}
 .hero-slide:after {
-  content: none; /* نلغي التدرج الغامق (:after) من قسم غلا فوق - كان مخصص لتصميم السلايدر الكبير القديم اللي فيه صورة خلفية كاملة، تصميمي الجديد شريط رفيع بخلفية تركوازية صافية فقط وما يحتاج تعتيم إضافي */
+  /* نفس تدرج .details-hero:after بالضبط - يوضّح النص فوق أي صورة إعلان */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(7, 49, 48, 0.92), rgba(7, 49, 48, 0.18) 55%, transparent);
 }
 .hero-content {
   position: relative;
   z-index: 2;
-  height: 100%;
+  width: 100%;
   display: flex;
-  flex-direction: row; /* لازم نثبتها هنا وإلا ترجع لـ column من قسم غلا فوق (تصميم السلايدر الكبير القديم كان بيرصف العناصر عمودي) */
-  align-items: center;
   justify-content: space-between;
+  align-items: flex-end;
   gap: 16px;
-  padding: 0 28px 18px; /* مسافة سفلية تحجز مكان لصف النقاط تحتها */
+  padding: 32px 40px 44px;
   color: white;
 }
 .hero-text {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0; /* يسمح بقص العنوان الطويل (ellipsis) بدل ما يكسر الصف */
-}
-.hero-thumb {
-  position: relative;
-  flex: 0 0 60px;
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.hero-thumb img {
-  object-fit: cover; /* أي صورة، بأي نسبة أبعاد، تتقص تلقائيًا تملأ المربع بدون تشويه */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
 }
 .hero-text h1 {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.6rem;
+  font-weight: 800;
   margin: 0;
-  max-width: 420px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 600px;
 }
 .hero-actions {
   display: flex;
@@ -1834,19 +1882,84 @@ h3 {
   background: #fff;
 }
 .stat-card {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  padding: 28px;
-  background: var(--teal-50);
+  padding: 20px;
   border-radius: var(--radius);
+  /* نفس تركيبة خلفية الهيدر (club-hero) لكن بدرجات أفتح - خاصة بكروت
+     الإحصائيات فقط، بدون أي تعديل على خلفية الهيدر نفسه */
+  background:
+    radial-gradient(620px 260px at 88% -10%, rgba(217, 95, 147, 0.05), transparent 70%),
+    radial-gradient(520px 240px at 8% 120%, rgba(62, 150, 148, 0.05), transparent 70%),
+    linear-gradient(160deg, #fff8fb 0%, #fffefe 45%, #f7fcfc 100%);
+  /* نفس تفاعل الهوفر (ارتفاع بسيط + ظل) المستخدم بكروت قسم الشركاء */
+  transition:
+    transform 0.22s,
+    box-shadow 0.22s;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
 }
 .stat-card strong {
+  position: relative;
+  z-index: 2;
   display: block;
   color: var(--teal-800);
-  font-size: 2.35rem;
+  font-size: 2.1rem;
 }
 .stat-card span {
+  position: relative;
+  z-index: 2;
   color: var(--muted);
 }
+
+/* وردة متحركة بزاوية بطاقة الإحصائية - راجع animated-stat-flower.tsx */
+.stat-flower {
+  display: block; /* بدونها width ما تشتغل لأن span عنصر inline افتراضيًا */
+  position: absolute;
+  z-index: 1;
+  left: -2px;
+  bottom: -16px;
+  width: 46px;
+  height: 69px; /* نفس نسبة viewBox (60×90) */
+  opacity: 0.85;
+  pointer-events: none;
+}
+.stat-flower svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.stat-flower-stem {
+  opacity: 0.5;
+}
+.stat-flower-petal {
+  opacity: 0;
+  transform: scale(0.35);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+/* الترتيب من الأسفل للأعلى: البتلة الأقرب لقاعدة الساق (٣) تظهر أول، ثم
+   الوسطى (٢)، ثم الأعلى (١) آخر شي - عكس ترقيمها بالمكوّن (1 هي الأعلى) */
+.stat-card:hover .stat-flower-petal-3 {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0s;
+}
+.stat-card:hover .stat-flower-petal-2 {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.14s;
+}
+.stat-card:hover .stat-flower-petal-1 {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.28s;
+}
+
 .auth-page {
   min-height: calc(100vh - 82px);
   display: grid;
@@ -1960,6 +2073,8 @@ h3 {
   position: sticky;
   top: 104px;
   padding: 28px;
+  display: grid;
+  gap: 14px;
 }
 .register-box .btn {
   width: 100%;
@@ -2055,6 +2170,31 @@ h3 {
 .btn-danger {
   background: var(--danger);
   color: white;
+}
+/* نافذة قص الصورة القابلة لإعادة الاستخدام (image-crop-modal) - أوسع من
+   النافذة الافتراضية (470px) عشان تتسع لمنطقة القص، خصوصًا النسب العريضة
+   جدًا زي شريط الإعلانات (5:1). */
+.image-crop-modal {
+  width: min(96vw, 720px);
+}
+.crop-stage {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+}
+.crop-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.crop-zoom-range {
+  width: 100%;
+  accent-color: var(--pink-500);
 }
 .admin-shell {
   display: grid;
@@ -2223,6 +2363,21 @@ h3 {
   color: #fff;
   font-size: 0.78rem;
   text-align: center;
+}
+/* معاينة صورة بانر شريط الإعلانات بكارد الأدمن - نسبة عريضة (مو مربّعة
+   زي صورة الكارد العادية) عشان تعكس شكلها الفعلي بالشريط */
+.admin-banner-upload {
+  padding: 0 20px 14px;
+}
+.admin-banner-upload .upload-hint {
+  display: block;
+  margin-top: 6px;
+}
+.program-card .card-image.admin-banner-image {
+  position: relative;
+  height: 110px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 .inline-input {
   border: 1px solid var(--pink-300);
@@ -2426,22 +2581,20 @@ h3 {
     grid-template-columns: 1fr;
   }
   .hero-slider {
-    height: 132px; /* رقم ثابت بدل auto - العنصر الداخلي مطلق الموضع فما يقدر يحدد ارتفاع تلقائي */
-    min-height: 132px; /* نفس سبب النسخة المكتبية: نلغي min-height:540px القديمة من قسم غلا فوق */
+    height: min(230px, calc(100vh - 72px));
+    min-height: 200px;
   }
   .hero-content {
-    padding: 10px 16px 30px;
-    flex-wrap: wrap;
-    row-gap: 8px;
+    padding: 20px 18px 26px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
   .hero-dots {
     bottom: 10px;
   }
-  .hero-thumb {
-    display: none; /* المساحة ضيقة على الجوال، نعطي الأولوية للعنوان والزر */
-  }
   .hero-text h1 {
-    font-size: 0.92rem;
+    font-size: 1.25rem;
     max-width: 100%;
   }
   .program-card .card-image {
@@ -2778,6 +2931,164 @@ h3 {
   }
 }
 
+/* ============================================================
+   خلفية قسم "الشركاء" بالرئيسية - نفس تنسيق خلفية الهيدر (club-hero)
+   بالضبط (تدرّج اللون + الرسومات النباتية الخفيفة)، بدون الشارة
+   العلوية (badge) فوق العنوان لأن هذا القسم يستخدم عنوانه المتوسط
+   (SectionTitle) العادي. كلاسات مستقلة عن club-hero عمدًا (نفس مبدأ
+   الاستقلالية المتبع بالملف) حتى ما يأثر تعديل مستقبلي بأحدهما بالثاني. */
+.partners-decor-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(620px 260px at 88% -10%, rgba(217, 95, 147, 0.1), transparent 70%),
+    radial-gradient(520px 240px at 8% 120%, rgba(62, 150, 148, 0.1), transparent 70%),
+    linear-gradient(160deg, var(--pink-50) 0%, #fffdfd 45%, var(--teal-50) 100%);
+}
+
+.partners-decor-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+.partners-decor {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.partners-decor svg {
+  display: block;
+}
+
+.partners-decor-sprig-left {
+  left: -18px;
+  bottom: -22px;
+  width: 150px;
+  opacity: 0.55;
+}
+
+.partners-decor-sprig-right {
+  right: 4%;
+  top: -18px;
+  width: 92px;
+  opacity: 0.4;
+  transform: rotate(18deg);
+}
+
+.partners-decor-dot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.partners-decor-dot-a {
+  width: 8px;
+  height: 8px;
+  left: 22%;
+  top: 22%;
+  background: var(--teal-300);
+  opacity: 0.6;
+}
+
+.partners-decor-dot-b {
+  width: 6px;
+  height: 6px;
+  left: 40%;
+  bottom: 18%;
+  background: var(--pink-400);
+  opacity: 0.55;
+}
+
+@media (max-width: 700px) {
+  .partners-decor-sprig-left {
+    width: 100px;
+    opacity: 0.4;
+  }
+  .partners-decor-sprig-right {
+    width: 64px;
+  }
+}
+
+/* ============================================================
+   خلفية قسم "قالوا عنا" بالرئيسية - نفس خلفية سكشن الشركاء بالضبط
+   (تدرّج اللون + الرسومات النباتية الخفيفة)، بكلاسات مستقلة عن
+   partners-decor عمدًا (نفس مبدأ الاستقلالية المتبع بالملف). */
+.testimonials-decor-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(620px 260px at 88% -10%, rgba(217, 95, 147, 0.1), transparent 70%),
+    radial-gradient(520px 240px at 8% 120%, rgba(62, 150, 148, 0.1), transparent 70%),
+    linear-gradient(160deg, var(--pink-50) 0%, #fffdfd 45%, var(--teal-50) 100%);
+}
+
+.testimonials-decor-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+.testimonials-decor {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.testimonials-decor svg {
+  display: block;
+}
+
+.testimonials-decor-sprig-left {
+  left: -18px;
+  bottom: -22px;
+  width: 150px;
+  opacity: 0.55;
+}
+
+.testimonials-decor-sprig-right {
+  right: 4%;
+  top: -18px;
+  width: 92px;
+  opacity: 0.4;
+  transform: rotate(18deg);
+}
+
+.testimonials-decor-dot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.testimonials-decor-dot-a {
+  width: 8px;
+  height: 8px;
+  left: 22%;
+  top: 22%;
+  background: var(--teal-300);
+  opacity: 0.6;
+}
+
+.testimonials-decor-dot-b {
+  width: 6px;
+  height: 6px;
+  left: 40%;
+  bottom: 18%;
+  background: var(--pink-400);
+  opacity: 0.55;
+}
+
+@media (max-width: 700px) {
+  .testimonials-decor-sprig-left {
+    width: 100px;
+    opacity: 0.4;
+  }
+  .testimonials-decor-sprig-right {
+    width: 64px;
+  }
+}
+
 /* نافذة تأكيد حذف البرنامج بالأدمن - نفس بنية .modal-overlay/.modal/.modal-actions
    الجاهزة بالمشروع، بكلاسات مستقلة عن account-delete-modal (صفحة الحساب عند غلا)
    حتى ما نلمس شي من تصميمها. */
@@ -2812,8 +3123,11 @@ h3 {
 /* ============================================================
    كاروسيل "البرامج المميزة" بالرئيسية (programs-carousel) - منفصل
    تمامًا عن شريط الإعلانات (hero-slider)، يستخدم ProgramCard كما هو
-   بدون أي تعديل عليه. البطاقة النشطة أكبر وواضحة، والمجاورة أصغر
-   وشفافة شوي وتبين جزئيًا من الطرفين.
+   بدون أي تعديل عليه. تأثير "Coverflow" ثلاثي الأبعاد: البطاقة النشطة
+   بالمنتصف كبيرة وبالمقدمة، والبقية تصغر وتدور وتتراجع للخلف كأنها على
+   قوس دائري - نفس أسلوب أدوبي/آبل الكلاسيكي. الموضع محسوب بالكامل
+   بالجافاسكربت (programs-carousel.tsx) عبر transform مباشر لكل بطاقة،
+   والـCSS هنا يجهّز بس المسرح ثلاثي الأبعاد (perspective) وأبعاد البطاقة.
    ============================================================ */
 .programs-carousel {
   position: relative;
@@ -2823,28 +3137,22 @@ h3 {
 }
 .programs-carousel-track {
   flex: 1;
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding: 10px 8% 22px; /* مسافة جانبية تكشف "بروز" البطاقات المجاورة بالطرفين، بدون تجاوز حدود .container */
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.programs-carousel-track::-webkit-scrollbar {
-  display: none;
+  position: relative;
+  height: 440px; /* نفس ارتفاع .carousel-poster-card بالضبط */
+  overflow: hidden; /* يمنع البطاقات البعيدة جدًا من تكبير عرض الصفحة أفقيًا */
+  perspective: 1400px;
+  touch-action: pan-y; /* يسمح بالتمرير العمودي للصفحة، ونتحكم إحنا بالسحب الأفقي */
 }
 .programs-carousel-slide {
-  flex: 0 0 clamp(240px, 30vw, 340px);
-  scroll-snap-align: center;
-  opacity: 0.55;
-  transform: scale(0.9);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: clamp(240px, 30vw, 340px);
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.22, 0.68, 0, 1), opacity 0.5s ease;
 }
 .programs-carousel-slide.active {
-  opacity: 1;
-  transform: scale(1);
+  cursor: default;
 }
 .programs-carousel-arrow {
   flex: 0 0 auto;
@@ -2863,38 +3171,87 @@ h3 {
   opacity: 0.35;
   cursor: not-allowed;
 }
-.programs-carousel-dots {
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.programs-carousel-dots button {
-  width: 7px;
-  height: 7px;
-  padding: 0;
-  border: 0;
-  border-radius: 99px;
-  background: var(--pink-200);
-  transition: 0.2s;
-}
-.programs-carousel-dots button.active {
-  width: 20px;
-  background: var(--pink-500);
-}
-
 @media (max-width: 700px) {
-  .programs-carousel-slide {
-    flex-basis: 78vw;
+  .programs-carousel-track {
+    height: 400px; /* نفس ارتفاع .carousel-poster-card بالجوال */
   }
   .programs-carousel-arrow {
-    display: none; /* على الجوال: سحب باللمس بس، بدون أسهم تزاحم المساحة */
+    display: none; /* على الجوال: سحب باللمس + لمس البطاقات المجاورة، بدون أسهم تزاحم المساحة */
   }
-  .programs-carousel-track {
-    padding-inline: 11vw;
+}
+
+/* ============================================================
+   كاروسيل "قالوا عنا" بالرئيسية (testimonials-peek) - بطاقة .testimonial
+   الأصلية بدون أي تعديل على شكلها. بطاقة نشطة واضحة بالمنتصف، والمجاورة
+   تبين جزئيًا (بروز) من الطرفين - نفس مبدأ كاروسيل البرامج الأول (تمرير
+   أفقي أصيل بالمتصفح عبر scroll-snap، يشتغل باللمس والسحب بالماوس تلقائيًا
+   بدون كود إضافي). الأسهم فوق منطقة البروز مباشرة. حركة دائرية مستمرة تشمل
+   كل الآراء المفعّلة من لوحة التحكم. كلاسات مستقلة عن programs-carousel
+   عمدًا رغم تشابه الفكرة، بنفس مبدأ الاستقلالية المتبع بالملف.
+   ============================================================ */
+.testimonials-peek {
+  position: relative;
+}
+.testimonials-peek-track {
+  display: flex;
+  gap: 22px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 4px 18% 4px; /* هامش أوسع من قبل عشان البطاقة الأصغر تبان بمنتصف متوازن */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.testimonials-peek-track::-webkit-scrollbar {
+  display: none;
+}
+.testimonials-peek-slide {
+  /* أصغر من قبل (كانت 72% بدون حد أقصى)، ومحدودة بحد أدنى وأقصى ثابتين
+     عشان تبقى متناسبة مع باقي الصفحة على أي حجم شاشة، مو بس نسبة مرنة */
+  flex: 0 0 clamp(300px, 42vw, 440px);
+  min-width: 0; /* بدون هذا، أي نص طويل بدون مسافات جوا البطاقة يفرض عرض أكبر من المحدد ويكسر التوحيد */
+  scroll-snap-align: center;
+  opacity: 0.5;
+  transform: scale(0.92);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.testimonials-peek-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+.testimonials-peek-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--pink-700);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 14px rgba(64, 42, 51, 0.08);
+  z-index: 3;
+}
+.testimonials-peek-prev {
+  right: 9%;
+}
+.testimonials-peek-next {
+  left: 9%;
+}
+@media (max-width: 700px) {
+  .testimonials-peek-slide {
+    flex-basis: clamp(240px, 74vw, 300px);
+  }
+  .testimonials-peek-track {
+    padding-inline: 12%;
+  }
+  .testimonials-peek-prev {
+    right: 2%;
+  }
+  .testimonials-peek-next {
+    left: 2%;
   }
 }
 
@@ -3059,11 +3416,13 @@ h3 {
   transition: transform 0.3s ease;
 }
 @media (hover: hover) {
-  .carousel-poster-card:hover .carousel-poster-panel {
+  /* الكشف بالهوفر يشتغل بس للبطاقة النشطة (المركزية) - البطاقات الجانبية
+     المتراجعة للخلف ما تفتح تفاصيلها حتى لو الماوس مرّ فوقها بالغلط. */
+  .programs-carousel-slide.active .carousel-poster-card:hover .carousel-poster-panel {
     transform: translateY(0);
   }
 }
-.carousel-poster-card.revealed .carousel-poster-panel {
+.programs-carousel-slide.active .carousel-poster-card.revealed .carousel-poster-panel {
   transform: translateY(0);
 }
 

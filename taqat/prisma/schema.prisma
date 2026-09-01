@@ -52,6 +52,12 @@ model ProgramCategory {
   programs Program[]
 }
 
+model TargetAudience {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  programs Program[]
+}
+
 model Program {
   id                   String                @id @default(cuid())
   title                String
@@ -76,6 +82,9 @@ model Program {
   updatedAt            DateTime              @updatedAt
   categoryId           String?
   category             ProgramCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  bannerImage          String?
+  targetAudienceId     String?
+  targetAudience       TargetAudience?       @relation(fields: [targetAudienceId], references: [id], onDelete: SetNull)
   createdById          String?
   createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   updatedById          String?
@@ -157,6 +166,9 @@ model StaffMember {
   @@index([groupId, displayOrder])
 }
 
+// ملاحظة: هذا الموديل ما عاد يُستخدم من الكود (قسم "الإحصائيات" بالرئيسية
+// صار محسوبًا بالكامل تلقائيًا من البيانات الحقيقية - راجع src/lib/homepage-stats.ts).
+// أبقيناه هنا بدون حذف الجدول أو بياناته القديمة من قاعدة البيانات.
 model Statistic {
   id           String   @id @default(cuid())
   title        String

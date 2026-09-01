@@ -9,62 +9,54 @@ import { CarouselProgramCard } from "./carousel-program-card";
 // ProgramCard كما هو.
 type CarouselProgram = Parameters<typeof ProgramCard>[0]["program"];
 
+const MAX_VISIBLE_DISTANCE = 3; // أبعد من كذا بطاقات نخفيها تمامًا (أداء + وضوح)
+const SWIPE_THRESHOLD = 40; // بكسل، أقل مسافة سحب باللمس عشان نعتبرها تنقّل
+
 /**
- * كاروسيل "البرامج المميزة" بالرئيسية - البطاقة النشطة بالمنتصف أكبر شوي،
- * والمجاورة أصغر وتبين جزئيًا. يعتمد على تمرير أفقي أصيل بالمتصفح
- * (scroll-snap) بدل حساب السحب يدويًا، فيشتغل صح باللمس على الجوال والسحب
- * بالماوس على الديسكتوب من غير أي كود إضافي، والأسهم تتحكم بنفس التمرير.
+ * كاروسيل "البرامج المميزة" بالرئيسية - كاروسيل ثلاثي الأبعاد (Coverflow):
+ * البطاقة النشطة بالمنتصف كبيرة وبالمقدمة، والبقية تصغر وتدور وتتراجع للخلف
+ * كأنها مصفوفة على قوس دائري، كل ما ابتعدت عن المنتصف. الضغط على أي بطاقة
+ * غير نشطة يجيبها هي للمنتصف (بدل ما يفتح صفحتها مباشرة)، والبطاقة النشطة
+ * نفسها تشتغل بسلوكها المعتاد (فتح الصفحة / كشف التفاصيل باللمس بالجوال).
  */
 export function ProgramsCarousel({ programs }: { programs: CarouselProgram[] }) {
-  const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
-  function scrollToIndex(index: number) {
-    const track = trackRef.current;
-    const card = track?.children[index] as HTMLElement | undefined;
-    card?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }
-
-  function navigate(direction: "next" | "prev") {
-    const target =
-      direction === "next"
-        ? Math.min(activeIndex + 1, programs.length - 1)
-        : Math.max(activeIndex - 1, 0);
-    scrollToIndex(target);
-  }
-
-  // نحدد البطاقة "النشطة" حاليًا حسب أقرب بطاقة لمنتصف منطقة العرض أثناء
-  // التمرير (بدل ما نطلب من المستخدم يفلت السحب بالضبط على بطاقة معينة).
+  // نحسب "موبايل أو لا" بعد أول تصيير بس (مو أثناء SSR)، عشان ما يصير تعارض
+  // بين HTML اللي يجهزه السيرفر وأول تصيير بالمتصفح (Hydration Mismatch).
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    let frame: number;
-    function updateActiveFromScroll() {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        if (!track) return;
-        const viewCenter = track.scrollLeft + track.clientWidth / 2;
-        let closestIndex = 0;
-        let closestDistance = Infinity;
-        Array.from(track.children).forEach((child, index) => {
-          const el = child as HTMLElement;
-          const elCenter = el.offsetLeft + el.offsetWidth / 2;
-          const distance = Math.abs(elCenter - viewCenter);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = index;
-          }
-        });
-        setActiveIndex(closestIndex);
-      });
-    }
-    track.addEventListener("scroll", updateActiveFromScroll, { passive: true });
-    updateActiveFromScroll();
-    return () => {
-      track.removeEventListener("scroll", updateActiveFromScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, [programs.length]);
+    const query = window.matchMedia("(max-width: 700px)");
+    const update = () => setIsMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  function goTo(index: number) {
+    setActiveIndex(index);
+  }
+
+  // تنقّل دائري (بدون نهاية): من آخر بطاقة "التالي" يرجعنا لأول بطاقة،
+  // ومن أول بطاقة "السابق" يودينا لآخر بطاقة - نفس فكرة الحركة الدائرية.
+  function navigate(direction: "next" | "prev") {
+    const n = programs.length;
+    goTo(direction === "next" ? (activeIndex + 1) % n : (activeIndex - 1 + n) % n);
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+    // بالـRTL: سحب لليمين (delta موجب) = "السابق"، سحب لليسار = "التالي"
+    navigate(delta > 0 ? "prev" : "next");
+  }
 
   if (!programs.length) return null;
 
@@ -75,48 +67,63 @@ export function ProgramsCarousel({ programs }: { programs: CarouselProgram[] }) 
           type="button"
           className="programs-carousel-arrow programs-carousel-prev"
           onClick={() => navigate("prev")}
-          disabled={activeIndex === 0}
           aria-label="البرنامج السابق"
         >
           <ChevronRight />
         </button>
       )}
-      <div className="programs-carousel-track" ref={trackRef} role="list">
-        {programs.map((program, index) => (
-          <div
-            key={program.slug}
-            role="listitem"
-            className={`programs-carousel-slide ${index === activeIndex ? "active" : ""}`}
-          >
-            <CarouselProgramCard program={program} />
-          </div>
-        ))}
+      <div
+        className="programs-carousel-track"
+        role="list"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {programs.map((program, index) => {
+          const n = programs.length;
+          let distance = index - activeIndex;
+          // نختار أقصر مسافة على "الدائرة" (يمين أو يسار) بدل المسافة الخطية
+          // العادية، عشان أول/آخر بطاقة توصل لبعض بسلاسة وما يبان فراغ.
+          if (distance > n / 2) distance -= n;
+          else if (distance < -n / 2) distance += n;
+          const absDistance = Math.abs(distance),
+            sign = Math.sign(distance),
+            hidden = absDistance > MAX_VISIBLE_DISTANCE,
+            depth = isMobile ? absDistance * 70 : absDistance * 150,
+            rotate = isMobile ? sign * -14 : sign * -26,
+            scale = Math.max(1 - absDistance * 0.14, 0.6),
+            opacity = hidden ? 0 : Math.max(1 - absDistance * 0.3, 0);
+          return (
+            <div
+              key={program.slug}
+              role="listitem"
+              className={`programs-carousel-slide ${index === activeIndex ? "active" : ""}`}
+              style={{
+                transform: `translateX(calc(-50% + ${distance} * 60%)) translateZ(${-depth}px) rotateY(${rotate}deg) scale(${scale})`,
+                opacity,
+                zIndex: 100 - absDistance,
+                pointerEvents: hidden ? "none" : "auto",
+              }}
+              onClickCapture={(e) => {
+                if (index === activeIndex) return;
+                e.preventDefault();
+                e.stopPropagation();
+                goTo(index);
+              }}
+            >
+              <CarouselProgramCard program={program} />
+            </div>
+          );
+        })}
       </div>
       {programs.length > 1 && (
         <button
           type="button"
           className="programs-carousel-arrow programs-carousel-next"
           onClick={() => navigate("next")}
-          disabled={activeIndex === programs.length - 1}
           aria-label="البرنامج التالي"
         >
           <ChevronLeft />
         </button>
-      )}
-      {programs.length > 1 && (
-        <div className="programs-carousel-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
-          {programs.map((program, index) => (
-            <button
-              key={program.slug}
-              type="button"
-              role="tab"
-              aria-selected={index === activeIndex}
-              aria-label={`عرض برنامج ${program.title}`}
-              className={index === activeIndex ? "active" : ""}
-              onClick={() => scrollToIndex(index)}
-            />
-          ))}
-        </div>
       )}
     </div>
   );

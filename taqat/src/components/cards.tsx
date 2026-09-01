@@ -128,18 +128,17 @@ export function PartnerLogoCard({
 }: {
   item: { name: string; logo: string; url: string | null };
 }) {
-  const content = (
-    <>
-      {item.logo && (
-        <Image
-          src={getPublicImageUrl(item.logo)}
-          alt={`شعار ${item.name}`}
-          width={120}
-          height={70}
-        />
-      )}
-      <span>{item.name}</span>
-    </>
+  const content = item.logo ? (
+    // لو فيه شعار (صورة) نكتفي فيه بس بدون اسم نصي جنبه - الشعار نفسه هو
+    // المعرّف البصري للشريك
+    <Image
+      src={getPublicImageUrl(item.logo)}
+      alt={`شعار ${item.name}`}
+      width={200}
+      height={120}
+    />
+  ) : (
+    <span>{item.name}</span>
   );
   return (
     <Card className="partner-card">{item.url ? <a href={item.url}>{content}</a> : content}</Card>

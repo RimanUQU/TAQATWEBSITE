@@ -5,6 +5,8 @@ const items = [
   ["/admin/settings", "الإعدادات العامة"],
   ["/admin/homepage", "الصفحة الرئيسية"],
   ["/admin/programs", "البرامج"],
+  ["/admin/categories", "تصنيفات البرامج"],
+  ["/admin/audiences", "الفئات المستهدفة"],
   ["/admin/partners", "الشركاء"],
   ["/admin/statistics", "الإحصائيات"],
   ["/admin/testimonials", "قالوا عنا"],

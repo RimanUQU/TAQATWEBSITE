@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { getStaffIcons, isStaffIcon } from "@/lib/staff-icons";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 const text = (fd: FormData, key: string) => String(fd.get(key) || "").trim();
 const bool = (fd: FormData, key: string) => fd.get(key) === "on";
 const num = (fd: FormData, key: string) => Number(fd.get(key) || 0);
@@ -22,6 +22,8 @@ export async function saveSettingsAction(formData: FormData) {
     "instagram",
     "x",
     "whatsapp",
+    "tiktok",
+    "snapchat",
     "siteTitle",
     "metaDescription",
     "logo",
@@ -42,6 +44,9 @@ export async function saveSettingsAction(formData: FormData) {
 export async function saveHomepageAction(formData: FormData) {
   await requireAdmin();
   const textKeys = [
+      "heroEyebrow",
+      "heroTitle",
+      "heroSubtitle",
       "programsHeading",
       "partnersHeading",
       "statisticsHeading",
@@ -122,6 +127,8 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
     showInSlider: bool(formData, "showInSlider"),
     isNew: bool(formData, "isNew"),
     categoryId: text(formData, "categoryId") || null,
+    targetAudienceId: text(formData, "targetAudienceId") || null,
+    bannerImage: text(formData, "bannerImage") || null,
     // بدون لون محدد: نبقي اللون التركوازي الافتراضي (نفس القيمة الافتراضية بقاعدة البيانات)
     backgroundColor: backgroundColorRaw || "#075658",
   };
@@ -134,8 +141,16 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
   // من أي طلب يوصل بدون المرور بالواجهة (Validation على الطبقتين)
   if (!/^#[0-9A-Fa-f]{6}$/.test(data.backgroundColor))
     throw new Error("صيغة لون البرنامج غير صحيحة، لازم تكون مثل #FB5E96");
-  if (id) await db.program.update({ where: { id }, data: { ...data, updatedById: admin.id } });
-  else await db.program.create({ data: { ...data, createdById: admin.id, updatedById: admin.id } });
+  try {
+    if (id) await db.program.update({ where: { id }, data: { ...data, updatedById: admin.id } });
+    else await db.program.create({ data: { ...data, createdById: admin.id, updatedById: admin.id } });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002")
+      throw new Error(
+        "رابط البرنامج (Slug) مستخدم مسبقًا لبرنامج آخر، جرّبي كتابة رابط مختلف يدويًا من خانة الرابط المختصر بنافذة التفاصيل",
+      );
+    throw error;
+  }
   revalidatePath("/programs");
   revalidatePath("/");
   revalidatePath("/admin/programs");
@@ -183,28 +198,63 @@ export async function deletePartnerAction(id: string) {
   revalidatePath("/");
   revalidatePath("/admin/partners");
 }
-export async function saveStatisticAction(formData: FormData) {
+export async function saveCategoryAction(formData: FormData) {
   await requireAdmin();
   const id = text(formData, "id"),
-    data = {
-      title: text(formData, "title"),
-      value: num(formData, "value"),
-      prefix: text(formData, "prefix") || null,
-      suffix: text(formData, "suffix") || null,
-      icon: text(formData, "icon") || null,
-      displayOrder: num(formData, "displayOrder"),
-      active: bool(formData, "active"),
-    };
-  if (id) await db.statistic.update({ where: { id }, data });
-  else await db.statistic.create({ data });
-  revalidatePath("/");
-  revalidatePath("/admin/statistics");
+    name = text(formData, "name"),
+    data = { name, slug: slugify(text(formData, "slug") || name) };
+  if (!data.name) throw new Error("اسم التصنيف مطلوب");
+  if (id) await db.programCategory.update({ where: { id }, data });
+  else await db.programCategory.create({ data });
+  revalidatePath("/admin/categories");
+  revalidatePath("/admin/programs");
 }
-export async function deleteStatisticAction(id: string) {
+export async function deleteCategoryAction(id: string) {
   await requireAdmin();
-  await db.statistic.delete({ where: { id } });
+  await db.programCategory.delete({ where: { id } });
+  revalidatePath("/admin/categories");
+  revalidatePath("/admin/programs");
+  revalidatePath("/programs");
+}
+export async function saveAudienceAction(formData: FormData) {
+  await requireAdmin();
+  const id = text(formData, "id"),
+    name = text(formData, "name");
+  if (!name) throw new Error("اسم الفئة المستهدفة مطلوب");
+  if (id) await db.targetAudience.update({ where: { id }, data: { name } });
+  else await db.targetAudience.create({ data: { name } });
+  revalidatePath("/admin/audiences");
+  revalidatePath("/admin/programs");
+}
+export async function deleteAudienceAction(id: string) {
+  await requireAdmin();
+  await db.targetAudience.delete({ where: { id } });
+  revalidatePath("/admin/audiences");
+  revalidatePath("/admin/programs");
+  revalidatePath("/programs");
+}
+// قسم "الإحصائيات" بالرئيسية محسوب بالكامل تلقائيًا من قاعدة البيانات (بدون
+// أي إدخال يدوي) - صلاحية الأدمن الوحيدة هنا إظهار/إخفاء أي بطاقة إحصائية،
+// نفس نمط saveHomepageAction بالأعلى لكن لمفاتيح الإحصائيات الأربعة فقط.
+export async function saveStatisticVisibilityAction(formData: FormData) {
+  await requireAdmin();
+  const keys = [
+    "showStatBeneficiaries",
+    "showStatPartners",
+    "showStatPrograms",
+    "showStatSatisfaction",
+  ];
+  await db.$transaction(
+    keys.map((key) =>
+      db.siteSetting.upsert({
+        where: { key },
+        create: { key, value: String(bool(formData, key)), group: "home" },
+        update: { value: String(bool(formData, key)) },
+      }),
+    ),
+  );
   revalidatePath("/");
-  revalidatePath("/admin/statistics");
+  redirect("/admin/statistics?saved=1");
 }
 export async function saveTestimonialAction(formData: FormData) {
   await requireAdmin();
