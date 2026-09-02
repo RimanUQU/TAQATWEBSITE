@@ -1906,6 +1906,14 @@ span.pagination-arrow {
   gap: 10px;
   flex: 0 0 auto;
 }
+/* الإعلان كامل رابط - يغطي الشريحة بالكامل تحت صف النقاط (z-index أقل)
+   عشان النقاط تفضل قابلة للضغط لوحدها */
+.hero-slide-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+}
 .hero-dots {
   position: absolute;
   z-index: 3;
