@@ -111,7 +111,7 @@ export default async function StaffAdminPage({
               value={groups.length + 1}
             />
           </div>
-          <Button size="sm">إضافة مجموعة</Button>
+          <Button size="sm" className="staff-create-group-button">إضافة مجموعة</Button>
         </form>
       </section>
       <section className="staff-admin-groups">

@@ -8,23 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
-enum ProgramStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum RegistrationStatus {
-  CONFIRMED
-  CANCELLED
-  WAITLIST
-}
-
 model User {
   id              String                @id @default(cuid())
   name            String
@@ -36,13 +19,12 @@ model User {
   active          Boolean               @default(true)
   createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt
-  registrations   ProgramRegistration[]
+  favorites       Favorite[]
+  feedbacks       Feedback[]
   resetTokens     PasswordResetToken[]
   createdPrograms Program[]             @relation("ProgramCreatedBy")
   updatedPrograms Program[]             @relation("ProgramUpdatedBy")
-
-  feedbacks Feedback[]
-  favorites Favorite[]
+  registrations   ProgramRegistration[]
 }
 
 model ProgramCategory {
@@ -76,22 +58,26 @@ model Program {
   featured             Boolean               @default(false)
   showInSlider         Boolean               @default(false)
   isNew                Boolean               @default(false)
-  backgroundColor      String                @default("#075658")
-  sliderOrder          Int                   @default(0)
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   categoryId           String?
-  category             ProgramCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdById          String?
+  updatedById          String?
+  backgroundColor      String                @default("#075658")
+  sliderOrder          Int                   @default(0)
   bannerImage          String?
   targetAudienceId     String?
-  targetAudience       TargetAudience?       @relation(fields: [targetAudienceId], references: [id], onDelete: SetNull)
-  createdById          String?
-  createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-  updatedById          String?
-  updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
-  registrations        ProgramRegistration[]
-  feedbacks            Feedback[]
+  goals                String?
+  features             String?
+  requirements         String?
+  faq                  String?
   favorites            Favorite[]
+  feedbacks            Feedback[]
+  category             ProgramCategory?      @relation(fields: [categoryId], references: [id])
+  createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id])
+  targetAudience       TargetAudience?       @relation(fields: [targetAudienceId], references: [id])
+  updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id])
+  registrations        ProgramRegistration[]
 }
 
 model ProgramRegistration {
@@ -100,8 +86,8 @@ model ProgramRegistration {
   programId String
   status    RegistrationStatus @default(CONFIRMED)
   createdAt DateTime           @default(now())
+  program   Program            @relation(fields: [programId], references: [id])
   user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  program   Program            @relation(fields: [programId], references: [id], onDelete: Restrict)
 
   @@unique([userId, programId])
   @@index([programId, status])
@@ -112,8 +98,8 @@ model Favorite {
   userId    String
   programId String
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   program   Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, programId])
   @@index([programId])
@@ -148,10 +134,10 @@ model StaffGroup {
   displayOrder Int           @default(0)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  members      StaffMember[]
   parentId     String?
-  parent       StaffGroup?   @relation("StaffGroupRows", fields: [parentId], references: [id], onDelete: SetNull)
-  rows         StaffGroup[]   @relation("StaffGroupRows")
+  parent       StaffGroup?   @relation("StaffGroupRows", fields: [parentId], references: [id])
+  rows         StaffGroup[]  @relation("StaffGroupRows")
+  members      StaffMember[]
 
   @@index([parentId, displayOrder])
 }
@@ -160,20 +146,17 @@ model StaffMember {
   id           String     @id @default(cuid())
   name         String
   jobTitle     String
-  icon         String     @default("")
   displayOrder Int        @default(0)
   active       Boolean    @default(true)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  icon         String     @default("")
   groupId      String
   group        StaffGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@index([groupId, displayOrder])
 }
 
-// ملاحظة: هذا الموديل ما عاد يُستخدم من الكود (قسم "الإحصائيات" بالرئيسية
-// صار محسوبًا بالكامل تلقائيًا من البيانات الحقيقية - راجع src/lib/homepage-stats.ts).
-// أبقيناه هنا بدون حذف الجدول أو بياناته القديمة من قاعدة البيانات.
 model Statistic {
   id           String   @id @default(cuid())
   title        String
@@ -215,42 +198,54 @@ model PasswordResetToken {
   @@index([userId])
 }
 
+model Feedback {
+  id                     String         @id @default(cuid())
+  type                   FeedbackType
+  message                String
+  email                  String
+  name                   String?
+  consent                Boolean        @default(false)
+  status                 FeedbackStatus @default(PENDING)
+  adminNote              String?
+  publishedAsTestimonial Boolean        @default(false)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  programId              String?
+  userId                 String?
+  program                Program?       @relation(fields: [programId], references: [id])
+  user                   User?          @relation(fields: [userId], references: [id])
+
+  @@index([status, type])
+  @@index([email, createdAt])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProgramStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  CANCELLED
+  WAITLIST
+}
+
 enum FeedbackType {
-  GENERAL // رأي عام عن طاقات
-  PROGRAM // رأي عن برنامج محدد
-  SUGGESTION // اقتراح أو فكرة جديدة
-  ISSUE // ملاحظة أو مشكلة
-  OTHER // أخرى
+  GENERAL
+  PROGRAM
+  SUGGESTION
+  ISSUE
+  OTHER
 }
 
 enum FeedbackStatus {
-  PENDING // قيد المراجعة
-  APPROVED // معتمد (قد يُنشر أو لا)
-  HIDDEN // مخفي (لن يظهر للعامة)
-}
-
-model Feedback {
-  id        String         @id @default(cuid())
-  type      FeedbackType
-  message   String
-  email     String
-  name      String?
-  consent   Boolean        @default(false) // موافقة المستفيدة على العرض العام
-  status    FeedbackStatus @default(PENDING)
-  adminNote String? // ملاحظة داخلية للإدارة، غير معروضة للعامة
-
-  // يصير true بعد ما تنشرها الإدارة كشهادة في "قالوا عنا" — يمنع النشر المكرر
-  publishedAsTestimonial Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  programId String?
-  program   Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
-
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([status, type])
-  @@index([email, createdAt]) // يستخدم لمنع تكرار الإرسال السريع (anti-spam)
+  PENDING
+  APPROVED
+  HIDDEN
 }
