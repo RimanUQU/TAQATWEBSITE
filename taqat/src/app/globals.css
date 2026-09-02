@@ -1522,6 +1522,27 @@ h3 {
   box-shadow: 0 0 0 3px var(--pink-100);
   outline: 0;
 }
+/* المتصفح (كروم) يلوّن خلفية أي حقل يقترح له تعبئة تلقائية بلون أزرق/أصفر
+   ثابت ما يقدر CSS العادي يلغيه بـbackground - هذا حل شائع: نغطيه بظل داخلي
+   أبيض بحجم كبير جدًا يغطي كامل الحقل، فتظهر خلفيتنا العادية بدلها. */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  box-shadow: 0 0 0 1000px #fff inset;
+  -webkit-text-fill-color: var(--ink);
+}
+/* سهم منسدل مخصص لكل القوائم (select) بدل سهم المتصفح الافتراضي - عشان
+   يطابق باقي عناصر التصميم بدل ما يبين مختلف/غريب عنها */
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-left: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c9366c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  background-size: 18px;
+}
 .textarea {
   height: auto;
   padding-block: 12px;
@@ -1802,6 +1823,24 @@ h3 {
   background: var(--pink-500);
   color: #fff;
 }
+.pagination-arrow {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--pink-700);
+}
+a.pagination-arrow:hover {
+  background: var(--pink-50);
+  border-color: var(--pink-300);
+}
+span.pagination-arrow {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 /* شريط الإعلانات (Hero) - صورة إعلان كاملة (Full-bleed) لكل شريحة، بنفس
    أسلوب صورة الخلفية بصفحة تفاصيل البرنامج (.details-hero): تدرّج شفاف
    فوقها لوضوح النص، والنص والزر بأسفل الصورة. بطاقة عائمة بحواف دائرية. */
@@ -1866,6 +1905,14 @@ h3 {
   align-items: center;
   gap: 10px;
   flex: 0 0 auto;
+}
+/* الإعلان كامل رابط - يغطي الشريحة بالكامل تحت صف النقاط (z-index أقل)
+   عشان النقاط تفضل قابلة للضغط لوحدها */
+.hero-slide-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
 }
 .hero-dots {
   position: absolute;
@@ -2035,15 +2082,54 @@ h3 {
 }
 .search-bar {
   display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 14px;
+  grid-template-columns: minmax(0, 560px) 200px;
+  gap: 12px;
   margin-bottom: 28px;
+}
+.search-input-wrap {
+  position: relative;
+}
+.search-input-wrap .input {
+  padding-right: 44px; /* مساحة لأيقونة البحث بزاوية البدء (يمين بالـRTL) */
+}
+.search-submit {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--pink-700);
+  transition: background 0.15s;
+}
+.search-submit:hover {
+  background: var(--pink-50);
+}
+/* نص "نتائج البحث/التصفية + عرض جميع البرامج" - يظهر بس وقت وجود بحث أو
+   تصنيف فعّال، عشان دايمًا فيه طريقة رجوع واضحة بدل ما تختفي مع اختفاء
+   الترقيم (Pagination) لما تكون النتائج قليلة. تصميم بسيط بدون صندوق لون
+   صارخ (كان يشبه رسالة خطأ) - نص عادي مثل .breadcrumb، والرابط بس ملوّن. */
+.search-active-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: -10px 0 24px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.search-active-note .card-link {
+  margin-top: 0;
+  font-size: 0.85rem;
 }
 .details-hero {
   min-height: 430px;
   position: relative;
   display: flex;
-  align-items: flex-end;
   color: white;
 }
 .details-hero img {
@@ -2055,24 +2141,72 @@ h3 {
   inset: 0;
   background: linear-gradient(0deg, rgba(7, 49, 48, 0.92), rgba(7, 49, 48, 0.18));
 }
+/* شريط التتبع (Breadcrumb) + الشارات (مفضلة/سعر) بأعلى الهيرو، وعنوان
+   البرنامج بأسفله - عمود واحد يوزّع مجموعتين على طرفيه بدل ما يتكدسوا
+   كلهم بالأسفل */
 .details-hero .container {
   position: relative;
   z-index: 2;
-  padding-bottom: 52px;
 }
-.details-hero p {
-  max-width: 700px;
+.details-hero-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 430px;
+  padding-block: 22px 26px;
+}
+.details-hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+/* شريط التتبع بالهيرو تحديدًا لازم يبان بوضوح فوق صورة/تدرّج غامق، وبحجم
+   يوازي الشارات (سعر/مفضلة) المقابلة له - لونه وحجمه الافتراضيين (رمادي
+   باهت وصغير) يضيعون بهالخلفية والسياق (باقي استخدامات الشريط بالموقع
+   على خلفية بيضاء تبقى كما هي) */
+.details-hero-top .breadcrumb {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  margin-bottom: 0;
+}
+.details-hero-top .breadcrumb a {
+  color: #fff;
+  font-weight: 600;
+}
+/* آخر عنصر بالشريط = الصفحة الحالية (بدون رابط) - نلوّنه وردي حتى يتميّز
+   عن رابط "البرامج" القابل للنقر */
+.details-hero-top .breadcrumb span:last-child {
+  color: var(--pink-300);
+  font-weight: 700;
 }
 .details-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
+/* صار عندها أيقونة دايرية جنب النص (بدل نص مجرّد) - كرت "معلومات
+   البرنامج" هو مكانها الوحيد بالموقع حاليًا */
 .detail-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 12px;
-}.detail-box small, .detail-box strong {
+}
+.detail-box-icon {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--teal-50);
+  color: var(--teal-700);
+}
+.detail-box small, .detail-box strong {
   display: block;
 }
 .detail-box small {
@@ -2088,6 +2222,54 @@ h3 {
 .register-box .btn {
   width: 100%;
   margin-top: 18px;
+}
+/* الأقسام الفرعية (أهداف/مميزات/متطلبات/أسئلة شائعة) داخل قسم "تفاصيل
+   البرنامج" بصفحة تفاصيل البرنامج العامة */
+.program-detail-section h3 {
+  margin: 28px 0 12px;
+  font-size: 1.15rem;
+  color: var(--teal-700);
+}
+.program-detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.program-detail-list li {
+  position: relative;
+  padding-inline-start: 22px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.program-detail-list li::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0.6em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pink-400);
+}
+/* نسخة مستقلة عن .faq الأصلية (صفحة /faq) بنفس التنسيق بالضبط - كلاسات
+   خاصة حتى ما يتأثر أي تصميم موجود، نفس مبدأ الاستقلالية المتبع بالملف */
+.program-faq details {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  padding: 18px 20px;
+  max-width: 630px;
+}
+.program-faq summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+.program-faq details p {
+  color: var(--muted);
+  margin: 12px 0 0;
 }
 .content-cards {
   display: grid;
@@ -2623,6 +2805,10 @@ h3 {
   }
   .details-hero {
     min-height: 380px;
+  }
+  .details-hero-inner {
+    min-height: 380px;
+    padding-block: 18px 22px;
   }
   .details-list {
     grid-template-columns: 1fr;
@@ -3376,12 +3562,28 @@ h3 {
 .program-details-modal {
   width: min(100%, 560px);
   text-align: right;
+  /* صارت النافذة أطول بكثير بالحقول الجديدة (أهداف/مميزات/متطلبات/أسئلة
+     شائعة) - تنسكرول جواها بدل ما تفيض عن الشاشة */
+  max-height: min(88vh, 900px);
+  overflow-y: auto;
 }
 .program-details-modal p.upload-hint {
   margin: 6px 0 16px;
 }
 .program-details-modal textarea {
   width: 100%;
+}
+.program-details-modal .field {
+  margin-bottom: 4px;
+}
+/* صورة غلاف صفحة التفاصيل داخل نافذة التفاصيل - النافذة الآن تُطبع
+   بـPortal على document.body فما عادت داخل .program-card، فما تقدر تعتمد
+   على تنسيقها (.program-card .card-image) وتحتاج تعريف مستقل كامل */
+.admin-cover-image {
+  position: relative;
+  height: 160px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 /* منتقي لون البرنامج (بشارات الأدمن بوضع التعديل) + نقطة اللون بوضع العرض */

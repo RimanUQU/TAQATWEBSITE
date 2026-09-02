@@ -67,16 +67,16 @@ model Program {
   sliderOrder          Int                   @default(0)
   bannerImage          String?
   targetAudienceId     String?
+  targetAudience       TargetAudience?       @relation(fields: [targetAudienceId], references: [id], onDelete: SetNull)
   goals                String?
   features             String?
   requirements         String?
   faq                  String?
+  createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   favorites            Favorite[]
   feedbacks            Feedback[]
   category             ProgramCategory?      @relation(fields: [categoryId], references: [id])
-  createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id])
-  targetAudience       TargetAudience?       @relation(fields: [targetAudienceId], references: [id])
-  updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy            User?                 @relation("ProgramUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   registrations        ProgramRegistration[]
 }
 

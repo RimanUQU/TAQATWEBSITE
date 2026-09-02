@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { getPublicImageUrl } from "@/lib/images";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft } from "lucide-react";
-import { ButtonLink } from "./ui";
 
 type Slide = {
   id: string;
@@ -55,24 +54,24 @@ export function HeroSlider({ slides }: { slides: Slide[] }) {
             // الصورة أو لو ما فيه صورة إطلاقًا
             style={{ backgroundColor: slide.backgroundColor }}
           >
-            {image && (
-              <Image
-                src={getPublicImageUrl(image)}
-                alt=""
-                fill
-                priority={index === 0}
-                sizes="100vw"
-              />
-            )}
-            {/* بدون اسم البرنامج أو شارة السعر هنا - صورة الإعلان نفسها فيها كل
-                النص/التصميم المطلوب من تصميم البانر، والزر بس يوديك للتفاصيل */}
-            <div className="hero-content">
-              <div className="hero-actions">
-                <ButtonLink href={`/programs/${slide.slug}`} size="sm">
-                  عرض التفاصيل <ChevronLeft size={16} />
-                </ButtonLink>
-              </div>
-            </div>
+            {/* الإعلان كامل صار رابط - بدون زر "عرض التفاصيل" منفصل، أي ضغطة
+                على الصورة نفسها توديك لصفحة البرنامج مباشرة */}
+            <Link
+              href={`/programs/${slide.slug}`}
+              className="hero-slide-link"
+              tabIndex={index === current ? 0 : -1}
+              aria-label={`عرض تفاصيل الإعلان ${index + 1}`}
+            >
+              {image && (
+                <Image
+                  src={getPublicImageUrl(image)}
+                  alt=""
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                />
+              )}
+            </Link>
             {slides.length > 1 && (
               <div className="hero-dots" role="tablist" aria-label="اختيار البرنامج المعروض">
                 {slides.map((s, i) => (

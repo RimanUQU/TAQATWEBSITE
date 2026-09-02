@@ -1,7 +1,8 @@
 "use client";
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
-import { AlertTriangle, CalendarDays, FileText, GraduationCap, MapPin, Tag, Users } from "lucide-react";
+import { AlertTriangle, CalendarDays, FileText, MapPin, Tag, User, Users } from "lucide-react";
 import type { Program, ProgramCategory, TargetAudience } from "@prisma/client";
 import { Button, Card, FormField, Input } from "./ui";
 import { formatDate } from "@/lib/utils";
@@ -52,11 +53,21 @@ export function AdminProgramCard({
   const [slug, setSlug] = useState(program?.slug || "");
   const [backgroundColor, setBackgroundColor] = useState(program?.backgroundColor || "#075658");
   const [detailsOpen, setDetailsOpen] = useState(false);
-  // القص مفعّل بس لصورة بانر شريط الإعلانات (نسبتها العريضة جدًا تحتاج
-  // تحديد يدوي)، مو لصورة الكارد - رفعها يبقى مباشر زي ما كان.
+  // صورة غلاف مستقلة لصفحة تفاصيل البرنامج العامة - افتراضيًا فاضية، وقتها
+  // saveProgramAction يستخدم صورة الكارد تلقائيًا (سلوك احتياطي موجود أصلًا)
+  const [coverImage, setCoverImage] = useState(program?.coverImage || "");
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [goals, setGoals] = useState(program?.goals || "");
+  const [features, setFeatures] = useState(program?.features || "");
+  const [requirements, setRequirements] = useState(program?.requirements || "");
+  const [faq, setFaq] = useState(program?.faq || "");
+  // القص مفعّل لصورة بانر شريط الإعلانات وصورة غلاف صفحة التفاصيل (نسبتهم
+  // العريضة تحتاج تحديد يدوي)، مو لصورة الكارد - رفعها يبقى مباشر زي ما كان.
   const [croppingBanner, setCroppingBanner] = useState<File | null>(null);
+  const [croppingCover, setCroppingCover] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bannerFileInputRef = useRef<HTMLInputElement>(null);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
   const deleteFormRef = useRef<HTMLFormElement>(null);
   const canDelete = !program || program._count.registrations === 0;
   const otherSliderCount = sliderCount - (program?.showInSlider ? 1 : 0);
@@ -75,6 +86,11 @@ export function AdminProgramCard({
     setSlug(program.slug);
     setBackgroundColor(program.backgroundColor);
     setBannerImage(program.bannerImage || "");
+    setCoverImage(program.coverImage || "");
+    setGoals(program.goals || "");
+    setFeatures(program.features || "");
+    setRequirements(program.requirements || "");
+    setFaq(program.faq || "");
     setEditing(false);
   }
 
@@ -130,6 +146,16 @@ export function AdminProgramCard({
     if (bannerFileInputRef.current) bannerFileInputRef.current.value = "";
     if (!file) return;
     setCroppingBanner(file);
+  }
+
+  // صورة الغلاف عريضة جدًا بصفحة التفاصيل العامة (شبيهة بشريط الإعلانات) -
+  // القص هنا يخليك تحددين الجزء المهم من الصورة بدل ما يقصّه المتصفح
+  // تلقائيًا (object-fit: cover) بشكل عشوائي.
+  function handleCoverPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (coverFileInputRef.current) coverFileInputRef.current.value = "";
+    if (!file) return;
+    setCroppingCover(file);
   }
 
   return (
@@ -411,7 +437,7 @@ export function AdminProgramCard({
               )}
             </span>
             <span>
-              <GraduationCap />
+              <User />
               {editing ? (
                 <select
                   name="targetAudienceId"
@@ -430,6 +456,12 @@ export function AdminProgramCard({
               )}
             </span>
           </div>
+          {editing && (
+            <small className="upload-hint">
+              التاريخ والمشاركات والموقع والفئة المستهدفة فوق - هذي هي نفسها اللي تظهر بكرت
+              &quot;معلومات البرنامج&quot; بصفحة تفاصيل البرنامج العامة.
+            </small>
+          )}
 
           {editing && (
             <button
@@ -449,11 +481,14 @@ export function AdminProgramCard({
               <input type="hidden" name="slug" value={slug} />
               <input type="hidden" name="shortDescription" value={program!.shortDescription} />
               <input type="hidden" name="description" value={description} />
-              {/* الغلاف بصفحة تفاصيل البرنامج يتبع نفس صورة الكارد دائمًا - قبل هالسطر كان
-                  يرسل صورة الغلاف القديمة دايمًا حتى لو رفعتِ صورة جديدة من الكارد، فتصير
-                  صورة الكارد والصفحة التفصيلية مختلفتين عن بعض */}
-              <input type="hidden" name="coverImage" value={cardImage} />
+              {/* الغلاف بصفحة تفاصيل البرنامج مستقل الحين (تُعدّل من نافذة التفاصيل) - لو
+                  تركتِه فاضي، saveProgramAction يستخدم صورة الكارد تلقائيًا كخيار احتياطي */}
+              <input type="hidden" name="coverImage" value={coverImage} />
               <input type="hidden" name="cardImage" value={cardImage} />
+              <input type="hidden" name="goals" value={goals} />
+              <input type="hidden" name="features" value={features} />
+              <input type="hidden" name="requirements" value={requirements} />
+              <input type="hidden" name="faq" value={faq} />
               <input type="hidden" name="endDate" value={toDateTimeLocal(program!.endDate)} />
               <input
                 type="hidden"
@@ -466,8 +501,13 @@ export function AdminProgramCard({
           {isNewProgram && (
             <>
               <input type="hidden" name="cardImage" value={cardImage} />
+              <input type="hidden" name="coverImage" value={coverImage} />
               <input type="hidden" name="description" value={description} />
               <input type="hidden" name="slug" value={slug} />
+              <input type="hidden" name="goals" value={goals} />
+              <input type="hidden" name="features" value={features} />
+              <input type="hidden" name="requirements" value={requirements} />
+              <input type="hidden" name="faq" value={faq} />
             </>
           )}
 
@@ -556,46 +596,51 @@ export function AdminProgramCard({
       {!editing && program && (
         <form ref={deleteFormRef} action={deleteProgramAction.bind(null, program.id)} hidden />
       )}
-      {confirmingDelete && (
-        <div
-          className="modal-overlay"
-          role="presentation"
-          onMouseDown={(e) => {
-            if (e.currentTarget === e.target) setConfirmingDelete(false);
-          }}
-        >
+      {confirmingDelete &&
+        createPortal(
+          // Portal لـdocument.body - بدونه النافذة تنحصر بحدود الكارد لأن
+          // .program-card:hover فيه transform (يصنع Containing Block جديد
+          // لأي position:fixed جواه). نفس الحل المستخدم بـImageCropModal.
           <div
-            className="modal program-delete-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-program-title"
+            className="modal-overlay"
+            role="presentation"
+            onMouseDown={(e) => {
+              if (e.currentTarget === e.target) setConfirmingDelete(false);
+            }}
           >
-            <span className="program-delete-modal-icon" aria-hidden="true">
-              <AlertTriangle size={22} />
-            </span>
-            <h2 id="delete-program-title">تأكيد الحذف</h2>
-            <p>
-              هل أنت متأكدة من حذف برنامج &quot;{program?.title}&quot;؟ هذا الإجراء لا يمكن
-              التراجع عنه.
-            </p>
-            <div className="modal-actions">
-              <Button type="button" variant="outline" onClick={() => setConfirmingDelete(false)}>
-                إلغاء
-              </Button>
-              <Button
-                type="button"
-                className="btn-danger"
-                onClick={() => {
-                  setConfirmingDelete(false);
-                  deleteFormRef.current?.requestSubmit();
-                }}
-              >
-                حذف البرنامج
-              </Button>
+            <div
+              className="modal program-delete-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-program-title"
+            >
+              <span className="program-delete-modal-icon" aria-hidden="true">
+                <AlertTriangle size={22} />
+              </span>
+              <h2 id="delete-program-title">تأكيد الحذف</h2>
+              <p>
+                هل أنت متأكدة من حذف برنامج &quot;{program?.title}&quot;؟ هذا الإجراء لا يمكن
+                التراجع عنه.
+              </p>
+              <div className="modal-actions">
+                <Button type="button" variant="outline" onClick={() => setConfirmingDelete(false)}>
+                  إلغاء
+                </Button>
+                <Button
+                  type="button"
+                  className="btn-danger"
+                  onClick={() => {
+                    setConfirmingDelete(false);
+                    deleteFormRef.current?.requestSubmit();
+                  }}
+                >
+                  حذف البرنامج
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
       {croppingBanner && (
         <ImageCropModal
           file={croppingBanner}
@@ -607,48 +652,158 @@ export function AdminProgramCard({
           }}
         />
       )}
-      {detailsOpen && (
-        <div
-          className="modal-overlay"
-          role="presentation"
-          onMouseDown={(e) => {
-            if (e.currentTarget === e.target) setDetailsOpen(false);
+      {croppingCover && (
+        <ImageCropModal
+          file={croppingCover}
+          aspectRatio={3 / 1}
+          onCancel={() => setCroppingCover(null)}
+          onCropped={(blob) => {
+            setCroppingCover(null);
+            uploadImage(blob, coverImage, setCoverImage, setCoverUploading);
           }}
-        >
-          <div
-            className="modal program-details-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="details-title"
-          >
-            <h2 id="details-title">تفاصيل البرنامج</h2>
-            <FormField
-              label="الرابط المختصر (Slug)"
-              htmlFor="program-slug"
-              hint="يُولّد تلقائيًا من الاسم عند تركه فارغًا"
-            >
-              <Input id="program-slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
-            </FormField>
-            <p className="upload-hint">
-              هذا النص يظهر بقسم &quot;عن البرنامج&quot; بصفحة تفاصيل البرنامج العامة (اللي
-              يشوفها الزوار)، منفصل عن الوصف المختصر اللي يبان على الكارد. يُحفظ فورًا أثناء
-              الكتابة.
-            </p>
-            <textarea
-              className="input textarea"
-              rows={8}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="اكتبي الوصف التفصيلي الكامل للبرنامج هنا..."
-            />
-            <div className="modal-actions">
-              <Button type="button" onClick={() => setDetailsOpen(false)}>
-                تم
-              </Button>
-            </div>
-          </div>
-        </div>
+        />
       )}
+      {detailsOpen &&
+        createPortal(
+          // Portal لـdocument.body - نفس سبب نافذة تأكيد الحذف فوق بالضبط
+          // (containing block جديد من transform الكارد عند :hover).
+          <div
+            className="modal-overlay"
+            role="presentation"
+            onMouseDown={(e) => {
+              if (e.currentTarget === e.target) setDetailsOpen(false);
+            }}
+          >
+            <div
+              className="modal program-details-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="details-title"
+            >
+              <h2 id="details-title">تفاصيل البرنامج</h2>
+              <FormField
+                label="الرابط المختصر (Slug)"
+                htmlFor="program-slug"
+                hint="يُولّد تلقائيًا من الاسم عند تركه فارغًا"
+              >
+                <Input id="program-slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
+              </FormField>
+
+              <FormField label="صورة غلاف صفحة تفاصيل البرنامج" htmlFor="program-cover">
+                <button
+                  type="button"
+                  id="program-cover"
+                  className="card-image admin-image-edit admin-cover-image"
+                  onClick={() => coverFileInputRef.current?.click()}
+                  disabled={coverUploading}
+                >
+                  {coverImage ? (
+                    <Image src={getPublicImageUrl(coverImage)} alt="" fill sizes="(max-width: 768px) 100vw, 33vw" />
+                  ) : (
+                    <span className="image-empty" aria-hidden="true">
+                      طاقات
+                    </span>
+                  )}
+                  <span className="admin-image-edit-hint">
+                    {coverUploading ? "جاري الرفع..." : "اضغطي لإضافة صورة الغلاف"}
+                  </span>
+                </button>
+                <input
+                  ref={coverFileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleCoverPick}
+                  style={{ display: "none" }}
+                />
+              </FormField>
+              <p className="upload-hint">
+                بعد اختيار الصورة تقدرين تحددين منطقة القص بنسبة عريضة تناسب شريط الغلاف
+                (تشبه شريط الإعلانات). لو تركتِها فاضية، تُستخدم صورة الكارد تلقائيًا. هذي
+                الصورة تظهر أعلى صفحة تفاصيل البرنامج العامة (خلف اسم البرنامج).
+              </p>
+
+              <p className="upload-hint">
+                هذا النص يظهر بقسم &quot;تفاصيل البرنامج&quot; بصفحة تفاصيل البرنامج العامة
+                (اللي يشوفها الزوار)، منفصل عن الوصف المختصر اللي يبان على الكارد. يُحفظ فورًا
+                أثناء الكتابة.
+              </p>
+              <textarea
+                className="input textarea"
+                rows={6}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="اكتبي الوصف التفصيلي الكامل للبرنامج هنا..."
+              />
+
+              <FormField
+                label="أهداف البرنامج"
+                htmlFor="program-goals"
+                hint="نقطة واحدة بكل سطر - تظهر كقائمة بصفحة البرنامج"
+              >
+                <textarea
+                  id="program-goals"
+                  className="input textarea"
+                  rows={3}
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                  placeholder={"مثال:\nتنمية مهارات التواصل\nبناء الثقة بالنفس"}
+                />
+              </FormField>
+
+              <FormField
+                label="مميزات البرنامج"
+                htmlFor="program-features"
+                hint="نقطة واحدة بكل سطر - تظهر كقائمة بصفحة البرنامج"
+              >
+                <textarea
+                  id="program-features"
+                  className="input textarea"
+                  rows={3}
+                  value={features}
+                  onChange={(e) => setFeatures(e.target.value)}
+                  placeholder={"مثال:\nمدرّبات معتمدات\nشهادة حضور معتمدة"}
+                />
+              </FormField>
+
+              <FormField
+                label="المتطلبات"
+                htmlFor="program-requirements"
+                hint="نقطة واحدة بكل سطر - تظهر كقائمة بصفحة البرنامج"
+              >
+                <textarea
+                  id="program-requirements"
+                  className="input textarea"
+                  rows={3}
+                  value={requirements}
+                  onChange={(e) => setRequirements(e.target.value)}
+                  placeholder={"مثال:\nجهاز لابتوب أو تابلت\nحماس للتعلم"}
+                />
+              </FormField>
+
+              <FormField
+                label="الأسئلة الشائعة"
+                htmlFor="program-faq"
+                hint="اكتبي السؤال بسطر، وجوابه بالسطر (أو الأسطر) اللي بعده مباشرة، وسطر فاضي بين كل سؤال والثاني"
+              >
+                <textarea
+                  id="program-faq"
+                  className="input textarea"
+                  rows={5}
+                  value={faq}
+                  onChange={(e) => setFaq(e.target.value)}
+                  placeholder={"مثال:\nهل يوجد شهادة حضور؟\nنعم، تُمنح لكل مشاركة أكملت البرنامج.\n\nما الفئة العمرية المناسبة؟\nمن 12 إلى 18 سنة."}
+                />
+              </FormField>
+
+              <div className="modal-actions">
+                <Button type="button" onClick={() => setDetailsOpen(false)}>
+                  تم
+                </Button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </Card>
   );
 }
