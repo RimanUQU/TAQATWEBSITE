@@ -85,6 +85,10 @@ model Program {
   bannerImage          String?
   targetAudienceId     String?
   targetAudience       TargetAudience?       @relation(fields: [targetAudienceId], references: [id], onDelete: SetNull)
+  goals                String?
+  features             String?
+  requirements         String?
+  faq                  String?
   createdById          String?
   createdBy            User?                 @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   updatedById          String?

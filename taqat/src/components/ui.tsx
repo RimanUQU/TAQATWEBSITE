@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type {
   ButtonHTMLAttributes,
+  HTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
   SelectHTMLAttributes,
@@ -108,8 +110,16 @@ export function Badge({
 }) {
   return <span className={`badge badge-${tone}`}>{children}</span>;
 }
-export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <article className={`card ${className}`}>{children}</article>;
+export function Card({
+  children,
+  className = "",
+  ...rest
+}: { children: ReactNode; className?: string } & HTMLAttributes<HTMLElement>) {
+  return (
+    <article className={`card ${className}`} {...rest}>
+      {children}
+    </article>
+  );
 }
 export function Alert({
   children,
@@ -172,18 +182,37 @@ export function Skeleton() {
 }
 export function Pagination({ page, total, base }: { page: number; total: number; base: string }) {
   if (total <= 1) return null;
+  const pageHref = (n: number) => `${base}${base.includes("?") ? "&" : "?"}page=${n}`;
   return (
     <nav className="pagination" aria-label="صفحات النتائج">
+      {page > 1 ? (
+        <Link className="pagination-arrow" href={pageHref(page - 1)} aria-label="الصفحة السابقة">
+          <ChevronRight size={18} />
+        </Link>
+      ) : (
+        <span className="pagination-arrow" aria-hidden="true">
+          <ChevronRight size={18} />
+        </span>
+      )}
       {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
         <Link
           className={n === page ? "active" : ""}
           aria-current={n === page ? "page" : undefined}
-          href={`${base}${base.includes("?") ? "&" : "?"}page=${n}`}
+          href={pageHref(n)}
           key={n}
         >
           {n}
         </Link>
       ))}
+      {page < total ? (
+        <Link className="pagination-arrow" href={pageHref(page + 1)} aria-label="الصفحة التالية">
+          <ChevronLeft size={18} />
+        </Link>
+      ) : (
+        <span className="pagination-arrow" aria-hidden="true">
+          <ChevronLeft size={18} />
+        </span>
+      )}
     </nav>
   );
 }

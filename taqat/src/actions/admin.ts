@@ -129,6 +129,10 @@ export async function saveProgramAction(id: string | undefined, formData: FormDa
     categoryId: text(formData, "categoryId") || null,
     targetAudienceId: text(formData, "targetAudienceId") || null,
     bannerImage: text(formData, "bannerImage") || null,
+    goals: text(formData, "goals") || null,
+    features: text(formData, "features") || null,
+    requirements: text(formData, "requirements") || null,
+    faq: text(formData, "faq") || null,
     // بدون لون محدد: نبقي اللون التركوازي الافتراضي (نفس القيمة الافتراضية بقاعدة البيانات)
     backgroundColor: backgroundColorRaw || "#075658",
   };
